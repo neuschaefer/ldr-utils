@@ -646,7 +646,12 @@ int ldr_create(char **filelist, struct ldr_create_options *opts)
 
 		/* convert the ELF to a binary */
 		tmpfile = xmalloc(strlen(filelist[i])+sizeof(".tmp..bin"));
-		sprintf(tmpfile, ".tmp.%s.bin", filelist[i]);
+		{
+			char *base_ret, *base_tmp = xstrdup(filelist[i]);
+			base_ret = basename(base_tmp);
+			sprintf(tmpfile, ".tmp.%s.bin", base_ret);
+			free(base_tmp);
+		}
 		if (fork()) {
 			int status;
 			wait(&status);

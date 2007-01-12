@@ -31,6 +31,7 @@
 #include <getopt.h>
 #include <termios.h>
 #include <sys/stat.h>
+#include <libgen.h>
 #include <elf.h>
 #include <sys/mman.h>
 #include <sys/wait.h>

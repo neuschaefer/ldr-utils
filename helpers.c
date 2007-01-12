@@ -19,14 +19,24 @@
 void *xmalloc(size_t size)
 {
 	void *ret = malloc(size);
-	assert(ret != NULL);
+	if (ret == NULL)
+		errp("malloc(%zi) returned NULL!", size);
 	return ret;
 }
 
 void *xrealloc(void *ptr, size_t size)
 {
 	void *ret = realloc(ptr, size);
-	assert(ret != NULL);
+	if (ret == NULL)
+		errp("realloc(%p, %zi) returned NULL!", ptr, size);
+	return ret;
+}
+
+char *xstrdup(const char *s)
+{
+	char *ret = strdup(s);
+	if (ret == NULL)
+		errp("strdup(%p) returned NULL!", s);
 	return ret;
 }
 
