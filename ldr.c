@@ -116,6 +116,7 @@ static LDR *_ldr_read_bin(FILE *fp)
 		if (feof(fp))
 			break;
 		memcpy(&flags, header+8, sizeof(flags));
+		ldr_make_little_endian_16(flags);
 		if (flags & LDR_FLAG_IGNORE) {
 			ldr->dxes = xrealloc(ldr->dxes, (++ldr->num_dxes) * sizeof(DXE));
 			dxe = &ldr->dxes[d++];
@@ -135,6 +136,9 @@ static LDR *_ldr_read_bin(FILE *fp)
 		memcpy(&(block->target_address), block->header, sizeof(block->target_address));
 		memcpy(&(block->byte_count), block->header+4, sizeof(block->byte_count));
 		memcpy(&(block->flags), block->header+8, sizeof(block->flags));
+		ldr_make_little_endian_32(block->target_address);
+		ldr_make_little_endian_32(block->byte_count);
+		ldr_make_little_endian_16(block->flags);
 		if (block->flags & LDR_FLAG_ZEROFILL)
 			block->data = NULL;
 		else {
@@ -486,7 +490,7 @@ canned_failure:
 			printf("%zi] ", ldr->dxes[d].num_blocks);
 			if (block->data != NULL) {
 				ret = write(fd, block->data, block->byte_count);
-				if (ret != block->byte_count)
+				if (ret != (ssize_t)block->byte_count)
 					goto canned_failure;
 			}
 		}
