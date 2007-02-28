@@ -93,49 +93,55 @@ static struct option_help const create_opts_help[] = {
 #define show_create_usage(status) show_some_usage(create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
 
 
-static void show_ldr(const char *filename)
+static int show_ldr(const char *filename)
 {
+	int ret;
 	LDR *ldr;
 	printf("Showing LDR %s ...\n", filename);
 	ldr = ldr_read(filename);
 	if (ldr == NULL) {
 		printf("Unable to read specified LDR\n");
-		return;
+		return -1;
 	}
-	ldr_print(ldr);
+	ret = ldr_print(ldr);
 	ldr_free(ldr);
+	return ret;
 }
 
-static void dump_ldr(const char *filename)
+static int dump_ldr(const char *filename)
 {
+	int ret;
 	LDR *ldr;
 	printf("Dumping LDR %s ...\n", filename);
 	ldr = ldr_read(filename);
 	if (ldr == NULL) {
 		perror("Unable to read specified LDR");
-		return;
+		return -1;
 	}
-	ldr_dump(filename, ldr);
+	ret = ldr_dump(filename, ldr);
 	ldr_free(ldr);
+	return ret;
 }
 
-static void load_ldr(const char *filename, const char *tty)
+static int load_ldr(const char *filename, const char *tty)
 {
+	int ret;
 	LDR *ldr;
 	printf("Loading LDR %s ... ", filename);
 	ldr = ldr_read(filename);
 	if (ldr == NULL) {
 		perror("Unable to read specified LDR");
-		return;
+		return -1;
 	}
 	printf("OK!\n");
-	ldr_send(ldr, tty);
+	ret = ldr_send(ldr, tty);
 	ldr_free(ldr);
+	return ret;
 }
 
-static void create_ldr(int argc, char *argv[])
+static int create_ldr(int argc, char *argv[])
 {
-	int i;
+	int ret, i;
 	struct ldr_create_options opts = {
 		.cpu = 0,
 		.resvec = 0,
@@ -155,7 +161,7 @@ static void create_ldr(int argc, char *argv[])
 			case '?': err("Unknown option '%c' or argument missing", optopt);
 			default:  err("Unhandled option '%c'; please report this", i);
 		}
-	}	
+	}
 	if (argc < optind + 2)
 		err("Create requires at least two arguments: <ldr> <elfs>");
 	if (opts.cpu < 0)
@@ -166,10 +172,12 @@ static void create_ldr(int argc, char *argv[])
 		err("Invalid GPIO '%i'.  Valid GPIO values are 0 - 16.", opts.gpio);
 
 	printf("Creating LDR %s ...\n", *(argv+optind));
-	if (ldr_create(argv+optind, &opts) != 0)
+	ret = ldr_create(argv+optind, &opts);
+	if (ret)
 		perror("Failed to create LDR");
 	else
 		printf("Done!\n");
+	return ret;
 }
 
 
@@ -191,7 +199,7 @@ int main(int argc, char *argv[])
 {
 	typedef enum { SHOW, DUMP, LOAD, CREATE, NONE } actions;
 	actions a = NONE;
-	int i;
+	int i, ret;
 
 	argv0 = strchr(argv[0], '/');
 	argv0 = (argv0 == NULL ? argv[0] : argv0+1);
@@ -215,27 +223,28 @@ int main(int argc, char *argv[])
 	if (optind == argc)
 		show_usage(EXIT_FAILURE);
 
+	ret = 0;
 parse_action:
 	switch (a) {
 		case SHOW:
 			for (i = optind; i < argc; ++i)
-				show_ldr(argv[i]);
+				ret |= show_ldr(argv[i]);
 			break;
 		case DUMP:
 			for (i = optind; i < argc; ++i)
-				dump_ldr(argv[i]);
+				ret |= dump_ldr(argv[i]);
 			break;
 		case LOAD:
 			if (optind + 2 != argc)
 				err("Load requires exactly two arguments: <ldr> <tty>");
-			load_ldr(argv[optind], argv[optind+1]);
+			ret |= load_ldr(argv[optind], argv[optind+1]);
 			break;
 		case CREATE:
 			--optind;
 			argc -= optind;
 			argv += optind;
 			argv[0] = "create";
-			create_ldr(argc, argv);
+			ret |= create_ldr(argc, argv);
 			break;
 		case NONE:
 			/* guess at requested action based upon context
@@ -256,5 +265,5 @@ parse_action:
 			show_usage(EXIT_FAILURE);
 	}
 
-	return 0;
+	return ret;
 }
