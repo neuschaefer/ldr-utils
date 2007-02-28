@@ -59,7 +59,7 @@ int str2bfcpu(const char *cpu)
 
 	switch (cpunum) {
 		case 531:
-		case 532: 
+		case 532:
 		case 533:
 		case 534:
 		case 535:
@@ -426,22 +426,29 @@ static inline int _tty_init(const int fd)
  *    it is ready for more ... we let the kernel worry about this crap
  *    in the call to write()
  */
+void ldr_send_timeout(int sig)
+{
+	warn("received signal %i: timeout while sending; aborting", sig);
+	exit(2);
+}
 int ldr_send(LDR *ldr, const char *tty)
 {
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
-	int fd;
+	int fd, error = -1;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
+	void (*old_alarm)(int);
 
 	setbuf(stdout, NULL);
 
+	/* give ourselves like ten seconds to do autobaud */
+	old_alarm = signal(SIGALRM, ldr_send_timeout);
+	alarm(10);
+
 	printf("Opening %s ... ", tty);
 	fd = open(tty, O_RDWR);
-	if (fd == -1) {
-canned_failure:
-		perror("Failed");
-		return -1;
-	}
+	if (fd == -1)
+		goto out;
 	printf("OK!\n");
 
 	printf("Configuring terminal I/O ... ");
@@ -453,20 +460,21 @@ canned_failure:
 	printf("Trying to send autobaud ... ");
 	ret = write(fd, "@", 1);
 	if (ret != 1)
-		goto canned_failure;
+		goto out;
 	printf("OK!\n");
 
 	printf("Trying to read autobaud ... ");
 	ret = read_retry(fd, autobaud, 4);
 	if (ret != 4)
-		goto canned_failure;
+		goto out;
 	printf("OK!\n");
 
 	printf("Checking autobaud ... ");
 	if (autobaud[0] != 0xBF || autobaud[3] != 0x00) {
 		printf("Failed: wanted {0xBF,..,..,0x00} but got {0x%02X,[0x%02X],[0x%02X],0x%02X}\n",
 			autobaud[0], autobaud[1], autobaud[2], autobaud[3]);
-		return -1;
+		error = -2;
+		goto out;
 	}
 	printf("OK!\n");
 
@@ -482,16 +490,18 @@ canned_failure:
 		for (b = 0; b < ldr->dxes[d].num_blocks; ++b) {
 			BLOCK *block = &(ldr->dxes[d].blocks[b]);
 
+			alarm(60);
+
 			printf("[%zi/", b+1);
 			ret = write(fd, block->header, sizeof(block->header));
 			if (ret != sizeof(block->header))
-				goto canned_failure;
+				goto out;
 
 			printf("%zi] ", ldr->dxes[d].num_blocks);
 			if (block->data != NULL) {
 				ret = write(fd, block->data, block->byte_count);
 				if (ret != (ssize_t)block->byte_count)
-					goto canned_failure;
+					goto out;
 			}
 		}
 		printf("OK!\n");
@@ -503,7 +513,13 @@ canned_failure:
 		printf("You may want to run minicom or kermit now\n"
 		       "Quick tip: run 'ldrviewer <ldr> <tty> && minicom'\n");
 
-	return 0;
+	error = 0;
+out:
+	if (error == -1)
+		perror("Failed");
+	alarm(0);
+	signal(SIGALRM, old_alarm);
+	return error;
 }
 
 /*
