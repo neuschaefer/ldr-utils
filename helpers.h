@@ -46,4 +46,9 @@ char *xstrdup(const char *);
 int parse_bool(const char *);
 ssize_t read_retry(int, void *, size_t);
 
+size_t tty_get_baud(const int);
+int tty_init(const int);
+int tty_lock(const char *);
+int tty_unlock(const char *);
+
 #endif

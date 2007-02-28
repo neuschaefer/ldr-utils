@@ -343,76 +343,6 @@ int ldr_dump(const char *base, LDR *ldr)
 }
 
 /*
- * _tty_speed_to_baud()
- * Annoying function for translating the termios baud representation
- * into the actual decimal value.
- */
-static inline size_t _tty_speed_to_baud(const speed_t speed)
-{
-	struct {
-		speed_t s;
-		size_t b;
-	} speeds[] = {
-		{B0, 0}, {B50, 50}, {B75, 75}, {B110, 110}, {B134, 134}, {B150, 150},
-		{B200, 200}, {B300, 300}, {B600, 600}, {B1200, 1200}, {B1800, 1800},
-		{B2400, 2400}, {B4800, 4800}, {B9600, 9600}, {B19200, 19200},
-		{B38400, 38400}, {B57600, 57600}, {B115200, 115200}, {B230400, 230400}
-	};
-	size_t i;
-
-	for (i = 0; i < sizeof(speeds)/sizeof(*speeds); ++i)
-		if (speeds[i].s == speed)
-			return speeds[i].b;
-
-	return 0;
-}
-
-/*
- * _tty_get_baud()
- * Helper function to return the baud rate the specified fd is running at.
- */
-static inline size_t _tty_get_baud(const int fd)
-{
-	struct termios term;
-	tcgetattr(fd, &term);
-	return _tty_speed_to_baud(cfgetispeed(&term));
-}
-
-/*
- * _tty_init()
- * Make sure the tty we're going to be working with is properly setup.
- *  - make sure we are not running in ICANON mode
- *  - set speed to 115200 so transfers go fast
- */
-#define DEFAULT_SPEED B115200 /*B57600*/
-static inline int _tty_init(const int fd)
-{
-	struct termios term;
-	if (verbose)
-		printf("[getattr] ");
-	if (tcgetattr(fd, &term))
-		return 1;
-	term.c_iflag &= ~(BRKINT | ICRNL);
-	term.c_iflag |= (IGNBRK | IXOFF);
-	term.c_oflag &= ~(OPOST | ONLCR);
-	term.c_lflag &= ~(ISIG | ICANON | ECHO | IEXTEN);
-	if (verbose)
-		printf("[setattr] ");
-	if (tcsetattr(fd, TCSANOW, &term))
-		return 1;
-	if (verbose)
-		printf("[speed] ");
-	if (cfgetispeed(&term) != DEFAULT_SPEED || cfgetospeed(&term) != DEFAULT_SPEED) {
-		/* TODO: add a runtime switch for users to control this */
-		if (cfsetispeed(&term, DEFAULT_SPEED) || cfsetospeed(&term, DEFAULT_SPEED))
-			return 1;
-		if (tcsetattr(fd, TCSANOW, &term))
-			return 1;
-	}
-	return 0;
-}
-
-/*
  * ldr_send()
  * Transmit the specified ldr over the serial line to a BF537.  Used when
  * you want to boot over the UART.
@@ -434,10 +364,15 @@ void ldr_send_timeout(int sig)
 int ldr_send(LDR *ldr, const char *tty)
 {
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
-	int fd, error = -1;
+	int fd, error = 1;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
+
+	if (tty_lock(tty)) {
+		warn("tty '%s' is locked", tty);
+		return 3;
+	}
 
 	setbuf(stdout, NULL);
 
@@ -452,7 +387,7 @@ int ldr_send(LDR *ldr, const char *tty)
 	printf("OK!\n");
 
 	printf("Configuring terminal I/O ... ");
-	if (_tty_init(fd))
+	if (tty_init(fd))
 		perror("skipping");
 	else
 		printf("OK!\n");
@@ -473,13 +408,13 @@ int ldr_send(LDR *ldr, const char *tty)
 	if (autobaud[0] != 0xBF || autobaud[3] != 0x00) {
 		printf("Failed: wanted {0xBF,..,..,0x00} but got {0x%02X,[0x%02X],[0x%02X],0x%02X}\n",
 			autobaud[0], autobaud[1], autobaud[2], autobaud[3]);
-		error = -2;
+		error = 2;
 		goto out;
 	}
 	printf("OK!\n");
 
 	/* bitrate = SCLK / (16 * Divisor) */
-	baud = _tty_get_baud(fd);
+	baud = tty_get_baud(fd);
 	sclock = baud * 16 * (autobaud[1] + (autobaud[2] << 8));
 	printf("Autobaud result: %zibps %zi.%zimhz (header:0x%02X DLL:0x%02X DLH:0x%02X fin:0x%02X)\n",
 	       baud, sclock / 1000000, sclock / 1000 - sclock / 1000000 * 1000,
@@ -519,6 +454,7 @@ out:
 		perror("Failed");
 	alarm(0);
 	signal(SIGALRM, old_alarm);
+	error |= tty_unlock(tty);
 	return error;
 }
 
