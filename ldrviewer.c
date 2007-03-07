@@ -23,22 +23,6 @@ struct option_help {
 	const char *desc, *opts;
 };
 
-static void show_some_usage(struct option const opts[], struct option_help const help[], const char *flags, int exit_status)
-{
-	unsigned long i;
-
-	printf("Usage: ldr [options] <-s|-d|-l|-c> [command options] <arguments>\n\n");
-	printf("Options: -[%s]\n", flags);
-	for (i=0; opts[i].name; ++i)
-		printf("  -%c, --%-7s %-14s * %s\n",
-		       opts[i].val, opts[i].name,
-		       (help[i].opts != NULL ? help[i].opts :
-		          (opts[i].has_arg == no_argument ? "" : "<arg>")),
-		       help[i].desc);
-
-	exit(exit_status);
-}
-
 #define PARSE_FLAGS "sdlcfvqhV"
 #define a_argument required_argument
 static struct option const long_opts[] = {
@@ -57,7 +41,7 @@ static struct option_help const opts_help[] = {
 	{"Show details of a LDR",         "<ldrs>"},
 	{"Break DXEs out of LDR",         "<ldrs>"},
 	{"Load LDR over UART to a BF537", "<ldr> <tty>"},
-	{"Create LDR from binaries",      "<ldr> <elfs>"},
+	{"Create LDR from binaries\n",    "<ldr> <elfs>"},
 	{"Ignore errors",                 NULL},
 	{"Make a lot of noise",           NULL},
 	{"Only show errors",              NULL},
@@ -85,6 +69,49 @@ static struct option_help const create_opts_help[] = {
 	{NULL,NULL}
 };
 #define show_create_usage(status) show_some_usage(create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
+
+#define LOAD_PARSE_FLAGS "b:fh"
+static struct option const load_long_opts[] = {
+	{"baud",      a_argument, NULL, 'b'},
+	{"force",    no_argument, NULL, 'f'},
+	{"help",     no_argument, NULL, 'h'},
+	{NULL,       no_argument, NULL, 0x0}
+};
+static struct option_help const load_opts_help[] = {
+	{"Set baud rate (default 115200)", "<baud>"},
+	{"Try to force loading",           NULL},
+	{"Print this help and exit",       NULL},
+	{NULL,NULL}
+};
+#define show_load_usage(status) show_some_usage(load_long_opts, load_opts_help, LOAD_PARSE_FLAGS, status)
+
+#define CASE_common_errors \
+	case ':': err("Option '%c' is missing parameter", optopt); \
+	case '?': err("Unknown option '%c' or argument missing", optopt); \
+	default:  err("Unhandled option '%c'; please report this", i);
+
+static void show_some_usage(struct option const opts[], struct option_help const help[], const char *flags, int exit_status)
+{
+	unsigned long i;
+
+	printf("Usage: ldr [options] <-s|-d|-l|-c> [subcommand options] <arguments>\n\n");
+	printf("Options: -[%s]\n", flags);
+	for (i=0; opts[i].name; ++i)
+		printf("  -%c, --%-7s %-14s * %s\n",
+		       opts[i].val, opts[i].name,
+		       (help[i].opts != NULL ? help[i].opts :
+		          (opts[i].has_arg == no_argument ? "" : "<arg>")),
+		       help[i].desc);
+	if (opts == long_opts)
+		printf(
+			"\n"
+			"Most subcommands take their own arguments, so type:\n"
+			"\tldr <subcommand> --help\n"
+			"for help on a specific command.\n"
+		);
+
+	exit(exit_status);
+}
 
 
 static int show_ldr(const char *filename)
@@ -117,10 +144,31 @@ static int dump_ldr(const char *filename)
 	return ret;
 }
 
-static int load_ldr(const char *filename, const char *tty)
+static int load_ldr(const int argc, char *argv[])
 {
-	int ret;
+	const char *filename, *tty;
+	int ret, i;
 	LDR *ldr;
+	struct ldr_load_options opts = {
+		.baud = 115200,
+		.force = 0,
+	};
+
+	while ((i=getopt_long(argc, argv, LOAD_PARSE_FLAGS, load_long_opts, NULL)) != -1) {
+		switch (i) {
+			case 'b': opts.baud = atoi(optarg); break;
+			case 'f': opts.force = 1; break;
+			case 'h': show_load_usage(0);
+			CASE_common_errors
+		}
+	}
+
+	if (optind + 2 != argc)
+		err("Load requires two arguments: <ldr> <tty>");
+
+	filename = argv[optind];
+	tty = argv[optind+1];
+
 	printf("Loading LDR %s ... ", filename);
 	ldr = ldr_read(filename);
 	if (ldr == NULL) {
@@ -128,12 +176,12 @@ static int load_ldr(const char *filename, const char *tty)
 		return -1;
 	}
 	printf("OK!\n");
-	ret = ldr_send(ldr, tty);
+	ret = ldr_send(ldr, tty, &opts);
 	ldr_free(ldr);
 	return ret;
 }
 
-static int create_ldr(int argc, char *argv[])
+static int create_ldr(const int argc, char *argv[])
 {
 	int ret, i;
 	struct ldr_create_options opts = {
@@ -143,7 +191,6 @@ static int create_ldr(int argc, char *argv[])
 		.gpio = 0,
 	};
 
-	optind = 0;
 	while ((i=getopt_long(argc, argv, CREATE_PARSE_FLAGS, create_long_opts, NULL)) != -1) {
 		switch (i) {
 			case 'C': opts.cpu = str2bfcpu(optarg); break;
@@ -151,9 +198,7 @@ static int create_ldr(int argc, char *argv[])
 			case 'p': opts.port = toupper(optarg[0]); break;
 			case 'g': opts.gpio = atoi(optarg); break;
 			case 'h': show_create_usage(0);
-			case ':': err("Option '%c' is missing parameter", optopt);
-			case '?': err("Unknown option '%c' or argument missing", optopt);
-			default:  err("Unhandled option '%c'; please report this", i);
+			CASE_common_errors
 		}
 	}
 	if (argc < optind + 2)
@@ -188,6 +233,14 @@ static void show_version(void)
 			err("Cannot specify more than one action at a time"); \
 		a = action; \
 	} while (0)
+#define reload_sub_args(new_argv0) \
+	do { \
+		--optind; \
+		argc -= optind; \
+		argv += optind; \
+		optind = 0; \
+		argv[0] = new_argv0; \
+	} while (0)
 
 int main(int argc, char *argv[])
 {
@@ -200,18 +253,16 @@ int main(int argc, char *argv[])
 
 	while ((i=getopt_long(argc, argv, PARSE_FLAGS, long_opts, NULL)) != -1) {
 		switch (i) {
-			case 's': set_action(SHOW); break;
-			case 'd': set_action(DUMP); break;
-			case 'l': set_action(LOAD); break;
-			case 'c': set_action(CREATE); goto parse_action; /* create has sub options */
+			case 's': set_action(SHOW); goto parse_action;
+			case 'd': set_action(DUMP); goto parse_action;
+			case 'l': set_action(LOAD); goto parse_action;
+			case 'c': set_action(CREATE); goto parse_action;
 			case 'f': ++force; break;
 			case 'v': ++verbose; break;
 			case 'q': ++quiet; break;
 			case 'h': show_usage(0);
 			case 'V': show_version();
-			case ':': err("Option '%c' is missing parameter", optopt);
-			case '?': err("Unknown option '%c' or argument missing", optopt);
-			default:  err("Unhandled option '%c'; please report this", i);
+			CASE_common_errors
 		}
 	}
 	if (optind == argc)
@@ -221,23 +272,21 @@ int main(int argc, char *argv[])
 parse_action:
 	switch (a) {
 		case SHOW:
+			/*reload_sub_args("show");*/
 			for (i = optind; i < argc; ++i)
 				ret |= show_ldr(argv[i]);
 			break;
 		case DUMP:
+			/*reload_sub_args("dump");*/
 			for (i = optind; i < argc; ++i)
 				ret |= dump_ldr(argv[i]);
 			break;
 		case LOAD:
-			if (optind + 2 != argc)
-				err("Load requires exactly two arguments: <ldr> <tty>");
-			ret |= load_ldr(argv[optind], argv[optind+1]);
+			reload_sub_args("load");
+			ret |= load_ldr(argc, argv);
 			break;
 		case CREATE:
-			--optind;
-			argc -= optind;
-			argv += optind;
-			argv[0] = "create";
+			reload_sub_args("create");
 			ret |= create_ldr(argc, argv);
 			break;
 		case NONE:

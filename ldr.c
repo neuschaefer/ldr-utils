@@ -355,17 +355,20 @@ void ldr_send_timeout(int sig)
 	warn("received signal %i: timeout while sending; aborting", sig);
 	exit(2);
 }
-int ldr_send(LDR *ldr, const char *tty)
+int ldr_send(LDR *ldr, const char *tty, const struct ldr_load_options *opts)
 {
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
-	int fd, error = 1;
+	int fd = -1, error = 1;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
 
 	if (tty_lock(tty)) {
-		warn("tty '%s' is locked", tty);
-		return 3;
+		if (!opts->force) {
+			warn("tty '%s' is locked", tty);
+			return 3;
+		} else
+			warn("ignoring lock for tty '%s'", tty);
 	}
 
 	setbuf(stdout, NULL);
@@ -381,9 +384,13 @@ int ldr_send(LDR *ldr, const char *tty)
 	printf("OK!\n");
 
 	printf("Configuring terminal I/O ... ");
-	if (tty_init(fd))
-		perror("skipping");
-	else
+	if (tty_init(fd, opts->baud)) {
+		if (!opts->force) {
+			perror("failed");
+			goto out;
+		} else
+			perror("skipping");
+	} else
 		printf("OK!\n");
 
 	printf("Trying to send autobaud ... ");
@@ -436,8 +443,6 @@ int ldr_send(LDR *ldr, const char *tty)
 		printf("OK!\n");
 	}
 
-	close(fd);
-
 	if (!quiet)
 		printf("You may want to run minicom or kermit now\n"
 		       "Quick tip: run 'ldrviewer <ldr> <tty> && minicom'\n");
@@ -446,6 +451,8 @@ int ldr_send(LDR *ldr, const char *tty)
 out:
 	if (error == -1)
 		perror("Failed");
+	if (fd != -1)
+		close(fd);
 	alarm(0);
 	signal(SIGALRM, old_alarm);
 	error |= tty_unlock(tty);
@@ -529,7 +536,7 @@ static int _ldr_copy_file_to_block(int out_fd, const char *file, uint32_t addr, 
 
 	return 0;
 }
-int ldr_create(char **filelist, struct ldr_create_options *opts)
+int ldr_create(char **filelist, const struct ldr_create_options *opts)
 {
 	uint16_t base_flags;
 	uint8_t *jump_bin = dxe_jump_code(LDR_ADDR_SDRAM);

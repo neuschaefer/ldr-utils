@@ -68,27 +68,35 @@ ssize_t read_retry(int fd, void *buf, size_t count)
 }
 
 /*
- * tty_speed_to_baud()
+ * tty_speed_to_baud() / tty_baud_to_speed()
  * Annoying function for translating the termios baud representation
- * into the actual decimal value.
+ * into the actual decimal value and vice versa.
  */
+static struct {
+	speed_t s;
+	size_t b;
+} speeds[] = {
+	{B0, 0}, {B50, 50}, {B75, 75}, {B110, 110}, {B134, 134}, {B150, 150},
+	{B200, 200}, {B300, 300}, {B600, 600}, {B1200, 1200}, {B1800, 1800},
+	{B2400, 2400}, {B4800, 4800}, {B9600, 9600}, {B19200, 19200},
+	{B38400, 38400}, {B57600, 57600}, {B115200, 115200}, {B230400, 230400}
+};
+__attribute__((const))
 static inline size_t tty_speed_to_baud(const speed_t speed)
 {
-	struct {
-		speed_t s;
-		size_t b;
-	} speeds[] = {
-		{B0, 0}, {B50, 50}, {B75, 75}, {B110, 110}, {B134, 134}, {B150, 150},
-		{B200, 200}, {B300, 300}, {B600, 600}, {B1200, 1200}, {B1800, 1800},
-		{B2400, 2400}, {B4800, 4800}, {B9600, 9600}, {B19200, 19200},
-		{B38400, 38400}, {B57600, 57600}, {B115200, 115200}, {B230400, 230400}
-	};
 	size_t i;
-
 	for (i = 0; i < sizeof(speeds)/sizeof(*speeds); ++i)
 		if (speeds[i].s == speed)
 			return speeds[i].b;
-
+	return 0;
+}
+__attribute__((const))
+static inline size_t tty_baud_to_speed(const size_t baud)
+{
+	size_t i;
+	for (i = 0; i < sizeof(speeds)/sizeof(*speeds); ++i)
+		if (speeds[i].b == baud)
+			return speeds[i].s;
 	return 0;
 }
 
@@ -109,10 +117,14 @@ size_t tty_get_baud(const int fd)
  *  - make sure we are not running in ICANON mode
  *  - set speed to 115200 so transfers go fast
  */
-#define DEFAULT_SPEED B115200 /*B57600*/
-int tty_init(const int fd)
+int tty_init(const int fd, const size_t baud)
 {
+	const speed_t speed = tty_baud_to_speed(baud);
 	struct termios term;
+	if (speed == B0) {
+		errno = EINVAL;
+		return 1;
+	}
 	if (verbose)
 		printf("[getattr] ");
 	if (tcgetattr(fd, &term))
@@ -126,10 +138,9 @@ int tty_init(const int fd)
 	if (tcsetattr(fd, TCSANOW, &term))
 		return 1;
 	if (verbose)
-		printf("[speed] ");
-	if (cfgetispeed(&term) != DEFAULT_SPEED || cfgetospeed(&term) != DEFAULT_SPEED) {
-		/* TODO: add a runtime switch for users to control this */
-		if (cfsetispeed(&term, DEFAULT_SPEED) || cfsetospeed(&term, DEFAULT_SPEED))
+		printf("[speed:%zu] ", baud);
+	if (cfgetispeed(&term) != speed || cfgetospeed(&term) != speed) {
+		if (cfsetispeed(&term, speed) || cfsetospeed(&term, speed))
 			return 1;
 		if (tcsetattr(fd, TCSANOW, &term))
 			return 1;

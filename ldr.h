@@ -57,13 +57,18 @@ struct ldr_create_options {
 	int gpio;
 };
 
+struct ldr_load_options {
+	size_t baud;
+	int force;
+};
+
 int str2bfcpu(const char *cpu);
 
 LDR *ldr_read(const char *);
 void ldr_free(LDR *);
 int ldr_print(LDR *);
 int ldr_dump(const char *, LDR *);
-int ldr_send(LDR *, const char *);
-int ldr_create(char **, struct ldr_create_options *);
+int ldr_send(LDR *, const char *, const struct ldr_load_options *);
+int ldr_create(char **, const struct ldr_create_options *);
 
 #endif
