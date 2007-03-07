@@ -1,16 +1,11 @@
 /*
- * File:         elf.h
- * Author:       Mike Frysinger <michael.frysinger@analog.com>
+ * File: elf.h
  *
- * Description:  Defines for internal ELF handling routines
- *
- * Rev:          $Id$
- *
- * Modified:     Copyright 2006 Analog Devices Inc.
- *
- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
- *
+ * Copyright 2006-2007 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
+ *
+ * Description:
+ * Defines for internal ELF handling routines
  */
 
 #ifndef __LDR_ELF_H__

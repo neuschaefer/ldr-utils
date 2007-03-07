@@ -1,18 +1,12 @@
 /*
- * File:         ldr.h
- * Author:       Mike Frysinger <michael.frysinger@analog.com>
+ * File: ldr.h
  *
- * Description:  View LDR contents
- *               Based on the "Visual DSP++ 4.0 Loader Manual"
- *               and misc Blackfin HRMs
- *
- * Rev:          $Id$
- *
- * Modified:     Copyright 2006 Analog Devices Inc.
- *
- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
- *
+ * Copyright 2006-2007 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
+ *
+ * Description:
+ * View LDR contents; based on the "Visual DSP++ 4.0 Loader Manual"
+ * and misc Blackfin HRMs
  */
 
 #ifndef __LDR_H__

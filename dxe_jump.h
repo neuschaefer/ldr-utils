@@ -1,16 +1,11 @@
 /*
- * File:         dxe_jump.h
- * Author:       Mike Frysinger <michael.frysinger@analog.com>
+ * File: dxe_jump.h
  *
- * Description:  Binary code for doing a "jump <address>"
- *
- * Rev:          $Id$
- *
- * Modified:     Copyright 2006 Analog Devices Inc.
- *
- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
- *
+ * Copyright 2006-2007 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
+ *
+ * Description:
+ * Binary code for doing a "jump <address>"
  */
 
 #ifndef __DXE_JUMP__

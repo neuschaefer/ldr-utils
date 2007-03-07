@@ -1,17 +1,11 @@
 /*
- * File:         dxes.h
- * Author:       Mike Frysinger <michael.frysinger@analog.com>
+ * File: dxes.h
  *
- * Description:  I'm too lazy to update headers in multiple files ...
- *               just move all that crap here ;)
- *
- * Rev:          $Id$
- *
- * Modified:     Copyright 2006 Analog Devices Inc.
- *
- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
- *
+ * Copyright 2006-2007 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
+ *
+ * Description:
+ * Stick all DXE headers here
  */
 
 #ifndef __DXES_H__

@@ -1,16 +1,11 @@
 /*
- * File:         helpers.c
- * Author:       Mike Frysinger <michael.frysinger@analog.com>
+ * File: helpers.c
  *
- * Description:  some common utility functions
- *
- * Rev:          $Id$
- *
- * Modified:     Copyright 2006 Analog Devices Inc.
- *
- * Bugs:         Enter bugs at http://blackfin.uclinux.org/
- *
+ * Copyright 2006-2007 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
+ *
+ * Description:
+ * some common utility functions
  */
 
 #include "headers.h"
