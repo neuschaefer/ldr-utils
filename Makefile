@@ -16,6 +16,11 @@ DESTDIR :=
 PREFIX  := /usr
 BINDIR  := $(PREFIX)/bin
 
+ifneq ($(wildcard ../uClibc/include/elf.h),)
+CPPFLAGS += -I.
+$(shell ln -sf ../uClibc/include/elf.h)
+endif
+
 all: ldr
 
 ldr: ldrviewer.o ldr.o helpers.o ldr_elf.o
@@ -29,7 +34,7 @@ install:
 	$(INSTALL) -m 755 ldr $(DESTDIR)$(BINDIR)
 
 clean:
-	rm -f *.o *.gdb *.elf ldr
+	rm -f *.o *.gdb *.elf ldr elf.h
 
 -include .depend
 
