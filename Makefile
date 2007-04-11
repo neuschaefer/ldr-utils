@@ -18,7 +18,7 @@ BINDIR  := $(PREFIX)/bin
 
 all: ldr
 
-ldr: ldrviewer.o ldr.o helpers.o elf.o
+ldr: ldrviewer.o ldr.o helpers.o ldr_elf.o
 
 .depend: $(wildcard *.c *.h)
 	$(CC) $(CPPFLAGS) -MM *.c > .depend

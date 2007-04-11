@@ -13,7 +13,7 @@
 #include "helpers.h"
 #include "ldr.h"
 #include "dxes.h"
-#include "elf.h"
+#include "ldr_elf.h"
 
 struct ldr_flag {
 	uint16_t flag;

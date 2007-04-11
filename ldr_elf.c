@@ -13,7 +13,7 @@
 
 #include "headers.h"
 #include "helpers.h"
-#include "elf.h"
+#include "ldr_elf.h"
 
 char do_reverse_endian;
 
