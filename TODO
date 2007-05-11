@@ -4,8 +4,6 @@ Add support for reading LDR files in Intel hex format:
 Add support for reading LDR files in Motorola s-record format:
 	ldr.c _ldr_read_srec()
 
-Rename to "ldr-utils"
-
 Document/comment more things
 
 Tweak ELF code to handle LSB/MSB 32bit/64bit ... not really needed until we

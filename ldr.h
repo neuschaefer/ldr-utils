@@ -51,10 +51,12 @@ typedef struct {
 } LDR;
 
 struct ldr_create_options {
-	int cpu;
+	int cpu;                                  /* CPU # (some have slightly diff LDR formats) */
 	int resvec;
-	char port;
-	int gpio;
+	char port;                                /* PORT on CPU for HWAIT signals */
+	int gpio;                                 /* GPIO on CPU for HWAIT signals */
+	uint32_t block_size;                      /* block size to break the DXE up into */
+	uint32_t load_addr;                       /* address at which to load DXE */
 };
 
 struct ldr_load_options {

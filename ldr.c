@@ -464,8 +464,6 @@ out:
  */
 #define LDR_ADDR_IGNORE  0xFF800040
 #define LDR_ADDR_INIT    0xFFA00000
-#define LDR_ADDR_SDRAM   0x1000 /* TODO: should make this configurable */
-#define LDR_BLOCK_SIZE   0x8000 /* TODO: should make this configurable */
 static void _ldr_write_block(const int fd, BLOCK b)
 {
 	ldr_make_little_endian_32(b.target_address);
@@ -489,7 +487,7 @@ static void _ldr_write_block(const int fd, BLOCK b)
 		b.data = _data; \
 		_ldr_write_block(fd, b); \
 	} while (0)
-static int _ldr_copy_file_to_block(int out_fd, const char *file, uint32_t addr, uint16_t flags)
+static int _ldr_copy_file_to_block(int out_fd, const char *file, uint32_t addr, uint16_t flags, uint32_t block_size)
 {
 	FILE *in_fp;
 	char *data;
@@ -502,7 +500,7 @@ static int _ldr_copy_file_to_block(int out_fd, const char *file, uint32_t addr, 
 	if (in_fp == NULL)
 		return -1;
 
-	data = xmalloc(LDR_BLOCK_SIZE);
+	data = xmalloc(block_size);
 
 	fstat(fileno(in_fp), &st);
 	filesize = st.st_size;
@@ -511,17 +509,17 @@ static int _ldr_copy_file_to_block(int out_fd, const char *file, uint32_t addr, 
 
 	while (bytes_written < filesize) {
 		if (cnt_left == 0) {
-			if (filesize < LDR_BLOCK_SIZE)
+			if (filesize < block_size)
 				cnt_left = filesize;
-			else if (filesize - bytes_written < LDR_BLOCK_SIZE)
+			else if (filesize - bytes_written < block_size)
 				cnt_left = filesize - bytes_written;
 			else
-				cnt_left = LDR_BLOCK_SIZE;
-			if ((flags & LDR_FLAG_FINAL) && (bytes_written + LDR_BLOCK_SIZE >= filesize))
+				cnt_left = block_size;
+			if ((flags & LDR_FLAG_FINAL) && (bytes_written + block_size >= filesize))
 				out_flags = flags;
 			_ldr_quick_write_block(out_fd, addr, cnt_left, out_flags, NULL);
-			cnt_left = LDR_BLOCK_SIZE;
-			addr += LDR_BLOCK_SIZE;
+			cnt_left = block_size;
+			addr += block_size;
 		}
 
 		cnt = fread(data, 1, cnt_left, in_fp);
@@ -539,13 +537,13 @@ static int _ldr_copy_file_to_block(int out_fd, const char *file, uint32_t addr, 
 int ldr_create(char **filelist, const struct ldr_create_options *opts)
 {
 	uint16_t base_flags;
-	uint8_t *jump_bin = dxe_jump_code(LDR_ADDR_SDRAM);
+	uint8_t *jump_bin = dxe_jump_code(opts->load_addr);
 	elfobj *elf;
 	uint8_t *dxe_init_start, *dxe_init_end;
 	const char *outfile = filelist[0];
 	char *tmpfile;
 	size_t i = 0;
-	int fd;
+	int fd, ret;
 
 	fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC| (force?0:O_EXCL), 00660);
 	if (fd == -1)
@@ -632,7 +630,10 @@ int ldr_create(char **filelist, const struct ldr_create_options *opts)
 		/* write out third (and last block) for the actual file */
 		if (!quiet)
 			printf("[file blocks] ");
-		if (_ldr_copy_file_to_block(fd, tmpfile, LDR_ADDR_SDRAM, base_flags|(filelist[i+1] == NULL ? LDR_FLAG_FINAL : 0)) == -1) {
+		ret = _ldr_copy_file_to_block(fd, tmpfile, opts->load_addr,
+		                              base_flags | (filelist[i+1] == NULL ? LDR_FLAG_FINAL : 0),
+		                              opts->block_size);
+		if (ret == -1) {
 			printf("Unable to copy '%s' to output\n", filelist[i]);
 			unlink(tmpfile);
 			free(tmpfile);

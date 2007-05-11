@@ -51,20 +51,24 @@ static struct option_help const opts_help[] = {
 };
 #define show_usage(status) show_some_usage(long_opts, opts_help, PARSE_FLAGS, status)
 
-#define CREATE_PARSE_FLAGS "rp:g:hC:"
+#define CREATE_PARSE_FLAGS "rp:g:hC:b:l:"
 static struct option const create_long_opts[] = {
 	{"cpu",       a_argument, NULL, 'C'},
 	{"resvec",   no_argument, NULL, 'r'},
 	{"port",      a_argument, NULL, 'p'},
 	{"gpio",      a_argument, NULL, 'g'},
+	{"blocksize", a_argument, NULL, 'b'},
+	{"loadaddr",  a_argument, NULL, 'l'},
 	{"help",     no_argument, NULL, 'h'},
 	{NULL,       no_argument, NULL, 0x0}
 };
 static struct option_help const create_opts_help[] = {
 	{"Select target CPU type",        "<BFXXX>"},
 	{"Enable resvec bit",             NULL},
-	{"Select port for HWAIT signal",  "<F|G|H>"},
+	{"Select PORT for HWAIT signal",  "<F|G|H>"},
 	{"Select GPIO for HWAIT signal",  "<#>"},
+	{"Block size of DXE (0x8000)",    "<size>"},
+	{"Load address of DXE (0x1000)",  "<addr>"},
 	{"Print this help and exit",      NULL},
 	{NULL,NULL}
 };
@@ -96,12 +100,15 @@ static void show_some_usage(struct option const opts[], struct option_help const
 
 	printf("Usage: ldr [options] <-s|-d|-l|-c> [subcommand options] <arguments>\n\n");
 	printf("Options: -[%s]\n", flags);
-	for (i=0; opts[i].name; ++i)
-		printf("  -%c, --%-7s %-14s * %s\n",
+	for (i=0; opts[i].name; ++i) {
+		if (!help[i].desc)
+			err("someone forgot to update the help text");
+		printf("  -%c, --%-10s %-10s * %s\n",
 		       opts[i].val, opts[i].name,
 		       (help[i].opts != NULL ? help[i].opts :
 		          (opts[i].has_arg == no_argument ? "" : "<arg>")),
 		       help[i].desc);
+	}
 	if (opts == long_opts)
 		printf(
 			"\n"
@@ -189,6 +196,8 @@ static int create_ldr(const int argc, char *argv[])
 		.resvec = 0,
 		.port = '?',
 		.gpio = 0,
+		.block_size = 0x8000,
+		.load_addr = 0x1000,
 	};
 
 	while ((i=getopt_long(argc, argv, CREATE_PARSE_FLAGS, create_long_opts, NULL)) != -1) {
@@ -197,6 +206,22 @@ static int create_ldr(const int argc, char *argv[])
 			case 'r': opts.resvec = 1; break;
 			case 'p': opts.port = toupper(optarg[0]); break;
 			case 'g': opts.gpio = atoi(optarg); break;
+			case 'b':
+				/* support reading in hex values since it's much more
+				 * common for people to set size in terms of hex ...
+				 */
+				opts.block_size = atoi(optarg);
+				if (opts.block_size == 0)
+					sscanf(optarg, "%X", &opts.block_size);
+				break;
+			case 'l':
+				/* support reading in hex values since it's much more
+				 * common for people to set address in terms of hex ...
+				 */
+				opts.load_addr = atoi(optarg);
+				if (opts.load_addr == 0)
+					sscanf(optarg, "%X", &opts.load_addr);
+				break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors
 		}
@@ -209,6 +234,8 @@ static int create_ldr(const int argc, char *argv[])
 		err("Invalid PORT '%c'.  Valid PORT values are 'F', 'G', and 'H'.", opts.port);
 	if (opts.gpio < 0 || opts.gpio > 16)
 		err("Invalid GPIO '%i'.  Valid GPIO values are 0 - 16.", opts.gpio);
+	if (opts.block_size == 0)
+		err("Invalid block size '%i'.  Valid block sizes are 1 <= size < 2^32.", opts.block_size);
 
 	printf("Creating LDR %s ...\n", *(argv+optind));
 	ret = ldr_create(argv+optind, &opts);

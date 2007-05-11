@@ -1,5 +1,5 @@
-helpers.o: helpers.c headers.h helpers.h
-ldr.o: ldr.c headers.h helpers.h ldr.h dxes.h dxe_jump.h \
+helpers.o: helpers.c headers.h elf.h helpers.h
+ldr.o: ldr.c headers.h elf.h helpers.h ldr.h dxes.h dxe_jump.h \
   blackfin_defines.h ldr_elf.h
-ldr_elf.o: ldr_elf.c headers.h helpers.h ldr_elf.h
-ldrviewer.o: ldrviewer.c headers.h helpers.h ldr.h
+ldr_elf.o: ldr_elf.c headers.h elf.h helpers.h ldr_elf.h
+ldrviewer.o: ldrviewer.c headers.h elf.h helpers.h ldr.h
