@@ -1,0 +1,13 @@
+AT_SETUP(usage)
+
+AT_LDR_CHECK(LDR_BINARY,           [1], [ignore], [])
+AT_LDR_CHECK(LDR_BINARY -h,        [0], [ignore], [])
+AT_LDR_CHECK(LDR_BINARY --help,    [0], [ignore], [])
+AT_LDR_CHECK(LDR_BINARY --version, [0], [ignore], [])
+AT_LDR_CHECK(LDR_BINARY --moo-moo, [1], [], [ignore])
+
+AT_LDR_CHECK(LDR_BINARY -T BAD .,  [1], [], [dnl
+ldr: unable to handle specified target: BAD
+])
+
+AT_CLEANUP

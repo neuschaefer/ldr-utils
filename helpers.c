@@ -35,14 +35,14 @@ char *xstrdup(const char *s)
 	return ret;
 }
 
-int parse_bool(const char *boo)
+bool parse_bool(const char *boo)
 {
-	if (strcmp(boo, "1") == 0 || strcasecmp(boo, "yes") == 0 ||	
+	if (strcmp(boo, "1") == 0 || strcasecmp(boo, "yes") == 0 ||
 	    strcasecmp(boo, "y") == 0 || strcasecmp(boo, "true") == 0)
-		return 1;
+		return true;
 	if (strcmp(boo, "0") == 0 || strcasecmp(boo, "no") == 0 ||
 	    strcasecmp(boo, "n") == 0 || strcasecmp(boo, "false") == 0)
-		return 0;
+		return false;
 	err("Invalid boolean: '%s'", boo);
 }
 
@@ -117,35 +117,35 @@ size_t tty_get_baud(const int fd)
  *  - make sure we are not running in ICANON mode
  *  - set speed to 115200 so transfers go fast
  */
-int tty_init(const int fd, const size_t baud)
+bool tty_init(const int fd, const size_t baud)
 {
 	const speed_t speed = tty_baud_to_speed(baud);
 	struct termios term;
 	if (speed == B0) {
 		errno = EINVAL;
-		return 1;
+		return false;
 	}
 	if (verbose)
 		printf("[getattr] ");
 	if (tcgetattr(fd, &term))
-		return 1;
-	term.c_iflag &= ~(BRKINT | ICRNL);
-	term.c_iflag |= (IGNBRK | IXOFF);
-	term.c_oflag &= ~(OPOST | ONLCR);
-	term.c_lflag &= ~(ISIG | ICANON | ECHO | IEXTEN);
+		return false;
+	term.c_iflag = IGNBRK | IGNPAR;
+	term.c_oflag = 0;
+	term.c_cflag = CS8 | CREAD | CLOCAL | CRTSCTS;
+	term.c_lflag = 0;
 	if (verbose)
 		printf("[setattr] ");
 	if (tcsetattr(fd, TCSANOW, &term))
-		return 1;
+		return false;
 	if (verbose)
 		printf("[speed:%zu] ", baud);
 	if (cfgetispeed(&term) != speed || cfgetospeed(&term) != speed) {
 		if (cfsetispeed(&term, speed) || cfsetospeed(&term, speed))
-			return 1;
+			return false;
 		if (tcsetattr(fd, TCSANOW, &term))
-			return 1;
+			return false;
 	}
-	return 0;
+	return true;
 }
 
 /*
@@ -170,9 +170,10 @@ static const char *_tty_get_lock_name(const char *tty)
  * tty_lock()
  * Try to lock the specified tty.
  */
-int tty_lock(const char *tty)
+bool tty_lock(const char *tty)
 {
-	int fd, mask, ret = -1;
+	int fd, mask;
+	bool ret = true;
 	FILE *fp;
 	const char *lockfile = _tty_get_lock_name(tty);
 
@@ -200,7 +201,7 @@ int tty_lock(const char *tty)
 		if (fp != NULL) {
 			fprintf(fp, "%lu\n", (unsigned long)getpid());
 			fclose(fp);
-			ret = 0;
+			ret &= false;
 		}
 		close(fd);
 	}
@@ -212,8 +213,8 @@ int tty_lock(const char *tty)
  * Unlock the specified tty.
  * TODO: maybe make sure this lock belongs to us ?
  */
-int tty_unlock(const char *tty)
+bool tty_unlock(const char *tty)
 {
 	const char *lockfile = _tty_get_lock_name(tty);
-	return unlink(lockfile);
+	return (unlink(lockfile) == 0 ? true : false);
 }

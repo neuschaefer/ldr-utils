@@ -4,7 +4,21 @@ Add support for reading LDR files in Intel hex format:
 Add support for reading LDR files in Motorola s-record format:
 	ldr.c _ldr_read_srec()
 
+Move target-specific options into lfd files (--create -> gpio/port/dma)
+
 Document/comment more things
 
 Tweak ELF code to handle LSB/MSB 32bit/64bit ... not really needed until we
 	have a blackfin chip that handles MSB or 64bit ...
+
+Parse ELF '.processor' section which VDSP produces ?
+
+VDSP does not fully enumerate the program header table, so no
+	DXE blocks are made for bss sections ... do we care ?
+
+Integrate into binutils BFD ?
+
+Add support for zlib compression
+
+Verify multi-DXE works for BF548 ... when DXE_FINAL is set, we scan to the
+	start of the file and clobber argument ...

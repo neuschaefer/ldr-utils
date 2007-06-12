@@ -13,6 +13,10 @@
 
 #include "headers.h"
 
+#ifndef EM_BLACKFIN
+# define EM_BLACKFIN 106
+#endif
+
 /* only support 1 ELF at a time for now ... */
 extern char do_reverse_endian;
 

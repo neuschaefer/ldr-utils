@@ -23,7 +23,8 @@ endif
 
 all: ldr
 
-ldr: ldrviewer.o ldr.o helpers.o ldr_elf.o
+ldr: ldr.o helpers.o ldr_elf.o \
+	$(patsubst %.c,%.o,$(wildcard lfd*.c))
 
 .depend: $(wildcard *.c *.h)
 	$(CC) $(CPPFLAGS) -MM *.c > .depend
@@ -33,9 +34,16 @@ install:
 	$(INSTALL) -m 755 -d $(DESTDIR)$(BINDIR)
 	$(INSTALL) -m 755 ldr $(DESTDIR)$(BINDIR)
 
+check test: ldr
+	$(MAKE) -C tests $@
+
 clean:
 	rm -f *.o *.gdb *.elf ldr elf.h
+	$(MAKE) -C tests $@
+
+distclean: clean
+	$(MAKE) -C tests $@
 
 -include .depend
 
-.PHONY: all clean install
+.PHONY: all check clean distclean install test

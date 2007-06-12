@@ -1,0 +1,66 @@
+AT_SETUP(create)
+
+AT_LDR_CHECK(LDR_BINARY -q -c moo cow, [1], [], [dnl
+ldr: please select a target with -T <target>
+])
+
+AT_LDR_CHECK(LDR_BINARY -q -T BF537 -c out.ldr /bin/bash, [1], [], [dnl
+ldr: '/bin/bash' is not a Blackfin ELF!
+Failed to create LDR: Bad file descriptor
+])
+
+AT_LDR_CHECK([
+LDR_BINARY -T BF548 -c post.ldr ELFS_DIR/POST.dxe
+echo "### --- ###"
+LDR_BINARY --show post.ldr
+], [0], [dnl
+Creating LDR post.ldr ...
+ Adding DXE 'elfs/POST.dxe' ... [[ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+Done!
+### --- ###
+Showing LDR post.ldr ...
+auto detected LDR as 'BF548'
+  DXE 1 at 0x00000000:
+    Block  1 at 0x00000000
+         Addr: 0xFFA00000 BCode: 0xAD7F5001 Bytes: 0x00000000 Args: 0x0000904C ( 8bit-dma-from-8bit ignore first )
+    Block  2 at 0x00000010
+         Addr: 0xFFA00000 BCode: 0xAD0E0001 Bytes: 0x000073AC Args: 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  3 at 0x000073CC
+         Addr: 0xFF800000 BCode: 0xAD9D0001 Bytes: 0x00001C70 Args: 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  4 at 0x0000904C
+         Addr: 0xFFA00000 BCode: 0xAD738001 Bytes: 0x00000000 Args: 0x00000000 ( 8bit-dma-from-8bit final )
+])
+
+AT_LDR_CHECK([
+LDR_BINARY -T BF561 -c bss.ldr ELFS_DIR/bss.elf
+echo "### --- ###"
+LDR_BINARY --show bss.ldr
+], [0], [dnl
+Creating LDR bss.ldr ...
+ Adding DXE 'elfs/bss.elf' ... [[jump block] [ELF block: 968 @ 0x00000000] [ELF block: 1144 @ 0x000013C8]] OK!
+Done!
+### --- ###
+Showing LDR bss.ldr ...
+auto detected LDR as 'BF561'
+  LDR header: A00000DE ( 8-bit-flash wait:15 hold:3 spi:500K )
+  DXE 1 at 0x00000000:
+    Block  1 at 0x00000000
+         Addr: 0xFFA00000 Bytes: 0x0000000C Flags: 0x0002 ( resvect )
+    Block  2 at 0x00000016
+         Addr: 0x00000000 Bytes: 0x000003C8 Flags: 0x0002 ( resvect )
+    Block  3 at 0x000003E8
+         Addr: 0x000013C8 Bytes: 0x00000034 Flags: 0x0002 ( resvect )
+    Block  4 at 0x00000426
+         Addr: 0x000013FC Bytes: 0x00000444 Flags: 0x8003 ( zerofill resvect final )
+])
+
+AT_LDR_CHECK([
+LDR_BINARY -T BF532 -c bad.ldr ELFS_DIR/bad.elf
+], [1], [dnl
+Creating LDR bad.ldr ...
+ Adding DXE 'elfs/bad.elf' ... ], [dnl
+ldr: 'elfs/bad.elf' is not a static ELF!
+Failed to create LDR: Bad file descriptor
+])
+
+AT_CLEANUP

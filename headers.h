@@ -12,24 +12,25 @@
 #ifndef __HEADERS_H__
 #define __HEADERS_H__
 
+#include <assert.h>
+#include <ctype.h>
+#include <elf.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <getopt.h>
+#include <libgen.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
-#include <signal.h>
-#include <errno.h>
-#include <assert.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <unistd.h>
-#include <getopt.h>
 #include <termios.h>
-#include <sys/stat.h>
-#include <libgen.h>
-#include <elf.h>
+#include <unistd.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 
 #if defined(__linux__)

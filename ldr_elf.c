@@ -61,6 +61,10 @@ elfobj *elf_open(const char *filename)
 	/* lookup the program and section header tables */
 	{
 		Elf32_Ehdr *ehdr = EHDR32(elf->ehdr);
+
+		if (ehdr->e_machine != EM_BLACKFIN)
+			goto err_munmap;
+
 		if (EGET(ehdr->e_phnum) <= 0)
 			elf->phdr = NULL;
 		else
@@ -73,11 +77,11 @@ elfobj *elf_open(const char *filename)
 
 	return elf;
 
-err_munmap:
+ err_munmap:
 	munmap(elf->data, elf->len);
-err_close:
+ err_close:
 	close(elf->fd);
-err_free:
+ err_free:
 	free(elf);
 	return NULL;
 }
@@ -144,7 +148,7 @@ void *elf_lookup_symbol(const elfobj *elf, const char *found_sym)
 	for (i = 0; i < cnt; ++i) {
 		symname = (char *)(elf->data + EGET(strtab->sh_offset) + EGET(sym->st_name));
 		if (!strcmp(symname, found_sym))
-			return elf->data + text->sh_offset + (sym->st_value - text->sh_addr);
+			return elf->data + EGET(text->sh_offset) + (EGET(sym->st_value) - EGET(text->sh_addr));
 		++sym;
 	}
 	}
