@@ -12,6 +12,9 @@ export top_builddir = $(builddir)/..
 export srcdir = $(builddir)
 export top_srcdir = $(top_builddir)
 
+CFLAGS ?= -g -O2
+CFLAGS += -Wall
+
 all: check
 
 package.m4: Makefile
@@ -23,17 +26,20 @@ package.m4: Makefile
 	echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
 	) > package.m4
 
+TEST_PROGS = fake-loadee
+fake-loadee: LDLIBS += -lutil
+
 testsuite: package.m4 $(wildcard *.at */*.at)
 	$(AUTOTEST) -o $@.tmp $@.at
 	mv $@.tmp $@
 
-check test: testsuite
+check test: testsuite $(TEST_PROGS)
 	./testsuite
 
 install:
 
 clean:
-	rm -rf testsuite.dir testsuite.log
+	rm -rf testsuite.dir testsuite.log $(TEST_PROGS)
 
 distclean: clean
 	rm -rf package.m4 testsuite testsuite.m4

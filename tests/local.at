@@ -1,5 +1,7 @@
 m4_defun([LDR_BINARY], [$top_builddir/ldr])
 
+m4_defun([LDR_UART_LOADER], [$builddir/fake-loadee])
+
 m4_defun([LDR_FILTER_VARS], [sed -e "s:$srcdir/::g"])
 
 m4_defun([LDRS_DIR], [$srcdir/ldrs])

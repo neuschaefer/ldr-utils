@@ -1,8 +1,6 @@
 helpers.o: helpers.c headers.h elf.h helpers.h
 ldr.o: ldr.c ldr.h headers.h elf.h helpers.h lfd.h
 ldr_elf.o: ldr_elf.c headers.h elf.h helpers.h ldr_elf.h
-lfd.o: lfd.c ldr.h headers.h elf.h helpers.h lfd.h dxes.h dxe_jump.h \
-  blackfin_defines.h ldr_elf.h
 lfd_bf533.o: lfd_bf533.c ldr.h headers.h elf.h helpers.h lfd.h dxes.h \
   dxe_jump.h blackfin_defines.h ldr_elf.h
 lfd_bf537.o: lfd_bf537.c ldr.h headers.h elf.h helpers.h lfd.h dxes.h \
@@ -11,3 +9,5 @@ lfd_bf548.o: lfd_bf548.c ldr.h headers.h elf.h helpers.h lfd.h dxes.h \
   dxe_jump.h blackfin_defines.h ldr_elf.h
 lfd_bf561.o: lfd_bf561.c ldr.h headers.h elf.h helpers.h lfd.h dxes.h \
   dxe_jump.h blackfin_defines.h ldr_elf.h
+lfd.o: lfd.c ldr.h headers.h elf.h helpers.h lfd.h dxes.h dxe_jump.h \
+  blackfin_defines.h ldr_elf.h

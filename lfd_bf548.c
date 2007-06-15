@@ -184,6 +184,7 @@ static bool _bf548_lfd_write_header(FILE *fp, uint32_t block_code, uint32_t addr
 	memcpy(header+ 0, &block_code, sizeof(block_code));
 	return (fwrite(header, sizeof(uint8_t), LDR_BLOCK_HEADER_LEN, fp) == LDR_BLOCK_HEADER_LEN ? true : false);
 }
+static uint32_t last_dxe_pos = 0;
 static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
                                   const void *void_opts, uint32_t addr,
                                   uint32_t count, void *src)
@@ -201,10 +202,8 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 
 	block_code = block_code_base;
 
-	if (dxe_flags & DXE_BLOCK_FIRST) {
+	if (dxe_flags & DXE_BLOCK_FIRST)
 		block_code |= BFLAG_IGNORE | BFLAG_FIRST;
-		addr = LDR_ADDR_INIT;
-	}
 	if (dxe_flags & DXE_BLOCK_INIT) {
 		block_code |= BFLAG_INIT;
 		addr = LDR_ADDR_INIT;
@@ -222,7 +221,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		ret &= (fwrite(src, 1, count, fp) == count ? true : false);
 
 	if (dxe_flags & DXE_BLOCK_FINAL) {
-		struct stat st;
+		uint32_t curr_pos;
 
 		block_code = block_code_base | BFLAG_FINAL;
 		addr = LDR_ADDR_INIT;
@@ -231,10 +230,14 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument, header);
 
 		/* we need to set the argument in the first block header to point here */
+		curr_pos = ftell(fp);
+		argument = curr_pos - last_dxe_pos - LDR_BLOCK_HEADER_LEN;
+		last_dxe_pos = curr_pos;
+		fseek(fp, 4, SEEK_SET);
+		fread(&addr, sizeof(addr), 1, fp);
+		ldr_make_little_endian_32(addr);
 		rewind(fp);
 		block_code = block_code_base | BFLAG_IGNORE | BFLAG_FIRST;
-		fstat(fileno(fp), &st);
-		argument = st.st_size - 16;
 		ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument, header);
 		fseek(fp, 0, SEEK_END);
 	}

@@ -288,11 +288,11 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 	size_t i = 0;
 	int fd;
 
-	fd = open(outfile, O_WRONLY|O_CREAT|O_TRUNC| (force?0:O_EXCL), 00660);
+	fd = open(outfile, O_RDWR|O_CREAT|O_TRUNC| (force?0:O_EXCL), 00660);
 	if (fd == -1)
 		return false;
 
-	alfd->fp = fdopen(fd, "w");
+	alfd->fp = fdopen(fd, "w+");
 	if (alfd->fp == NULL) {
 		close(fd);
 		return false;
@@ -308,16 +308,21 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 		if (!quiet)
 			printf(" Adding DXE '%s' ... ", filelist[i]);
 
-		/* spit out a special first block if the target needs it */
-		alfd->target->iovec.write_block(alfd, DXE_BLOCK_FIRST, opts, 0, 0, NULL);
-
-		/* if the ELF has ldr init markers, let's pull the code out */
+		/* lets get this ELF rolling */
 		elf = elf_open(filelist[i]);
 		if (elf == NULL) {
 			warn("'%s' is not a Blackfin ELF!", filelist[i]);
 			ret &= false;
 			continue;
 		}
+
+		Elf32_Ehdr *ehdr = elf->ehdr;
+		Elf32_Phdr *phdr = elf->phdr;
+
+		/* spit out a special first block if the target needs it */
+		alfd->target->iovec.write_block(alfd, DXE_BLOCK_FIRST, opts, EGET(ehdr->e_entry), 0, NULL);
+
+		/* if the ELF has ldr init markers, let's pull the code out */
 		dxe_init_start = elf_lookup_symbol(elf, "dxe_init_start");
 		dxe_init_end = elf_lookup_symbol(elf, "dxe_init_end");
 		if (dxe_init_start != dxe_init_end) {
@@ -326,8 +331,6 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 			alfd->target->iovec.write_block(alfd, DXE_BLOCK_INIT, opts, 0, (dxe_init_end-dxe_init_start), dxe_init_start);
 		}
 
-		Elf32_Ehdr *ehdr = elf->ehdr;
-		Elf32_Phdr *phdr = elf->phdr;
 		size_t final_load, p;
 		bool elf_ok = true;
 
@@ -516,9 +519,12 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	alarm(10);
 
 	printf("Opening %s ... ", tty);
-	fd = open(tty, O_RDWR);
-	if (fd == -1)
-		goto out;
+	if (tty[0] != '#') {
+		fd = open(tty, O_RDWR);
+		if (fd == -1)
+			goto out;
+	} else
+		fd = atoi(tty+1);
 	printf("OK!\n");
 
 	printf("Configuring terminal I/O ... ");
