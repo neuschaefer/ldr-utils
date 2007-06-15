@@ -79,7 +79,7 @@ static bool bf561_lfd_write_ldr(LFD *alfd)
 		(LDR_FLAG_SIGN_MAGIC << LDR_FLAG_SIGN_SHIFT) | \
 		(15 << LDR_FLAG_WAIT_SHIFT) | \
 		(3 << LDR_FLAG_HOLD_SHIFT);
-
+	ldr_make_little_endian_32(header);
 	return (fwrite(&header, sizeof(header), 1, alfd->fp) == sizeof(header) ? true : false);
 }
 

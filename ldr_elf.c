@@ -62,7 +62,7 @@ elfobj *elf_open(const char *filename)
 	{
 		Elf32_Ehdr *ehdr = EHDR32(elf->ehdr);
 
-		if (ehdr->e_machine != EM_BLACKFIN)
+		if (EGET(ehdr->e_machine) != EM_BLACKFIN)
 			goto err_munmap;
 
 		if (EGET(ehdr->e_phnum) <= 0)

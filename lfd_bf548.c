@@ -178,7 +178,9 @@ static bool _bf548_lfd_write_header(FILE *fp, uint32_t block_code, uint32_t addr
 	memcpy(header+ 4, &addr, sizeof(addr));
 	memcpy(header+ 8, &count, sizeof(count));
 	memcpy(header+12, &argument, sizeof(argument));
+	ldr_make_little_endian_32(block_code);
 	block_code |= (compute_hdrchk(header, LDR_BLOCK_HEADER_LEN) << BFLAG_HDRCHK_SHIFT);
+	ldr_make_little_endian_32(block_code);
 	memcpy(header+ 0, &block_code, sizeof(block_code));
 	return (fwrite(header, sizeof(uint8_t), LDR_BLOCK_HEADER_LEN, fp) == LDR_BLOCK_HEADER_LEN ? true : false);
 }
