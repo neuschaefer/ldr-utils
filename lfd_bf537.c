@@ -134,7 +134,6 @@ bool bf53x_lfd_display_dxe(LFD *alfd, size_t d)
 /*
  * ldr_create()
  */
-#define LDR_ADDR_INIT    0xFFA00000
 bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
                            const void *void_opts, uint32_t addr,
                            uint32_t count, void *src)
@@ -145,7 +144,9 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	size_t out_count = count;
 
 	flags = 0;
-	if (!(target_is(alfd, "BF531") || target_is(alfd, "BF532")))
+	if (!target_is(alfd, "BF531") &&
+	    !target_is(alfd, "BF532") &&
+	    !target_is(alfd, "BF538"))
 		flags = LDR_FLAG_RESVECT;
 	if (family_is(alfd, "BF537")) {
 		flags |= (opts->gpio << LDR_FLAG_PFLAG_SHIFT) & LDR_FLAG_PFLAG_MASK;
@@ -162,10 +163,10 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		return true;
 	if (dxe_flags & DXE_BLOCK_INIT) {
 		flags |= LDR_FLAG_INIT;
-		addr = LDR_ADDR_INIT;
+		addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
 	}
 	if (dxe_flags & DXE_BLOCK_JUMP)
-		addr = LDR_ADDR_INIT;
+		addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
 	if (dxe_flags & DXE_BLOCK_FILL)
 		flags |= LDR_FLAG_ZEROFILL;
 	if (dxe_flags & DXE_BLOCK_FINAL)
