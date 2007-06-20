@@ -209,7 +209,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		addr = LDR_ADDR_INIT;
 	}
 	if (dxe_flags & DXE_BLOCK_JUMP)
-		addr = LDR_ADDR_INIT;
+		return true;
 	if (dxe_flags & DXE_BLOCK_FILL) {
 		block_code |= BFLAG_FILL;
 		argument = 0;
