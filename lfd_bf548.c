@@ -116,6 +116,12 @@ static bool bf548_lfd_display_dxe(LFD *alfd, size_t d)
 
 		block_code = header->block_code;
 
+		/* address and byte count need to be 4 byte aligned */
+		if (header->target_address % 4)
+			printf("!!addralgn!! ");
+		if (header->byte_count % 4)
+			printf("!!cntalgn!! ");
+
 		/* hdrsign should always be set to 0xAD */
 		tmp = (header->block_code & BFLAG_HDRSIGN_MASK) >> BFLAG_HDRSIGN_SHIFT;
 		if (tmp != BFLAG_HDRSIGN_MAGIC)
@@ -194,6 +200,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	uint32_t block_code_base, block_code, argument;
 	uint8_t header[LDR_BLOCK_HEADER_LEN];
 	bool ret = true;
+	uint8_t pad_size = 0, pad = 0;
 
 	argument = 0xDEADBEEF;
 	block_code_base = \
@@ -215,10 +222,21 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		argument = 0;
 	}
 
-	ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument, header);
+	if (addr % 4)
+		warn("address is not 4 byte aligned (0x%X %% 4 = %i)", addr, addr % 4);
+	pad_size = count % 4;
+	if (pad_size) {
+		warn("count is not 4 byte aligned (0x%X %% 4 = %i)", count, pad_size);
+		warn("going to pad the end with zeros, but you should fix this");
+	}
+
+	ret &= _bf548_lfd_write_header(fp, block_code, addr, count+pad_size, argument, header);
 
 	if (src)
 		ret &= (fwrite(src, 1, count, fp) == count ? true : false);
+
+	if (pad_size)
+		fwrite(&pad, sizeof(pad), pad_size, fp);
 
 	if (dxe_flags & DXE_BLOCK_FINAL) {
 		uint32_t curr_pos;
