@@ -63,4 +63,12 @@ ldr: 'elfs/bad.elf' is not a static ELF!
 Failed to create LDR: Bad file descriptor
 ])
 
+AT_LDR_CHECK([
+LDR_BINARY -T BF536 -c section.ldr ELFS_DIR/section.elf
+], [0], [dnl
+Creating LDR section.ldr ...
+ Adding DXE 'elfs/section.elf' ... [[init block 2] [jump block] [ELF block: 2 @ 0x00000000]] OK!
+Done!
+])
+
 AT_CLEANUP
