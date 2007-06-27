@@ -128,18 +128,17 @@ void *elf_lookup_section(const elfobj *elf, const char *name)
 void *elf_lookup_symbol(const elfobj *elf, const char *found_sym)
 {
 	unsigned long i;
-	void *symtab_void, *strtab_void, *text_void;
+	void *symtab_void, *strtab_void;
 
 	symtab_void = elf_lookup_section(elf, ".symtab");
 	strtab_void = elf_lookup_section(elf, ".strtab");
-	  text_void = elf_lookup_section(elf, ".text");
-	if (!symtab_void || !strtab_void || !text_void)
+	if (!symtab_void || !strtab_void)
 		return NULL;
 
 	{
+	Elf32_Shdr *shdr = SHDR32(elf->shdr);
 	Elf32_Shdr *symtab = SHDR32(symtab_void);
 	Elf32_Shdr *strtab = SHDR32(strtab_void);
-	Elf32_Shdr *text   = SHDR32(  text_void);
 	Elf32_Sym *sym = SYM32(elf->data + EGET(symtab->sh_offset));
 	unsigned long cnt = EGET(symtab->sh_entsize);
 	char *symname;
@@ -147,8 +146,10 @@ void *elf_lookup_symbol(const elfobj *elf, const char *found_sym)
 		cnt = EGET(symtab->sh_size) / cnt;
 	for (i = 0; i < cnt; ++i) {
 		symname = (char *)(elf->data + EGET(strtab->sh_offset) + EGET(sym->st_name));
-		if (!strcmp(symname, found_sym))
-			return elf->data + EGET(text->sh_offset) + (EGET(sym->st_value) - EGET(text->sh_addr));
+		if (!strcmp(symname, found_sym)) {
+			shdr = shdr + EGET(sym->st_shndx);
+			return elf->data + EGET(shdr->sh_offset) + (EGET(sym->st_value) - EGET(shdr->sh_addr));
+		}
 		++sym;
 	}
 	}
