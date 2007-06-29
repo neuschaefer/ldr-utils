@@ -209,14 +209,24 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 
 	block_code = block_code_base;
 
-	if (dxe_flags & DXE_BLOCK_FIRST)
+	if (dxe_flags & DXE_BLOCK_FIRST) {
 		block_code |= BFLAG_IGNORE | BFLAG_FIRST;
+		addr = LDR_ADDR_INIT;
+	}
 	if (dxe_flags & DXE_BLOCK_INIT) {
 		block_code |= BFLAG_INIT;
 		addr = LDR_ADDR_INIT;
 	}
-	if (dxe_flags & DXE_BLOCK_JUMP)
-		return true;
+	if (dxe_flags & DXE_BLOCK_JUMP) {
+		/* normally we can use the LDR header to control
+		 * the start address, but the 0.0 bootrom has a
+		 * bug in it when booting out of external memory,
+		 * so we have to force the jump block for now.
+		 */
+		if (addr == LDR_ADDR_INIT)
+			return true;
+		addr = LDR_ADDR_INIT;
+	}
 	if (dxe_flags & DXE_BLOCK_FILL) {
 		block_code |= BFLAG_FILL;
 		argument = 0;

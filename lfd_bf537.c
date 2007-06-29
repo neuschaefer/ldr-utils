@@ -141,6 +141,7 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	const struct ldr_create_options *opts = void_opts;
 	FILE *fp = alfd->fp;
 	uint16_t flags;
+	uint32_t default_init_addr;
 	size_t out_count = count;
 
 	flags = 0;
@@ -148,6 +149,7 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	    !target_is(alfd, "BF532") &&
 	    !target_is(alfd, "BF538"))
 		flags = LDR_FLAG_RESVECT;
+	default_init_addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
 	if (family_is(alfd, "BF537")) {
 		flags |= (opts->gpio << LDR_FLAG_PFLAG_SHIFT) & LDR_FLAG_PFLAG_MASK;
 		switch (toupper(opts->port)) {
@@ -163,10 +165,19 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		return true;
 	if (dxe_flags & DXE_BLOCK_INIT) {
 		flags |= LDR_FLAG_INIT;
+		addr = default_init_addr;
+	}
+	if (dxe_flags & DXE_BLOCK_JUMP) {
+		/* if the ELF's entry is already at the
+		 * expected location, then we can omit it.
+		 * XXX: we can ignore the case where the entry overlays the
+		 *      jump block slightly as this will not cause any runtime
+		 *      bugs (jump block is P0 load followed by jump).
+		 */
+		if (addr == default_init_addr)
+			return true;
 		addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
 	}
-	if (dxe_flags & DXE_BLOCK_JUMP)
-		addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
 	if (dxe_flags & DXE_BLOCK_FILL)
 		flags |= LDR_FLAG_ZEROFILL;
 	if (dxe_flags & DXE_BLOCK_FINAL)

@@ -357,14 +357,15 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 			continue;
 		}
 
-		/* now create a jump block to the ELF entry if need be:
-		 * assume that any address starting with 0xF is in L1
+		/* now create a jump block to the ELF entry ... we can
+		 * only omit this block if the ELF entry is the same as
+		 * what the bootrom defaults to, but this differs depending
+		 * on the target, so we have to let the target figure out
+		 * if it can ommit the jump.
 		 */
-		if ((EGET(ehdr->e_entry) >> 28) != 0xF) {
-			if (!quiet)
-				printf("[jump block] ");
-			alfd->target->iovec.write_block(alfd, DXE_BLOCK_JUMP, opts, 0, DXE_JUMP_CODE_SIZE, dxe_jump_code(EGET(ehdr->e_entry)));
-		}
+		if (!quiet)
+			printf("[jump block] ");
+		alfd->target->iovec.write_block(alfd, DXE_BLOCK_JUMP, opts, 0, DXE_JUMP_CODE_SIZE, dxe_jump_code(EGET(ehdr->e_entry)));
 
 		/* extract each PT_LOAD program header */
 		for (p = 0; p < EGET(ehdr->e_phnum); ++p) {
