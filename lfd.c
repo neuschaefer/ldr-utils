@@ -493,6 +493,21 @@ static void ldr_send_timeout(int sig)
 	warn("received signal %i: timeout while sending; aborting", sig);
 	exit(2);
 }
+static void ldr_send_erase_output(size_t count)
+{
+	while (count--)
+		printf("\b \b");
+}
+static char ldr_send_prompt(const char *msg)
+{
+	int outret, inret;
+	char dummy;
+	alarm(0);
+	outret = printf("\n%s: ", msg);
+	fflush(stdout);
+	inret = scanf("%c", &dummy);
+	return (inret == EOF ? EOF : dummy);
+}
 static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 {
 	const struct ldr_load_options *opts = void_opts;
@@ -515,10 +530,9 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 
 	setbuf(stdout, NULL);
 
-	/* give ourselves like ten seconds to do autobaud */
 	old_alarm = signal(SIGALRM, ldr_send_timeout);
-	alarm(10);
 
+	alarm(10);
 	printf("Opening %s ... ", tty);
 	if (tty[0] != '#') {
 		fd = open(tty, O_RDWR);
@@ -538,6 +552,10 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	} else
 		printf("OK!\n");
 
+	if (opts->prompt)
+		ldr_send_prompt("Press any key to send autobaud");
+
+	alarm(10);
 	printf("Trying to send autobaud ... ");
 	ret = write(fd, "@", 1);
 	if (ret != 1)
@@ -545,6 +563,10 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	tcdrain(fd);
 	printf("OK!\n");
 
+	if (opts->prompt)
+		ldr_send_prompt("Press any key to read autobaud");
+
+	alarm(10);
 	printf("Trying to read autobaud ... ");
 	ret = read_retry(fd, autobaud, 4);
 	if (ret != 4)
@@ -567,10 +589,15 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	       autobaud[0], autobaud[1], autobaud[2], autobaud[3]);
 
 	if (ldr->header) {
+		if (opts->prompt)
+			ldr_send_prompt("Press any key to send global LDR header");
+
+		alarm(10);
 		printf("Sending global LDR header ... ");
 		ret = write(fd, ldr->header, ldr->header_size);
 		if (ret != (ssize_t)ldr->header_size)
 			goto out;
+		tcdrain(fd);
 		printf("OK!\n");
 	}
 
@@ -579,6 +606,9 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 		for (b = 0; b < ldr->dxes[d].num_blocks; ++b) {
 			BLOCK *block = &(ldr->dxes[d].blocks[b]);
 			int del;
+
+			if (opts->prompt)
+				ldr_send_prompt("Press any key to send block header");
 
 			alarm(60);
 
@@ -591,6 +621,9 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 				goto out;
 			tcdrain(fd);
 
+			if (opts->prompt && block->data != NULL)
+				ldr_send_prompt("Press any key to send block data");
+
 			del += printf("%zi] (%2.0f%%)", ldr->dxes[d].num_blocks,
 			              ((float)(b+1) / (float)ldr->dxes[d].num_blocks) * 100);
 			if (block->data != NULL) {
@@ -600,8 +633,8 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 				tcdrain(fd);
 			}
 
-			while (del--)
-				printf("\b \b");
+			if (!opts->prompt)
+				ldr_send_erase_output(del);
 		}
 		printf("OK!\n");
 	}

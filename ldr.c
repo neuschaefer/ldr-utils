@@ -101,13 +101,15 @@ static struct option_help const create_opts_help[] = {
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
 
-#define LOAD_PARSE_FLAGS COMMON_FLAGS "b:f"
+#define LOAD_PARSE_FLAGS COMMON_FLAGS "b:p"
 static struct option const load_long_opts[] = {
 	{"baud",      a_argument, NULL, 'b'},
+	{"prompt",   no_argument, NULL, 'p'},
 	COMMON_LONG_OPTS
 };
 static struct option_help const load_opts_help[] = {
-	{"Set baud rate (default 115200)", "<baud>"},
+	{"Set baud rate (default 115200)",           "<baud>"},
+	{"Prompt for data flow",                     NULL},
 	COMMON_HELP_OPTS
 };
 #define show_load_usage(status) show_some_usage("load", load_long_opts, load_opts_help, LOAD_PARSE_FLAGS, status)
@@ -238,11 +240,13 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 	struct ldr_load_options opts = {
 		.tty = NULL,
 		.baud = 115200,
+		.prompt = false,
 	};
 
 	while ((i=getopt_long(argc, argv, LOAD_PARSE_FLAGS, load_long_opts, NULL)) != -1) {
 		switch (i) {
 			case 'b': opts.baud = atoi(optarg); break;
+			case 'p': opts.prompt = true; break;
 			case 'h': show_load_usage(0);
 			CASE_common_errors
 		}

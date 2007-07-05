@@ -27,6 +27,7 @@
 #include <string.h>
 #include <strings.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>

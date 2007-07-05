@@ -46,6 +46,7 @@ struct ldr_create_options {
 struct ldr_load_options {
 	const char *tty;
 	size_t baud;
+	bool prompt;
 };
 
 struct ldr_dump_options {
