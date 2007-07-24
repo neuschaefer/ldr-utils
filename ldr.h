@@ -40,6 +40,7 @@ struct ldr_create_options {
 	int gpio;                     /* GPIO on CPU for HWAIT signals (BF53x) */
 	uint16_t dma;                 /* DMA setting (BF54x) */
 	uint32_t block_size;          /* block size to break the DXE up into */
+	char *init_code;              /* initialization routine */
 	char **filelist;
 };
 

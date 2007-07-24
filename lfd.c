@@ -322,6 +322,28 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 		/* spit out a special first block if the target needs it */
 		alfd->target->iovec.write_block(alfd, DXE_BLOCK_FIRST, opts, EGET(ehdr->e_entry), 0, NULL);
 
+		/* if the user gave us some init code, let's pull the code out */
+		if (opts->init_code) {
+			elfobj *init = elf_open(opts->init_code);
+			if (init == NULL) {
+				warn("'%s' is not a Blackfin ELF!", opts->init_code);
+				ret &= false;
+			} else {
+				Elf32_Shdr *shdr = elf_lookup_section(init, ".text");
+
+				if (!EGET(shdr->sh_size)) {
+					warn("'%s' is missing .text to extract", opts->init_code);
+				} else {
+					if (!quiet)
+						printf("[initcode %zi] ", EGET(shdr->sh_size));
+
+					alfd->target->iovec.write_block(alfd, DXE_BLOCK_INIT, opts, 0, EGET(shdr->sh_size), elf->data + EGET(shdr->sh_offset));
+				}
+
+				elf_close(init);
+			}
+		}
+
 		/* if the ELF has ldr init markers, let's pull the code out */
 		dxe_init_start = elf_lookup_symbol(elf, "dxe_init_start");
 		dxe_init_end = elf_lookup_symbol(elf, "dxe_init_end");

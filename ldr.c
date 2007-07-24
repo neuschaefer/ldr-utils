@@ -90,6 +90,7 @@ static struct option const create_long_opts[] = {
 	{"gpio",      a_argument, NULL, 'g'},
 	{"dma",       a_argument, NULL, 'd'},
 	{"blocksize", a_argument, NULL, 'b'},
+	{"initcode",  a_argument, NULL, 'i'},
 	COMMON_LONG_OPTS
 };
 static struct option_help const create_opts_help[] = {
@@ -97,6 +98,7 @@ static struct option_help const create_opts_help[] = {
 	{"GPIO for HWAIT signal (BF53x)", "<#>"},
 	{"DMA flag (BF54x)",              "<#>"},
 	{"Block size of DXE (0x8000)",    "<size>"},
+	{"Init code",                     "<file>"},
 	COMMON_HELP_OPTS
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
@@ -287,6 +289,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.gpio = 0,
 		.dma = 1,
 		.block_size = 0x8000,
+		.init_code = NULL,
 		.filelist = NULL,
 	};
 
@@ -303,6 +306,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 					sscanf(optarg, "%X", &opts.block_size);
 				break;
 			case 'd': opts.dma = atoi(optarg); break;
+			case 'i': opts.init_code = optarg; break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors
 		}
