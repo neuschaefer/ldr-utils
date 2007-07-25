@@ -337,7 +337,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 					if (!quiet)
 						printf("[initcode %zi] ", EGET(shdr->sh_size));
 
-					alfd->target->iovec.write_block(alfd, DXE_BLOCK_INIT, opts, 0, EGET(shdr->sh_size), elf->data + EGET(shdr->sh_offset));
+					alfd->target->iovec.write_block(alfd, DXE_BLOCK_INIT, opts, 0, EGET(shdr->sh_size), init->data + EGET(shdr->sh_offset));
 				}
 
 				elf_close(init);
