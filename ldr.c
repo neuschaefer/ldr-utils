@@ -84,21 +84,29 @@ static struct option_help const dump_opts_help[] = {
 };
 #define show_dump_usage(status) show_some_usage("dump", dump_long_opts, dump_opts_help, DUMP_PARSE_FLAGS, status)
 
-#define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:b:"
+#define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:B:w:H:s:b:i:"
 static struct option const create_long_opts[] = {
 	{"port",      a_argument, NULL, 'p'},
 	{"gpio",      a_argument, NULL, 'g'},
 	{"dma",       a_argument, NULL, 'd'},
+	{"bits",      a_argument, NULL, 'B'},
+	{"waitstate", a_argument, NULL, 'w'},
+	{"holdtimes", a_argument, NULL, 'H'},
+	{"spibaud",   a_argument, NULL, 's'},
 	{"blocksize", a_argument, NULL, 'b'},
 	{"initcode",  a_argument, NULL, 'i'},
 	COMMON_LONG_OPTS
 };
 static struct option_help const create_opts_help[] = {
-	{"PORT for HWAIT signal (BF53x)", "<F|G|H>"},
-	{"GPIO for HWAIT signal (BF53x)", "<#>"},
-	{"DMA flag (BF54x)",              "<#>"},
-	{"Block size of DXE (0x8000)",    "<size>"},
-	{"Init code",                     "<file>"},
+	{"(BF53x) PORT for HWAIT signal",       "<F|G|H>"},
+	{"(BF53x) GPIO for HWAIT signal",       "<#>"},
+	{"(BF54x) DMA flag",                    "<#>"},
+	{"(BF56x) Flash bits (8bit)",           "<bits>"},
+	{"(BF56x) Wait states (15)",            "<num>"},
+	{"(BF56x) Flash Hold time cycles (3)",  "<num>"},
+	{"(BF56x) SPI boot baud rate (500k)",   "<baud>"},
+	{"Block size of DXE (0x8000)",          "<size>"},
+	{"Init code",                           "<file>"},
 	COMMON_HELP_OPTS
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
@@ -288,6 +296,10 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.port = '?',
 		.gpio = 0,
 		.dma = 1,
+		.flash_bits = 8,
+		.wait_states = 15,
+		.flash_holdtimes = 3,
+		.spi_baud = 500,
 		.block_size = 0x8000,
 		.init_code = NULL,
 		.filelist = NULL,
@@ -297,6 +309,11 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		switch (i) {
 			case 'p': opts.port = toupper(optarg[0]); break;
 			case 'g': opts.gpio = atoi(optarg); break;
+			case 'd': opts.dma = atoi(optarg); break;
+			case 'B': opts.flash_bits = atoi(optarg); break;
+			case 'w': opts.wait_states = atoi(optarg); break;
+			case 'H': opts.flash_holdtimes = atoi(optarg); break;
+			case 's': opts.spi_baud = atoi(optarg); break;
 			case 'b':
 				/* support reading in hex values since it's much more
 				 * common for people to set size in terms of hex ...
@@ -305,7 +322,6 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 				if (opts.block_size == 0)
 					sscanf(optarg, "%X", &opts.block_size);
 				break;
-			case 'd': opts.dma = atoi(optarg); break;
 			case 'i': opts.init_code = optarg; break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors
@@ -315,12 +331,22 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		err("Create requires at least two arguments: <ldr> <elfs>");
 	if (strchr("?FGH", opts.port) == NULL)
 		err("Invalid PORT '%c'.  Valid PORT values are 'F', 'G', and 'H'.", opts.port);
-	if (opts.gpio < 0 || opts.gpio > 16)
+	if (opts.gpio > 16)
 		err("Invalid GPIO '%i'.  Valid GPIO values are 0 - 16.", opts.gpio);
 	if (opts.dma < 1 || opts.dma > 15)
 		err("Invalid DMA '%i'.  Valid DMA values are 1 - 15.", opts.dma);
 	if (opts.block_size == 0)
 		err("Invalid block size '%i'.  Valid block sizes are 1 <= size < 2^32.", opts.block_size);
+	if (opts.flash_bits != 8 && opts.flash_bits != 16)
+		err("Invalid flash bits '%i'.  Valid bits are '8' and '16'.", opts.flash_bits);
+	if (opts.wait_states > 15)
+		err("Invalid number of wait states '%i'.  Valid values are 0 - 15.", opts.wait_states);
+	if (opts.flash_holdtimes > 3)
+		err("Invalid number of flash hold time cycles '%i'.  Valid values are 0 - 3.", opts.flash_holdtimes);
+	if (opts.spi_baud != 500 && opts.spi_baud != 1000 && opts.spi_baud != 2000)
+		err("Invalid SPI baud '%i'.  Valid values are 500 (500k), 1000 (1M), or 2000 (2M).", opts.spi_baud);
+	if (opts.init_code && access(opts.init_code, R_OK))
+		errp("Unable to read initcode '%s'", opts.init_code);
 
 	opts.filelist = argv + optind;
 

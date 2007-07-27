@@ -31,7 +31,7 @@ struct lfd_iovec {
 	void*    (*read_block_header) (struct lfd *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len);
 	bool     (*display_ldr)       (struct lfd *alfd);
 	bool     (*display_dxe)       (struct lfd *alfd, const size_t dxe_idx);
-	bool     (*write_ldr)         (struct lfd *alfd);
+	bool     (*write_ldr)         (struct lfd *alfd, const void *opts);
 	bool     (*write_block)       (struct lfd *alfd, uint8_t dxe_flags, const void *opts, uint32_t addr, uint32_t count, void *src);
 	uint32_t (*dump_block)        (BLOCK *block, FILE *fp, bool dump_fill);
 	bool     (*close)             (struct lfd *alfd);

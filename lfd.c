@@ -301,7 +301,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 	setbuf(stdout, NULL);
 
 	if (alfd->target->iovec.write_ldr)
-		alfd->target->iovec.write_ldr(alfd);
+		alfd->target->iovec.write_ldr(alfd, opts);
 
 	/* write out one DXE per ELF given to us */
 	while (filelist[++i]) {

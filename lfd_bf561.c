@@ -73,12 +73,20 @@ static bool bf561_lfd_display_ldr(LFD *alfd)
 	return true;
 }
 
-static bool bf561_lfd_write_ldr(LFD *alfd)
+static bool bf561_lfd_write_ldr(LFD *alfd, const void *void_opts)
 {
+	const struct ldr_create_options *opts = void_opts;
 	uint32_t header = \
 		(LDR_FLAG_SIGN_MAGIC << LDR_FLAG_SIGN_SHIFT) | \
-		(15 << LDR_FLAG_WAIT_SHIFT) | \
-		(3 << LDR_FLAG_HOLD_SHIFT);
+		(opts->wait_states << LDR_FLAG_WAIT_SHIFT) | \
+		(opts->flash_holdtimes << LDR_FLAG_HOLD_SHIFT);
+	if (opts->flash_bits == 16)
+		header |= LDR_FLAG_16BIT_FLASH;
+	switch (opts->spi_baud) {
+		case  500: header |= (LDR_FLAG_SPI_500K << LDR_FLAG_SPI_SHIFT); break;
+		case 1000: header |= (LDR_FLAG_SPI_1M << LDR_FLAG_SPI_SHIFT);   break;
+		case 2000: header |= (LDR_FLAG_SPI_2M << LDR_FLAG_SPI_SHIFT);   break;
+	}
 	ldr_make_little_endian_32(header);
 	return (fwrite(&header, sizeof(header), 1, alfd->fp) == sizeof(header) ? true : false);
 }

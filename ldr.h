@@ -36,9 +36,13 @@ typedef struct {
 } LDR;
 
 struct ldr_create_options {
-	char port;                    /* PORT on CPU for HWAIT signals (BF53x) */
-	int gpio;                     /* GPIO on CPU for HWAIT signals (BF53x) */
-	uint16_t dma;                 /* DMA setting (BF54x) */
+	char port;                    /* (BF53x) PORT on CPU for HWAIT signals */
+	unsigned int gpio;            /* (BF53x) GPIO on CPU for HWAIT signals */
+	uint16_t dma;                 /* (BF54x) DMA setting */
+	unsigned int flash_bits;      /* (BF56x) bit size of the flash */
+	unsigned int wait_states;     /* (BF56x) number of wait states */
+	unsigned int flash_holdtimes; /* (BF56x) number of hold time cycles */
+	unsigned int spi_baud;        /* (BF56x) baud rate for SPI boot */
 	uint32_t block_size;          /* block size to break the DXE up into */
 	char *init_code;              /* initialization routine */
 	char **filelist;
