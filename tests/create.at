@@ -15,7 +15,7 @@ echo "### --- ###"
 LDR_BINARY --show post.ldr
 ], [0], [dnl
 Creating LDR post.ldr ...
- Adding DXE 'elfs/POST.dxe' ... [[ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+ Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
 Done!
 ### --- ###
 Showing LDR post.ldr ...
