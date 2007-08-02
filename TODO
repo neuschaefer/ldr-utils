@@ -12,6 +12,24 @@ Tweak ELF code to handle LSB/MSB 32bit/64bit ... not really needed until we
 	have a blackfin chip that handles MSB or 64bit ...
 
 Parse ELF '.processor' section which VDSP produces ?
+	Format of .processor:
+		byte offset into .strtab section for null terminated string which
+		represents the processor this ELF is for
+		$ readelf -x 4 a.dxe
+		  0x00000000 1c000000                            ....
+		so 0x1c bytes into the .strtab section is:
+		41445350 2d424635 333500        ADSP-BF535.
+	Format of .attributes:
+		null terminated strings and each string is tab delimited format:
+			key\tvalue
+		useful because there is a si-revision key in there:
+		73692d72 65766973 696f6e09 312e3300     si-revision.1.3.
+		as well as
+	While .processor is only present in final linked VDSP ELFs (*.dxe),
+	.attributes can be found in both the relocatable objects (*.doj/*.o)
+	as well as the final linked ELF.  In the relocatable object, there
+	is a 'si-revision' and a 'processor-id' field in .attributes while
+	in the final linked ELF, only 'si-revision' shows up.
 
 VDSP does not fully enumerate the program header table, so no
 	DXE blocks are made for bss sections ... do we care ?
