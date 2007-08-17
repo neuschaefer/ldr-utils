@@ -30,10 +30,12 @@ void lfd_target_register(struct lfd_target *target)
 
 struct lfd_target *lfd_target_find(const char *name)
 {
-	size_t i;
+	const char *p = strchr(name, '-');
+	size_t i, checklen;
 	struct list_item *curr = target_list;
+	checklen = (p ? (size_t)(p - name) : strlen(name));
 	while (curr) {
-		if (!strcasecmp(name, curr->target->name))
+		if (!strncasecmp(name, curr->target->name, checklen))
 			return curr->target;
 		if (curr->target->aliases)
 			for (i = 0; curr->target->aliases[i]; ++i)
@@ -58,7 +60,14 @@ LFD *lfd_malloc(const char *target)
 	LFD *alfd = xmalloc(sizeof(*alfd));
 	memset(alfd, 0x00, sizeof(*alfd));
 	if (target) {
-		alfd->selected_target = target;
+		char *p;
+		alfd->dupped_mem = xstrdup(target);
+		alfd->selected_target = alfd->dupped_mem;
+		p = strchr(alfd->selected_target, '-');
+		if (p) {
+			alfd->selected_sirev = p + 1;
+			*p = '\0';
+		}
 		alfd->target = lfd_target_find(target);
 		if (!alfd->target)
 			err("unable to handle specified target: %s", target);
@@ -68,6 +77,7 @@ LFD *lfd_malloc(const char *target)
 
 bool lfd_free(LFD *alfd)
 {
+	free(alfd->dupped_mem);
 	free(alfd);
 	return true;
 }

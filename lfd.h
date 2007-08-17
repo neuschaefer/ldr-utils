@@ -49,8 +49,10 @@ struct lfd_target {
 typedef struct lfd {
 	struct lfd_target *target;
 
+	char *dupped_mem;
 	const char *filename;
 	const char *selected_target;
+	const char *selected_sirev;
 	FILE *fp;
 	bool is_open;
 	void *private_data;
