@@ -39,7 +39,7 @@ struct lfd_target *lfd_target_find(const char *name)
 			return curr->target;
 		if (curr->target->aliases)
 			for (i = 0; curr->target->aliases[i]; ++i)
-				if (!strcasecmp(name, curr->target->aliases[i]))
+				if (!strncasecmp(name, curr->target->aliases[i], checklen))
 					return curr->target;
 		curr = curr->next;
 	}
