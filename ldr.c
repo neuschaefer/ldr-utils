@@ -84,7 +84,7 @@ static struct option_help const dump_opts_help[] = {
 };
 #define show_dump_usage(status) show_some_usage("dump", dump_long_opts, dump_opts_help, DUMP_PARSE_FLAGS, status)
 
-#define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:B:w:H:s:b:i:"
+#define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:B:w:H:s:b:i:P:"
 static struct option const create_long_opts[] = {
 	{"port",      a_argument, NULL, 'p'},
 	{"gpio",      a_argument, NULL, 'g'},
@@ -95,6 +95,7 @@ static struct option const create_long_opts[] = {
 	{"spibaud",   a_argument, NULL, 's'},
 	{"blocksize", a_argument, NULL, 'b'},
 	{"initcode",  a_argument, NULL, 'i'},
+	{"punchit",   a_argument, NULL, 'P'},
 	COMMON_LONG_OPTS
 };
 static struct option_help const create_opts_help[] = {
@@ -107,6 +108,7 @@ static struct option_help const create_opts_help[] = {
 	{"(BF56x) SPI boot baud rate (500k)",   "<baud>"},
 	{"Block size of DXE (0x8000)",          "<size>"},
 	{"Init code",                           "<file>"},
+	{"Punch an ignore hole",                "<off:size>"},
 	COMMON_HELP_OPTS
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
@@ -302,6 +304,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.spi_baud = 500,
 		.block_size = 0x8000,
 		.init_code = NULL,
+		.hole = { 0, 0 },
 		.filelist = NULL,
 	};
 
@@ -323,6 +326,13 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 					sscanf(optarg, "%X", &opts.block_size);
 				break;
 			case 'i': opts.init_code = optarg; break;
+			case 'P':
+				/* support reading in hex values since it's much more
+				 * common for people to set size in terms of hex ...
+				 */
+				if (sscanf(optarg, "%zX:%zX", &opts.hole.offset, &opts.hole.length) != 2)
+					err("Unable to parse offset:size from '%s'", optarg);
+				break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors
 		}

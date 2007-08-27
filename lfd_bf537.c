@@ -134,6 +134,16 @@ bool bf53x_lfd_display_dxe(LFD *alfd, size_t d)
 /*
  * ldr_create()
  */
+static void _bf53x_lfd_write_header(FILE *fp, uint16_t flags,
+                                    uint32_t addr, uint32_t count)
+{
+	ldr_make_little_endian_32(addr);
+	ldr_make_little_endian_32(count);
+	ldr_make_little_endian_16(flags);
+	fwrite(&addr, sizeof(addr), 1, fp);
+	fwrite(&count, sizeof(count), 1, fp);
+	fwrite(&flags, sizeof(flags), 1, fp);
+}
 bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
                            const void *void_opts, uint32_t addr,
                            uint32_t count, void *src)
@@ -142,7 +152,6 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	FILE *fp = alfd->fp;
 	uint16_t flags;
 	uint32_t default_init_addr;
-	size_t out_count = count;
 
 	flags = 0;
 	if (!target_is(alfd, "BF531") &&
@@ -180,18 +189,58 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	}
 	if (dxe_flags & DXE_BLOCK_FILL)
 		flags |= LDR_FLAG_ZEROFILL;
+
+	/* Punch a hole in the middle of this block if requested.
+	 * This means the block we're punching just got split ... so if
+	 * you're punching a hole in a block that by nature shouldn't be
+	 * split, we'll just error out rather than trying to figure out
+	 * how exactly to safely split it.  Also might be worth noting
+	 * that while in master boot modes the address of the ignore
+	 * block is irrelevant, in slave boot modes we need to actually
+	 * read in the ignore data and put it somewhere, so we need to
+	 * assume address 0 is suitable for this.
+	 */
+	if (opts->hole.offset) {
+		size_t off = ftello(fp);
+		if (opts->hole.offset > off && opts->hole.offset < off + LDR_BLOCK_HEADER_LEN + count) {
+			uint32_t hole_count = opts->hole.length;
+
+			if (dxe_flags & DXE_BLOCK_INIT)
+				err("Punching holes in init blocks is not supported");
+
+			/* fill up what we can to the punched location */
+			ssize_t ssplit_count = opts->hole.offset - off - LDR_BLOCK_HEADER_LEN * 2;
+			if (ssplit_count < LDR_BLOCK_HEADER_LEN) {
+				/* leading hole is wicked small, so just expand the ignore block a bit */
+				if (opts->hole.offset - off < LDR_BLOCK_HEADER_LEN)
+					err("Unable to punch a hole soon enough");
+				else
+					hole_count += (opts->hole.offset - off - LDR_BLOCK_HEADER_LEN);
+			} else {
+				/* squeeze out a little of this block first */
+				uint32_t split_count = ssplit_count;
+				_bf53x_lfd_write_header(fp, flags, addr, split_count);
+				if (fwrite(src, 1, split_count, fp) != split_count)
+					return false;
+				src += split_count;
+				addr += split_count;
+				count -= split_count;
+			}
+
+			/* finally write out hole */
+			_bf53x_lfd_write_header(fp, flags | LDR_FLAG_IGNORE, 0, hole_count);
+			fseeko(fp, hole_count, SEEK_CUR);
+		}
+	}
+
+
 	if (dxe_flags & DXE_BLOCK_FINAL)
 		flags |= LDR_FLAG_FINAL;
 
-	ldr_make_little_endian_32(addr);
-	ldr_make_little_endian_32(count);
-	ldr_make_little_endian_16(flags);
-	fwrite(&addr, sizeof(addr), 1, fp);
-	fwrite(&count, sizeof(count), 1, fp);
-	fwrite(&flags, sizeof(flags), 1, fp);
+	_bf53x_lfd_write_header(fp, flags, addr, count);
 
 	if (src)
-		return (fwrite(src, 1, out_count, fp) == out_count ? true : false);
+		return (fwrite(src, 1, count, fp) == count ? true : false);
 	else
 		return true;
 }

@@ -71,4 +71,86 @@ Creating LDR section.ldr ...
 Done!
 ])
 
+AT_LDR_CHECK([
+LDR_BINARY -T bf544-0.0 -c hole-4x-split.ldr ELFS_DIR/POST.dxe --punchit 0x40:0x70
+LDR_BINARY -T bf544-0.0 -c hole-4x-expan.ldr ELFS_DIR/POST.dxe --punchit 0x30:0x70
+LDR_BINARY -T bf534-0.3 -c hole-3x-split.ldr ELFS_DIR/POST.dxe --punchit 0x40:0x70
+LDR_BINARY -T bf534-0.3 -c hole-3x-expan.ldr ELFS_DIR/POST.dxe --punchit 0x10:0x70
+echo "### --- ###"
+LDR_BINARY --quiet -s hole-4x-split.ldr
+LDR_BINARY --quiet -s hole-4x-expan.ldr
+LDR_BINARY --quiet -s hole-3x-split.ldr
+dnl The --target here is needed because the autodetect only works
+dnl if the first block is a load into L1 rather than an ignore
+LDR_BINARY --target BF533 --quiet -s hole-3x-expan.ldr
+], [0], [dnl
+Creating LDR hole-4x-split.ldr ...
+ Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+Done!
+Creating LDR hole-4x-expan.ldr ...
+ Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+Done!
+Creating LDR hole-3x-split.ldr ...
+ Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+Done!
+Creating LDR hole-3x-expan.ldr ...
+ Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+Done!
+### --- ###
+dnl
+dnl this one should split the first load block into two pieces
+dnl
+  DXE 1 at 0x00000000:
+              Offset      BlockCode  Address    Bytes      Argument
+    Block  1 0x00000000: 0xADEF5001 0xFFA00000 0x00000000 0x000090DC ( 8bit-dma-from-8bit ignore first )
+    Block  2 0x00000010: 0xADC10001 0xFFA00000 0x00000010 0xDEADBEEF ( 8bit-dma-from-8bit )
+dnl The important part is that the ignore block have an offset of
+dnl (start-block_header_size), or in this case, (0x40 - 16 == 0x30)
+    Block  3 0x00000030: 0xAD261001 0x00000000 0x00000070 0xBAADF00D ( 8bit-dma-from-8bit ignore )
+dnl Then we need to make sure that the next block has an offset of
+dnl (start+offset), or in this case, (0x40 + 0x70 == 0xB0)
+    Block  4 0x000000B0: 0xAD2E0001 0xFFA00010 0x0000739C 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  5 0x0000745C: 0xAD9D0001 0xFF800000 0x00001C70 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  6 0x000090DC: 0xAD738001 0xFFA00000 0x00000000 0x00000000 ( 8bit-dma-from-8bit final )
+dnl
+dnl this one should expand the hole
+dnl
+  DXE 1 at 0x00000000:
+              Offset      BlockCode  Address    Bytes      Argument
+    Block  1 0x00000000: 0xADEF5001 0xFFA00000 0x00000000 0x000090DC ( 8bit-dma-from-8bit ignore first )
+dnl Here we see that the hole makes sure to end at an offset of
+dnl (start+offset), or in this case, (0x30 + 0x70 == 0xA0) and that
+dnl the size of the hole was expanded from 0x70 to 0x80 to fill the
+dnl leading gap (since we couldn't split the punched block)
+    Block  2 0x00000010: 0xADD61001 0x00000000 0x00000080 0xBAADF00D ( 8bit-dma-from-8bit ignore )
+    Block  3 0x000000A0: 0xAD0E0001 0xFFA00000 0x000073AC 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  4 0x0000745C: 0xAD9D0001 0xFF800000 0x00001C70 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  5 0x000090DC: 0xAD738001 0xFFA00000 0x00000000 0x00000000 ( 8bit-dma-from-8bit final )
+dnl
+dnl this one should split the first load block into two pieces
+dnl
+  DXE 1 at 0x00000000:
+              Offset      Address     Bytes    Flags
+    Block  1 0x00000000: 0xFFA00000 0x0000002C 0x0002 ( resvect )
+dnl The important part is that the ignore block have an offset of
+dnl (start-block_header_size), or in this case, (0x40 - 10 == 0x36)
+    Block  2 0x00000036: 0x00000000 0x00000070 0x0012 ( resvect ignore )
+dnl Then we need to make sure that the next block has an offset of
+dnl (start+offset), or in this case, (0x40 + 0x70 == 0xB0)
+    Block  3 0x000000B0: 0xFFA0002C 0x00007380 0x0002 ( resvect )
+    Block  4 0x0000743A: 0xFF800000 0x00001C70 0x8002 ( resvect final )
+dnl
+dnl this one should expand the hole
+dnl
+  DXE 1 at 0x00000000:
+              Offset      Address     Bytes    Flags
+dnl Here we see that the hole makes sure to end at an offset of
+dnl (start+offset), or in this case, (0x10 + 0x70 == 0x80) and that
+dnl the size of the hole was expanded from 0x70 to 0x76 to fill the
+dnl leading gap (since we couldn't split the punched block)
+    Block  1 0x00000000: 0x00000000 0x00000076 0x0012 ( resvect ignore )
+    Block  2 0x00000080: 0xFFA00000 0x000073AC 0x0002 ( resvect )
+    Block  3 0x00007436: 0xFF800000 0x00001C70 0x8002 ( resvect final )
+])
+
 AT_CLEANUP

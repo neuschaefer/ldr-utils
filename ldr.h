@@ -35,6 +35,10 @@ typedef struct {
 	size_t header_size;
 } LDR;
 
+typedef struct {
+	size_t offset, length;
+} hole;
+
 struct ldr_create_options {
 	char port;                    /* (BF53x) PORT on CPU for HWAIT signals */
 	unsigned int gpio;            /* (BF53x) GPIO on CPU for HWAIT signals */
@@ -45,6 +49,7 @@ struct ldr_create_options {
 	unsigned int spi_baud;        /* (BF56x) baud rate for SPI boot */
 	uint32_t block_size;          /* block size to break the DXE up into */
 	char *init_code;              /* initialization routine */
+	hole hole;                    /* punch a hole in LDR image */
 	char **filelist;
 };
 

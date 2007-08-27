@@ -174,8 +174,19 @@ static bool bf548_lfd_display_dxe(LFD *alfd, size_t d)
  */
 #define LDR_ADDR_INIT 0xFFA00000
 static bool _bf548_lfd_write_header(FILE *fp, uint32_t block_code, uint32_t addr,
-                                    uint32_t count, uint32_t argument, void *header)
+                                    uint32_t count, uint32_t argument)
 {
+	uint8_t header[LDR_BLOCK_HEADER_LEN];
+
+	uint8_t pad_size = count % 4;
+	if (addr % 4)
+		warn("address is not 4 byte aligned (0x%X %% 4 = %i)", addr, addr % 4);
+	if (pad_size) {
+		warn("count is not 4 byte aligned (0x%X %% 4 = %i)", count, pad_size);
+		warn("going to pad the end with zeros, but you should fix this");
+		count += pad_size;
+	}
+
 	ldr_make_little_endian_32(block_code);
 	ldr_make_little_endian_32(addr);
 	ldr_make_little_endian_32(count);
@@ -198,9 +209,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	const struct ldr_create_options *opts = void_opts;
 	FILE *fp = alfd->fp;
 	uint32_t block_code_base, block_code, argument;
-	uint8_t header[LDR_BLOCK_HEADER_LEN];
 	bool ret = true;
-	uint8_t pad_size = 0, pad = 0;
 
 	argument = 0xDEADBEEF;
 	block_code_base = \
@@ -232,21 +241,53 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		argument = 0;
 	}
 
-	if (addr % 4)
-		warn("address is not 4 byte aligned (0x%X %% 4 = %i)", addr, addr % 4);
-	pad_size = count % 4;
-	if (pad_size) {
-		warn("count is not 4 byte aligned (0x%X %% 4 = %i)", count, pad_size);
-		warn("going to pad the end with zeros, but you should fix this");
+	/* Punch a hole in the middle of this block if requested.
+	 * This means the block we're punching just got split ... so if
+	 * you're punching a hole in a block that by nature shouldn't be
+	 * split, we'll just error out rather than trying to figure out
+	 * how exactly to safely split it.  Also might be worth noting
+	 * that while in master boot modes the address of the ignore
+	 * block is irrelevant, in slave boot modes we need to actually
+	 * read in the ignore data and put it somewhere, so we need to
+	 * assume address 0 is suitable for this.
+	 */
+	if (opts->hole.offset) {
+		size_t off = ftello(fp);
+		if (opts->hole.offset > off && opts->hole.offset < off + LDR_BLOCK_HEADER_LEN + count) {
+			uint32_t hole_count = opts->hole.length;
+
+			if (dxe_flags & DXE_BLOCK_INIT)
+				err("Punching holes in init blocks is not supported");
+
+			/* fill up what we can to the punched location */
+			ssize_t ssplit_count = opts->hole.offset - off - LDR_BLOCK_HEADER_LEN * 2;
+			if (ssplit_count < LDR_BLOCK_HEADER_LEN) {
+				/* leading hole is wicked small, so just expand the ignore block a bit */
+				if (opts->hole.offset - off < LDR_BLOCK_HEADER_LEN)
+					err("Unable to punch a hole soon enough");
+				else
+					hole_count += (opts->hole.offset - off - LDR_BLOCK_HEADER_LEN);
+			} else {
+				/* squeeze out a little of this block first */
+				uint32_t split_count = ssplit_count;
+				ret &= _bf548_lfd_write_header(fp, block_code, addr, split_count, argument);
+				ret &= (fwrite(src, 1, split_count, fp) == split_count ? true : false);
+				src += split_count;
+				addr += split_count;
+				count -= split_count;
+			}
+
+			/* finally write out hole */
+			ret &= _bf548_lfd_write_header(fp, block_code | BFLAG_IGNORE, 0, hole_count, 0xBAADF00D);
+			fseeko(fp, hole_count, SEEK_CUR);
+		}
 	}
 
-	ret &= _bf548_lfd_write_header(fp, block_code, addr, count+pad_size, argument, header);
-
+	ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument);
 	if (src)
 		ret &= (fwrite(src, 1, count, fp) == count ? true : false);
-
-	if (pad_size)
-		fwrite(&pad, sizeof(pad), pad_size, fp);
+	if (count % 4) /* skip a few trailing bytes */
+		fseek(fp, count % 4, SEEK_CUR);
 
 	if (dxe_flags & DXE_BLOCK_FINAL) {
 		uint32_t curr_pos;
@@ -255,7 +296,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		addr = LDR_ADDR_INIT;
 		count = 0;
 		argument = 0;
-		ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument, header);
+		ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument);
 
 		/* we need to set the argument in the first block header to point here */
 		curr_pos = ftell(fp);
@@ -266,7 +307,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		ldr_make_little_endian_32(addr);
 		rewind(fp);
 		block_code = block_code_base | BFLAG_IGNORE | BFLAG_FIRST;
-		ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument, header);
+		ret &= _bf548_lfd_write_header(fp, block_code, addr, count, argument);
 		fseek(fp, 0, SEEK_END);
 	}
 

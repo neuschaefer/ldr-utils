@@ -205,7 +205,7 @@ bool lfd_read(LFD *alfd)
 
 		if (fill)
 			block->data = NULL;
-		else {
+		else if (block->data_size) {
 			block->data = xmalloc(block->data_size);
 			fread(block->data, 1, block->data_size, fp);
 			pos += block->data_size;
