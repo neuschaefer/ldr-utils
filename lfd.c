@@ -383,6 +383,45 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 					p = EGET(ehdr->e_phnum);
 					break;
 			}
+		/* if program headers are OK, then check for undefined symbols */
+		if (elf_ok && elf->shdr) {
+			Elf32_Shdr *shdr = elf->shdr;
+			size_t shi;
+
+			/* since one ELF can have multiple SYMTAB's, need to check them all */
+			for (shi = 0; shi < EGET(ehdr->e_shnum); ++shi) {
+				if (EGET(shdr[shi].sh_type) != SHT_SYMTAB)
+					continue;
+
+				Elf32_Sym *sym = SYM32(elf->data + EGET(shdr[shi].sh_offset));
+				const char *symname;
+				size_t symi = 0;
+
+				/* skip first "notype" undefined sym */
+				symname = elf->data + EGET(shdr[EGET(shdr[shi].sh_link)].sh_offset) + EGET(sym[symi].st_name);
+				if (!strcmp(symname, ""))
+					++symi;
+
+				/* now check all of the SYMs in this SYMTAB section */
+				for (; symi < EGET(shdr[shi].sh_size) / EGET(shdr[shi].sh_entsize); ++symi) {
+					if (EGET(sym[symi].st_shndx) != SHN_UNDEF)
+						continue;
+
+					/* VDSP labels "FILE" types as SHN_UNDEF */
+					if (ELF32_ST_TYPE(EGET(sym[symi].st_info)) == STT_FILE)
+						continue;
+
+					const char *symname = elf->data + EGET(shdr[EGET(shdr[shi].sh_link)].sh_offset) + EGET(sym[symi].st_name);
+					warn("Undefined symbol '%s' in ELF!", symname);
+					if (!force) {
+						elf_ok &= false;
+						break;
+					}
+				}
+				if (!elf_ok)
+					break;
+			}
+		}
 		if (!elf_ok) {
 			elf_close(elf);
 			ret &= false;
