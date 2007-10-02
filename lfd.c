@@ -178,10 +178,11 @@ bool lfd_read(LFD *alfd)
 	ldr->num_dxes = 0;
 	d = 0;
 
-	if (alfd->target->iovec.read_ldr_header)
-		ldr->header = alfd->target->iovec.read_ldr_header(alfd);
-	else
+	if (!alfd->target->iovec.read_ldr_header) {
 		ldr->header = NULL;
+		ldr->header_size = 0;
+	} else
+		ldr->header = alfd->target->iovec.read_ldr_header(alfd, &ldr->header_size);
 
 	do {
 		tmp_header = alfd->target->iovec.read_block_header(alfd, &ignore, &fill, &final, &header_len, &data_len);
