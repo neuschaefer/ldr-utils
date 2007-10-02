@@ -210,7 +210,8 @@ bool lfd_read(LFD *alfd)
 			block->data = xmalloc(block->data_size);
 			fread(block->data, 1, block->data_size, fp);
 			pos += block->data_size;
-		}
+		} else
+			block->data = NULL;
 		pos += header_len;
 
 		if (final)
