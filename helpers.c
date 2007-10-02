@@ -11,11 +11,19 @@
 #include "headers.h"
 #include "helpers.h"
 
+static void poison_it(void *ptr, size_t size)
+{
+#ifndef NDEBUG
+	memset(ptr, 0xFB, size);
+#endif
+}
+
 void *xmalloc(size_t size)
 {
 	void *ret = malloc(size);
 	if (ret == NULL)
 		errp("malloc(%zu) returned NULL!", size);
+	poison_it(ret, size);
 	return ret;
 }
 
@@ -24,6 +32,8 @@ void *xrealloc(void *ptr, size_t size)
 	void *ret = realloc(ptr, size);
 	if (ret == NULL)
 		errp("realloc(%p, %zu) returned NULL!", ptr, size);
+	if (ptr == NULL)
+		poison_it(ret, size);
 	return ret;
 }
 
