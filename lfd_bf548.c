@@ -68,7 +68,6 @@ static void *bf548_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bo
 	FILE *fp = alfd->fp;
 	BLOCK_HEADER *header = xmalloc(sizeof(*header));
 	fread(header->raw, 1, LDR_BLOCK_HEADER_LEN, fp);
-	memcpy(header->raw, header->raw, LDR_BLOCK_HEADER_LEN);
 	memcpy(&(header->block_code), header->raw, sizeof(header->block_code));
 	memcpy(&(header->target_address), header->raw+4, sizeof(header->target_address));
 	memcpy(&(header->byte_count), header->raw+8, sizeof(header->byte_count));
