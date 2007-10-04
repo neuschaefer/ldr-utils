@@ -55,7 +55,7 @@ static struct lfd_flag bf548_lfd_flags[] = {
 };
 
 /**
- *	bf548_lfd_read_block_header - read in the BF54x block header
+ *	bf54x_lfd_read_block_header - read in the BF54x block header
  *
  * The format of each block header:
  * [4 bytes for block codes]
@@ -63,7 +63,7 @@ static struct lfd_flag bf548_lfd_flags[] = {
  * [4 bytes for byte count]
  * [4 bytes for arguments]
  */
-static void *bf548_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len)
+void *bf54x_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len)
 {
 	FILE *fp = alfd->fp;
 	BLOCK_HEADER *header = xmalloc(sizeof(*header));
@@ -84,7 +84,7 @@ static void *bf548_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bo
 	return header;
 }
 
-static bool bf548_lfd_display_dxe(LFD *alfd, size_t d)
+bool bf54x_lfd_display_dxe(LFD *alfd, size_t d)
 {
 	LDR *ldr = alfd->private_data;
 	size_t i, b;
@@ -201,7 +201,7 @@ static bool _bf548_lfd_write_header(FILE *fp, uint32_t block_code, uint32_t addr
 	return (fwrite(header, sizeof(uint8_t), LDR_BLOCK_HEADER_LEN, fp) == LDR_BLOCK_HEADER_LEN ? true : false);
 }
 static uint32_t last_dxe_pos = 0;
-static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
+bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
                                   const void *void_opts, uint32_t addr,
                                   uint32_t count, void *src)
 {
@@ -313,7 +313,7 @@ static bool bf548_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	return ret;
 }
 
-static uint32_t bf548_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
+uint32_t bf54x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 {
 	BLOCK_HEADER *header = block->header;
 
@@ -339,10 +339,10 @@ static struct lfd_target bf548_lfd_target = {
 	.aliases = bf548_aliases,
 	.uart_boot = true,
 	.iovec = {
-		.read_block_header = bf548_lfd_read_block_header,
-		.display_dxe = bf548_lfd_display_dxe,
-		.write_block = bf548_lfd_write_block,
-		.dump_block = bf548_lfd_dump_block,
+		.read_block_header = bf54x_lfd_read_block_header,
+		.display_dxe = bf54x_lfd_display_dxe,
+		.write_block = bf54x_lfd_write_block,
+		.dump_block = bf54x_lfd_dump_block,
 	},
 };
 
