@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <libgen.h>
+#include <pthread.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>

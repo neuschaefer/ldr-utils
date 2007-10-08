@@ -11,6 +11,7 @@ WFLAGS  := $(call cc-option,-Wall,) $(call cc-option,-Wextra,)
 CFLAGS  ?= -g -O0
 CFLAGS  += $(WFLAGS)
 LDFLAGS += $(CFLAGS)
+LDLIBS  += -lpthread
 
 DESTDIR :=
 PREFIX  := /usr

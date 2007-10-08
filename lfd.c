@@ -578,8 +578,30 @@ static char ldr_send_prompt(const char *msg)
 	alarm(0);
 	outret = printf("\n%s: ", msg);
 	fflush(stdout);
-	inret = scanf("%c", &dummy);
-	return (inret == EOF ? EOF : dummy);
+	while ((inret = read(0, &dummy, 1)) == -1)
+		if (errno != EAGAIN)
+			break;
+	return (inret <= 0 ? EOF : dummy);
+}
+static void *ldr_read_board(void *arg)
+{
+	int fd = *(int *)arg;
+	char buf[1024];
+
+	while (1) {
+		ssize_t ret = read(fd, buf, sizeof(buf)-1);
+		if (ret > 0) {
+			buf[ret] = '\0';
+			printf("[board said: %s]\n", buf);
+		}
+	}
+
+	return NULL;
+}
+static struct termios stdin_orig_attrs;
+void ldr_restore_stdin_attrs(void)
+{
+	tcsetattr(0, TCSANOW, &stdin_orig_attrs);
 }
 static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 {
@@ -588,10 +610,12 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	const char *tty = opts->tty;
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
 	int fd = -1;
-	bool ok = false;
+	bool ok = false, prompt = opts->prompt;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
+	pthread_t reader;
+	struct termios stdin_attrs;
 
 	if (tty_lock(tty)) {
 		if (force) {
@@ -602,6 +626,13 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	}
 
 	setbuf(stdout, NULL);
+
+	tcgetattr(0, &stdin_orig_attrs);
+	atexit(ldr_restore_stdin_attrs);
+	stdin_attrs = stdin_orig_attrs;
+	stdin_attrs.c_lflag &= ~(ECHO | ICANON);
+	tcsetattr(0, TCSADRAIN, &stdin_attrs);
+	setbuf(stdin, NULL);
 
 	old_alarm = signal(SIGALRM, ldr_send_timeout);
 
@@ -625,7 +656,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	} else
 		printf("OK!\n");
 
-	if (opts->prompt)
+	if (prompt)
 		ldr_send_prompt("Press any key to send autobaud");
 
 	alarm(10);
@@ -636,7 +667,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	tcdrain(fd);
 	printf("OK!\n");
 
-	if (opts->prompt)
+	if (prompt)
 		ldr_send_prompt("Press any key to read autobaud");
 
 	alarm(10);
@@ -654,6 +685,8 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	}
 	printf("OK!\n");
 
+	pthread_create(&reader, NULL, ldr_read_board, &fd);
+
 	/* bitrate = SCLK / (16 * Divisor) */
 	baud = tty_get_baud(fd);
 	sclock = baud * 16 * (autobaud[1] + (autobaud[2] << 8));
@@ -662,14 +695,15 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	       autobaud[0], autobaud[1], autobaud[2], autobaud[3]);
 
 	if (ldr->header) {
-		if (opts->prompt)
-			ldr_send_prompt("Press any key to send global LDR header");
+		if (prompt)
+			if (ldr_send_prompt("Press any key to send global LDR header") == 'c')
+				prompt = false;
 
 		alarm(10);
 		printf("Sending global LDR header ... ");
 		ret = write(fd, ldr->header, ldr->header_size);
 		if (ret != (ssize_t)ldr->header_size)
-			goto out;
+			goto pout;
 		tcdrain(fd);
 		printf("OK!\n");
 	}
@@ -680,8 +714,9 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 			BLOCK *block = &(ldr->dxes[d].blocks[b]);
 			int del;
 
-			if (opts->prompt)
-				ldr_send_prompt("Press any key to send block header");
+			if (prompt)
+				if (ldr_send_prompt("Press any key to send block header") == 'c')
+					prompt = false;
 
 			alarm(60);
 
@@ -691,22 +726,23 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 			del = printf("[%zi/", b+1);
 			ret = write(fd, block->header, block->header_size);
 			if (ret != (ssize_t)block->header_size)
-				goto out;
+				goto pout;
 			tcdrain(fd);
 
-			if (opts->prompt && block->data != NULL)
-				ldr_send_prompt("Press any key to send block data");
+			if (prompt && block->data != NULL)
+				if (ldr_send_prompt("Press any key to send block data") == 'c')
+				prompt = false;
 
 			del += printf("%zi] (%2.0f%%)", ldr->dxes[d].num_blocks,
 			              ((float)(b+1) / (float)ldr->dxes[d].num_blocks) * 100);
 			if (block->data != NULL) {
 				ret = write(fd, block->data, block->data_size);
 				if (ret != (ssize_t)block->data_size)
-					goto out;
+					goto pout;
 				tcdrain(fd);
 			}
 
-			if (!opts->prompt)
+			if (!prompt)
 				ldr_send_erase_output(del);
 		}
 		printf("OK!\n");
@@ -717,6 +753,8 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 		       "Quick tip: run 'ldr <ldr> <tty> && minicom'\n");
 
 	ok = true;
+ pout:
+	pthread_cancel(reader);
  out:
 	if (!ok)
 		perror("Failed");
