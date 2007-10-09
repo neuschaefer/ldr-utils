@@ -618,7 +618,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	struct termios stdin_attrs;
 
 	if (tty_lock(tty)) {
-		if (force) {
+		if (!force) {
 			warn("tty '%s' is locked", tty);
 			return false;
 		} else
