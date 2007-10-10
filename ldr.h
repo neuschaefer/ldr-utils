@@ -54,9 +54,10 @@ struct ldr_create_options {
 };
 
 struct ldr_load_options {
-	const char *tty;
-	size_t baud;
-	bool prompt;
+	const char *tty;              /* path to the TTY for board */
+	size_t baud;                  /* baud rate to send LDR */
+	bool prompt;                  /* prompt before every communication step */
+	int sleep_time;               /* time (in usecs) to sleep between blocks */
 };
 
 struct ldr_dump_options {
