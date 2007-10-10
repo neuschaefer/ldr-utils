@@ -108,7 +108,7 @@ static struct option_help const create_opts_help[] = {
 	{"(BF56x) SPI boot baud rate (500k)",   "<baud>"},
 	{"Block size of DXE (0x8000)",          "<size>"},
 	{"Init code",                           "<file>"},
-	{"Punch an ignore hole",                "<off:size>"},
+	{"Punch an ignore hole",                "<off:size[:filler]>"},
 	COMMON_HELP_OPTS
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
@@ -308,7 +308,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.spi_baud = 500,
 		.block_size = 0x8000,
 		.init_code = NULL,
-		.hole = { 0, 0 },
+		.hole = { 0, 0, NULL },
 		.filelist = NULL,
 	};
 
@@ -337,6 +337,17 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 				if (sscanf(optarg, "%zi:%zi", &opts.hole.offset, &opts.hole.length) != 2)
 					if (sscanf(optarg, "%zX:%zX", &opts.hole.offset, &opts.hole.length) != 2)
 						err("Unable to parse offset:size from '%s'", optarg);
+
+				/* if the filler option was specified, grab the filename */
+				char *filler_file = strchr(optarg, ':');
+				if (filler_file) {
+					filler_file = strchr(filler_file + 1, ':');
+					if (filler_file++) {
+						if (access(filler_file, R_OK))
+							err("Unable to access filler file '%s'", filler_file);
+						opts.hole.filler_file = filler_file;
+					}
+				}
 				break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors

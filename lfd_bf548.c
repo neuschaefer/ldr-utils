@@ -278,7 +278,21 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 
 			/* finally write out hole */
 			ret &= _bf548_lfd_write_header(fp, block_code | BFLAG_IGNORE, 0, hole_count, 0xBAADF00D);
-			fseeko(fp, hole_count, SEEK_CUR);
+			if (opts->hole.filler_file) {
+				FILE *filler_fp = fopen(opts->hole.filler_file, "r");
+				if (filler_fp) {
+					size_t bytes;
+					uint8_t filler_buf[8192];	/* random size */
+					while (!feof(filler_fp)) {
+						bytes = fread(filler_buf, 1, sizeof(filler_buf), filler_fp);
+						ret &= (fwrite(filler_buf, 1, bytes, fp) == bytes ? true : false);
+					}
+					if (ferror(filler_fp))
+						ret &= false;
+				} else
+					ret &= false;
+			} else
+				fseeko(fp, hole_count, SEEK_CUR);
 		}
 	}
 

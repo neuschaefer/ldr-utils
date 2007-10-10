@@ -37,6 +37,7 @@ typedef struct {
 
 typedef struct {
 	size_t offset, length;
+	char *filler_file;
 } hole;
 
 struct ldr_create_options {
