@@ -334,8 +334,9 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 				/* support reading in hex values since it's much more
 				 * common for people to set size in terms of hex ...
 				 */
-				if (sscanf(optarg, "%zX:%zX", &opts.hole.offset, &opts.hole.length) != 2)
-					err("Unable to parse offset:size from '%s'", optarg);
+				if (sscanf(optarg, "%zi:%zi", &opts.hole.offset, &opts.hole.length) != 2)
+					if (sscanf(optarg, "%zX:%zX", &opts.hole.offset, &opts.hole.length) != 2)
+						err("Unable to parse offset:size from '%s'", optarg);
 				break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors
