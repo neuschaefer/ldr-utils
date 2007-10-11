@@ -10,7 +10,7 @@ cc-option = $(shell $(CC) $(CFLAGS) $(1) -S -o /dev/null -xc /dev/null \
 WFLAGS  := $(call cc-option,-Wall,) $(call cc-option,-Wextra,)
 CFLAGS  ?= -g -O0
 CFLAGS  += $(WFLAGS)
-LDFLAGS += $(CFLAGS)
+LDFLAGS += $(CFLAGS) -rdynamic
 LDLIBS  += -lpthread
 
 DESTDIR :=

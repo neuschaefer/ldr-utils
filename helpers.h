@@ -19,6 +19,13 @@ extern int force, verbose, quiet;
 
 extern const char *argv0;
 
+#if defined(__GLIBC__) && !defined(__UCLIBC__) && !defined(NDEBUG)
+# define HAVE_BACKTRACE
+void error_backtrace(void);
+#else
+# define error_backtrace()
+#endif
+
 #define warn(fmt, args...) \
 	fprintf(stderr, "%s: " fmt "\n", argv0 , ## args)
 #define warnf(fmt, args...) warn("%s(): " fmt, __func__ , ## args)
@@ -26,6 +33,7 @@ extern const char *argv0;
 #define _err(wfunc, fmt, args...) \
 	do { \
 		wfunc(fmt, ## args); \
+		error_backtrace(); \
 		exit(EXIT_FAILURE); \
 	} while (0)
 #define err(fmt, args...) _err(warn, fmt, ## args)

@@ -228,3 +228,15 @@ bool tty_unlock(const char *tty)
 	const char *lockfile = _tty_get_lock_name(tty);
 	return (unlink(lockfile) == 0 ? true : false);
 }
+
+#ifdef HAVE_BACKTRACE
+# include <execinfo.h>
+void error_backtrace(void)
+{
+	void *funcs[10];
+	int num_funcs;
+	puts("\nBacktrace:");
+	num_funcs = backtrace(funcs, sizeof(funcs));
+	backtrace_symbols_fd(funcs, num_funcs, 1);
+}
+#endif
