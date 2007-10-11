@@ -11,6 +11,7 @@ export builddir = $(shell echo $$PWD)
 export top_builddir = $(builddir)/..
 export srcdir = $(builddir)
 export top_srcdir = $(top_builddir)
+export LDR_UTILS_TESTING=yes
 
 CFLAGS ?= -g -O2
 CFLAGS += -Wall

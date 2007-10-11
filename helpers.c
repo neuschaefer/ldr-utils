@@ -235,6 +235,8 @@ void error_backtrace(void)
 {
 	void *funcs[10];
 	int num_funcs;
+	if (getenv("LDR_UTILS_TESTING"))
+		return;
 	puts("\nBacktrace:");
 	num_funcs = backtrace(funcs, sizeof(funcs));
 	backtrace_symbols_fd(funcs, num_funcs, 1);
