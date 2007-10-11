@@ -13,8 +13,8 @@ Failed: No such file or directory
 ])
 
 AT_LDR_CHECK([
-LDR_UART_LOADER LDR_BINARY --load LDRS_DIR/uart.ldr
-LDR_UART_LOADER LDR_BINARY --load LDRS_DIR/bf548.ldr
+LDR_UART_LOADER LDR_BINARY --load --delay 0 LDRS_DIR/uart.ldr
+LDR_UART_LOADER LDR_BINARY --load --delay 0 LDRS_DIR/bf548.ldr
 ], [0], [dnl
 Loading LDR ldrs/uart.ldr ... auto detected LDR as 'BF537'
 OK!
