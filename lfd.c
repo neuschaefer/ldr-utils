@@ -743,8 +743,10 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 			}
 
 			if (!prompt) {
-				if (opts->sleep_time)
-					usleep(opts->sleep_time);
+				if (opts->sleep_time) {
+					if (b < ldr->dxes[d].num_blocks - 1)
+						usleep(opts->sleep_time);
+				}
 				ldr_send_erase_output(del);
 			}
 		}
