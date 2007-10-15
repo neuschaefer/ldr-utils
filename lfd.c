@@ -413,6 +413,10 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 					if (ELF32_ST_TYPE(EGET(sym[symi].st_info)) == STT_FILE)
 						continue;
 
+					/* skip weak ELF symbols */
+					if (ELF32_ST_BIND(EGET(sym[symi].st_info)) == STB_WEAK)
+						continue;
+
 					const char *symname = elf->data + EGET(shdr[EGET(shdr[shi].sh_link)].sh_offset) + EGET(sym[symi].st_name);
 					warn("Undefined symbol '%s' in ELF!", symname);
 					if (!force) {
