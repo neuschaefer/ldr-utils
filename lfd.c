@@ -448,7 +448,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 		for (p = 0; p < EGET(ehdr->e_phnum); ++p) {
 			if (EGET(phdr->p_type) == PT_LOAD) {
 				uint32_t final;
-				size_t paddr = EGET(phdr->p_paddr);
+				size_t paddr = EGET(opts->use_vmas ? phdr->p_vaddr : phdr->p_paddr);
 				size_t filesz = EGET(phdr->p_filesz);
 				size_t memsz = EGET(phdr->p_memsz);
 

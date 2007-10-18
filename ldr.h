@@ -51,6 +51,7 @@ struct ldr_create_options {
 	uint32_t block_size;          /* block size to break the DXE up into */
 	char *init_code;              /* initialization routine */
 	hole hole;                    /* punch a hole in LDR image */
+	bool use_vmas;                /* use the VMA addresses rather than LMA */
 	char **filelist;
 };
 
