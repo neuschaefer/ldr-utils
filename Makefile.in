@@ -125,6 +125,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PTY_LIB = @PTY_LIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -171,6 +172,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = tests
+AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
 ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h
 ldr_LDADD = -lpthread
 all: config.h

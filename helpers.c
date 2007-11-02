@@ -159,6 +159,30 @@ bool tty_init(const int fd, const size_t baud)
 }
 
 /*
+ * _tty_get_lock_dir()
+ * Return the directory for lock files.
+ */
+static const char *_tty_get_lock_dir(void)
+{
+	return LOCALSTATEDIR "/lock";
+}
+
+/*
+ * _tty_check_lock_dir()
+ * Make sure the lock dir is usable.
+ */
+static bool _tty_check_lock_dir(void)
+{
+	const char *lockdir = _tty_get_lock_dir();
+	if (access(lockdir, R_OK)) {
+		if (verbose)
+			warn("tty lock dir '%s' is not usable", lockdir);
+		return false;
+	}
+	return true;
+}
+
+/*
  * _tty_get_lock_name()
  * Transform the specified tty path to its lock name.
  * Note: not reentrant by any means.
@@ -172,22 +196,30 @@ static const char *_tty_get_lock_name(const char *tty)
 		base_tty = tty;
 	else
 		++base_tty;
-	snprintf(lockfile, sizeof(lockfile), "/var/lock/LCK..%s", base_tty);
+	snprintf(lockfile, sizeof(lockfile), "%s/LCK..%s", _tty_get_lock_dir(), base_tty);
 	return lockfile;
 }
 
 /*
  * tty_lock()
- * Try to lock the specified tty.
+ * Try to lock the specified tty.  Return value indicates
+ * whether locking was successful.
  */
 bool tty_lock(const char *tty)
 {
 	int fd, mask;
-	bool ret = true;
+	bool ret = false;
 	FILE *fp;
-	const char *lockfile = _tty_get_lock_name(tty);
+	const char *lockfile;
 
-	/* first see if it's stale */
+	/* if the lock dir is not available, just lie and say
+	 * the locking worked out for us.
+	 */
+	if (!_tty_check_lock_dir())
+		return true;
+
+	/* see if the lock is stale */
+	lockfile = _tty_get_lock_name(tty);
 	fp = fopen(lockfile, "r");
 	if (fp != NULL) {
 		unsigned long pid;
@@ -211,10 +243,11 @@ bool tty_lock(const char *tty)
 		if (fp != NULL) {
 			fprintf(fp, "%lu\n", (unsigned long)getpid());
 			fclose(fp);
-			ret &= false;
+			ret = true;
 		}
 		close(fd);
 	}
+
 	return ret;
 }
 
@@ -225,6 +258,12 @@ bool tty_lock(const char *tty)
  */
 bool tty_unlock(const char *tty)
 {
+	/* if the lock dir is not available, just lie and say
+	 * the locking worked out for us.
+	 */
+	if (!_tty_check_lock_dir())
+		return true;
+
 	const char *lockfile = _tty_get_lock_name(tty);
 	return (unlink(lockfile) == 0 ? true : false);
 }

@@ -347,7 +347,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 					warn("'%s' is missing .text to extract", opts->init_code);
 				} else {
 					if (!quiet)
-						printf("[initcode %zi] ", EGET(shdr->sh_size));
+						printf("[initcode %u] ", EGET(shdr->sh_size));
 
 					alfd->target->iovec.write_block(alfd, DXE_BLOCK_INIT, opts, 0, EGET(shdr->sh_size), init->data + EGET(shdr->sh_offset));
 				}
@@ -614,14 +614,15 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	const char *tty = opts->tty;
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
 	int fd = -1;
-	bool ok = false, prompt = opts->prompt;
+	bool ok = false, prompt = opts->prompt, tty_locked;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
 	pthread_t reader;
 	struct termios stdin_attrs;
 
-	if (tty_lock(tty)) {
+	tty_locked = tty_lock(tty);
+	if (!tty_locked) {
 		if (!force) {
 			warn("tty '%s' is locked", tty);
 			return false;
@@ -771,7 +772,8 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 		close(fd);
 	alarm(0);
 	signal(SIGALRM, old_alarm);
-	ok &= tty_unlock(tty);
+	if (tty_locked)
+		ok &= tty_unlock(tty);
 	return ok;
 }
 bool lfd_load_uart(LFD *alfd, const void *opts)

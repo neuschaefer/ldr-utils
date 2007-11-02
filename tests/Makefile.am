@@ -3,8 +3,10 @@ AT_FILES = create.at dump.at load.at local.at show.at testsuite.at usage.at
 TESTSUITE = $(srcdir)/testsuite
 DISTCLEANFILES = atconfig
 
+INCLUDES = -I$(top_srcdir)
+
 check_PROGRAMS = fake-loadee
-fake_loadee_LDADD = -lutil
+fake_loadee_LDADD = @PTY_LIB@
 
 check-local: atconfig atlocal $(TESTSUITE)
 	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS)

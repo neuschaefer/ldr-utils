@@ -38,7 +38,9 @@
 # define HAVE_SYS_WAIT_H 1
 # ifdef __linux__
 #  define HAVE_ENDIAN_H 1
+#  define HAVE_PTY_H 1
 # endif
+# define LOCALSTATEDIR "/var"
 #else
 # include <config.h>
 #endif
@@ -51,6 +53,9 @@
 #endif
 #ifdef HAVE_ELF_H
 # include <elf.h>
+#endif
+#ifdef HAVE_LOCAL_ELF_H
+# include "elf.h"
 #endif
 #ifdef HAVE_ENDIAN_H
 # include <endian.h>
@@ -69,6 +74,9 @@
 #endif
 #ifdef HAVE_PTHREAD_H
 # include <pthread.h>
+#endif
+#ifdef HAVE_PTY_H
+# include <pty.h>
 #endif
 #ifdef HAVE_SIGNAL_H
 # include <signal.h>
@@ -99,6 +107,9 @@
 #endif
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
+#endif
+#ifdef HAVE_UTIL_H
+# include <util.h>
 #endif
 #ifdef HAVE_SYS_ENDIAN_H
 # include <sys/endian.h>

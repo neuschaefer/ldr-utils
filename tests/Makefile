@@ -14,6 +14,7 @@ export abs_top_srcdir = $(abs_top_builddir)
 
 CFLAGS ?= -g -O2
 CFLAGS += -Wall
+CPPFLAGS += -I$(abs_top_srcdir)
 
 all: check
 

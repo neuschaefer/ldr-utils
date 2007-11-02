@@ -95,6 +95,7 @@ PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PTY_LIB = @PTY_LIB@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -144,7 +145,8 @@ EXTRA_DIST = fake-loadee.c Makefile.in atlocal.in package.m4.in elfs/POST.dxe el
 AT_FILES = create.at dump.at load.at local.at show.at testsuite.at usage.at
 TESTSUITE = $(srcdir)/testsuite
 DISTCLEANFILES = atconfig
-fake_loadee_LDADD = -lutil
+INCLUDES = -I$(top_srcdir)
+fake_loadee_LDADD = @PTY_LIB@
 AUTOTEST = $(AUTOM4TE) --language=autotest
 all: all-am
 
