@@ -19,7 +19,6 @@
 # define HAVE_ELF_H 1
 # define HAVE_ERRNO_H 1
 # define HAVE_FCNTL_H 1
-# define HAVE_FEATURES_H 1
 # define HAVE_GETOPT_H 1
 # define HAVE_LIBGEN_H 1
 # define HAVE_PTHREAD_H 1
@@ -49,9 +48,6 @@
 #endif
 #ifdef HAVE_CTYPE_H
 # include <ctype.h>
-#endif
-#ifdef HAVE_FEATURES_H
-# include <features.h>
 #endif
 #ifdef HAVE_ELF_H
 # include <elf.h>
@@ -120,11 +116,26 @@
 # include <sys/wait.h>
 #endif
 
-#ifndef BYTE_ORDER
-# error unable to detect endian
-#endif
-#if BYTE_ORDER != BIG_ENDIAN && BYTE_ORDER != LITTLE_ENDIAN
-# error unknown endian
+#define _LDR_UTILS_BIG_ENDIAN 4321
+#define _LDR_UTILS_LITTLE_ENDIAN 1234
+#ifndef HAVE_CONFIG_H
+# ifndef BYTE_ORDER
+#  error unable to detect endian
+# endif
+# if BYTE_ORDER != BIG_ENDIAN && BYTE_ORDER != LITTLE_ENDIAN
+#  error unknown endian
+# endif
+# if BYTE_ORDER == BIG_ENDIAN
+#  define _LDR_UTILS_ENDIAN _LDR_UTILS_BIG_ENDIAN
+# else
+#  define _LDR_UTILS_ENDIAN _LDR_UTILS_LITTLE_ENDIAN
+# endif
+#else
+# ifdef WORDS_BIGENDIAN
+#  define _LDR_UTILS_ENDIAN _LDR_UTILS_BIG_ENDIAN
+# else
+#  define _LDR_UTILS_ENDIAN _LDR_UTILS_LITTLE_ENDIAN
+# endif
 #endif
 
 #if !defined(bswap_16)
@@ -143,18 +154,18 @@
 # endif
 #endif
 
-#if BYTE_ORDER == BIG_ENDIAN
+#if _LDR_UTILS_ENDIAN == _LDR_UTILS_BIG_ENDIAN
 # define ldr_make_little_endian_16(x) (x) = bswap_16(x)
 # define ldr_make_little_endian_32(x) (x) = bswap_32(x)
-#elif BYTE_ORDER == LITTLE_ENDIAN
+#elif _LDR_UTILS_ENDIAN == _LDR_UTILS_LITTLE_ENDIAN
 # define ldr_make_little_endian_16(x)
 # define ldr_make_little_endian_32(x)
 #endif
 
 #ifndef ELF_DATA
-# if BYTE_ORDER == BIG_ENDIAN
+# if _LDR_UTILS_ENDIAN == _LDR_UTILS_BIG_ENDIAN
 #  define ELF_DATA ELFDATA2MSB
-# elif BYTE_ORDER == LITTLE_ENDIAN
+# elif _LDR_UTILS_ENDIAN == _LDR_UTILS_LITTLE_ENDIAN
 #  define ELF_DATA ELFDATA2LSB
 # endif
 #endif
