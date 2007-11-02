@@ -36,7 +36,13 @@ VDSP does not fully enumerate the program header table, so no
 
 Integrate into binutils BFD ?
 
-Add support for zlib compression
+Add support for intermediate stages:
+	- compression (zlib/lzma/bzip2/etc...)
+	- encryption
+	- hashes (crc)
 
 Verify multi-DXE works for BF548 ... when DXE_FINAL is set, we scan to the
 	start of the file and clobber argument ...
+
+Make sure we treat the count field as signed or unsigned depending on
+	how it's used.

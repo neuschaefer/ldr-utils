@@ -49,8 +49,8 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_ldr_OBJECTS = helpers.$(OBJEXT) ldr.$(OBJEXT) ldr_elf.$(OBJEXT) \
-	lfd_bf527.$(OBJEXT) lfd_bf533.$(OBJEXT) lfd_bf537.$(OBJEXT) \
-	lfd_bf548.$(OBJEXT) lfd_bf561.$(OBJEXT) lfd.$(OBJEXT)
+	lfd.$(OBJEXT) lfd_bf527.$(OBJEXT) lfd_bf533.$(OBJEXT) \
+	lfd_bf537.$(OBJEXT) lfd_bf548.$(OBJEXT) lfd_bf561.$(OBJEXT)
 ldr_OBJECTS = $(am_ldr_OBJECTS)
 ldr_DEPENDENCIES =
 DEFAULT_INCLUDES = -I.@am__isrc@
@@ -171,7 +171,7 @@ target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = tests
-ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c lfd.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr_elf.h ldr.h lfd.h
+ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h
 ldr_LDADD = -lpthread
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

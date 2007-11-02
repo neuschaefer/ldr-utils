@@ -1,7 +1,0 @@
-abs_builddir=/usr/local/src/blackfin/svn/toolchain/trunk/ldr-utils/tests
-abs_top_builddir=/usr/local/src/blackfin/svn/toolchain/trunk/ldr-utils/tests/..
-abs_srcdir=/usr/local/src/blackfin/svn/toolchain/trunk/ldr-utils/tests
-abs_top_srcdir=/usr/local/src/blackfin/svn/toolchain/trunk/ldr-utils/tests/..
-
-export PATH=$abs_top_builddir:$abs_builddir:$PATH
-export LDR_UTILS_TESTING=yes

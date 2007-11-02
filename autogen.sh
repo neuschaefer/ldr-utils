@@ -2,6 +2,10 @@
 
 set -e -x
 
+# force consistent sorting in generated files
+# so we dont get pointless changes across builds
+export LC_ALL=C
+
 make distclean
 
 # prep files for autotoolization

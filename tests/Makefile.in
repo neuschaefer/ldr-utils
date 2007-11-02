@@ -13,7 +13,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkglibdir = $(libdir)/@PACKAGE@
@@ -30,7 +29,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-noinst_PROGRAMS = fake-loadee$(EXEEXT)
+check_PROGRAMS = fake-loadee$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(srcdir)/atlocal.in $(srcdir)/package.m4.in
@@ -41,7 +40,6 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES = atlocal package.m4
-PROGRAMS = $(noinst_PROGRAMS)
 fake_loadee_SOURCES = fake-loadee.c
 fake_loadee_OBJECTS = fake-loadee.$(OBJEXT)
 fake_loadee_DEPENDENCIES =
@@ -142,9 +140,10 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = fake-loadee.c atlocal.in Makefile.in package.m4.in elfs/bad.elf elfs/bss.elf elfs/POST.dxe elfs/section.elf ldrs/bf548.ldr ldrs/spi.ldr ldrs/uart.ldr $(AT_FILES) $(TESTSUITE)
+EXTRA_DIST = fake-loadee.c Makefile.in atlocal.in package.m4.in elfs/POST.dxe elfs/bad.elf elfs/bss.elf elfs/section.elf ldrs/bf548.ldr ldrs/spi.ldr ldrs/uart.ldr $(AT_FILES) $(TESTSUITE)
 AT_FILES = create.at dump.at load.at local.at show.at testsuite.at usage.at
 TESTSUITE = $(srcdir)/testsuite
+DISTCLEANFILES = atconfig
 fake_loadee_LDADD = -lutil
 AUTOTEST = $(AUTOM4TE) --language=autotest
 all: all-am
@@ -185,8 +184,8 @@ atlocal: $(top_builddir)/config.status $(srcdir)/atlocal.in
 package.m4: $(top_builddir)/config.status $(srcdir)/package.m4.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
-clean-noinstPROGRAMS:
-	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
 fake-loadee$(EXEEXT): $(fake_loadee_OBJECTS) $(fake_loadee_DEPENDENCIES) 
 	@rm -f fake-loadee$(EXEEXT)
 	$(LINK) $(fake_loadee_OBJECTS) $(fake_loadee_LDADD) $(LIBS)
@@ -288,9 +287,10 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-local
 check: check-am
-all-am: Makefile $(PROGRAMS)
+all-am: Makefile
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -312,14 +312,14 @@ clean-generic:
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+	-test -z "$(DISTCLEANFILES)" || rm -f $(DISTCLEANFILES)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-local clean-noinstPROGRAMS \
-	mostlyclean-am
+clean-am: clean-checkPROGRAMS clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -377,7 +377,7 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am check-local clean \
-	clean-generic clean-local clean-noinstPROGRAMS ctags distclean \
+	clean-checkPROGRAMS clean-generic clean-local ctags distclean \
 	distclean-compile distclean-generic distclean-tags distdir dvi \
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
@@ -390,10 +390,10 @@ uninstall-am:
 	tags uninstall uninstall-am
 
 
-check-local: atlocal fake-loadee $(TESTSUITE)
+check-local: atconfig atlocal $(TESTSUITE)
 	$(SHELL) '$(TESTSUITE)' $(TESTSUITEFLAGS)
 
-installcheck-local: atlocal fake-loadee $(TESTSUITE)
+installcheck-local: atconfig atlocal $(TESTSUITE)
 	$(SHELL) '$(TESTSUITE)' AUTOTEST_PATH='$(bindir)' $(TESTSUITEFLAGS)
 
 clean-local:

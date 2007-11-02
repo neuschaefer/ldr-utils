@@ -1,4 +1,4 @@
-AC_INIT(ldr-utils, svn-1866, [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, svn-1873, [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10 dist-bzip2 no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
@@ -32,7 +32,7 @@ sys/types.h \
 sys/wait.h \
 ])
 
-AC_CONFIG_TESTDIR
+AC_CONFIG_TESTDIR([tests])
 
 AC_OUTPUT([
 Makefile
