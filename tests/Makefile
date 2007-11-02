@@ -3,34 +3,41 @@ AUTOTEST = $(AUTOM4TE) --language=autotest
 
 PACKAGE_NAME      = ldr-utils
 PACKAGE_TARNAME   = $(PACKAGE_NAME)
-PACKAGE_VERSION   = svn $(shell svn info .. | sed -n '/^Last Changed Rev/s|^.*: ||p')
+PACKAGE_VERSION   = $(shell ../local-version.sh)
 PACKAGE_STRING    = $(PACKAGE_NAME) $(PACKAGE_VERSION)
 PACKAGE_BUGREPORT = toolchain-devel@blackfin.uclinux.org
 
-export builddir = $(shell echo $$PWD)
-export top_builddir = $(builddir)/..
-export srcdir = $(builddir)
-export top_srcdir = $(top_builddir)
-export LDR_UTILS_TESTING=yes
+abs_builddir = $(shell echo $$PWD)
+abs_top_builddir = $(abs_builddir)/..
+abs_srcdir = $(abs_builddir)
+abs_top_srcdir = $(abs_top_builddir)
 
 CFLAGS ?= -g -O2
 CFLAGS += -Wall
 
 all: check
 
-package.m4: Makefile
-	( \
-	echo 'm4_define([AT_PACKAGE_NAME],      [$(PACKAGE_NAME)])'; \
-	echo 'm4_define([AT_PACKAGE_TARNAME],   [$(PACKAGE_TARNAME)])'; \
-	echo 'm4_define([AT_PACKAGE_VERSION],   [$(PACKAGE_VERSION)])'; \
-	echo 'm4_define([AT_PACKAGE_STRING],    [$(PACKAGE_STRING)])'; \
-	echo 'm4_define([AT_PACKAGE_BUGREPORT], [$(PACKAGE_BUGREPORT)])'; \
-	) > package.m4
+atlocal: Makefile atlocal.in
+	sed \
+		-e 's:@abs_top_builddir@:$(abs_top_builddir):g' \
+		-e 's:@abs_builddir@:$(abs_builddir):g' \
+		-e 's:@abs_top_srcdir@:$(abs_top_srcdir):g' \
+		-e 's:@abs_srcdir@:$(abs_srcdir):g' \
+		atlocal.in > atlocal
+
+package.m4: Makefile package.m4.in
+	sed \
+		-e 's:@PACKAGE_NAME@:$(PACKAGE_NAME):g' \
+		-e 's:@PACKAGE_TARNAME@:$(PACKAGE_TARNAME):g' \
+		-e 's:@PACKAGE_VERSION@:$(PACKAGE_VERSION):g' \
+		-e 's:@PACKAGE_STRING@:$(PACKAGE_STRING):g' \
+		-e 's:@PACKAGE_BUGREPORT@:$(PACKAGE_BUGREPORT):g' \
+		package.m4.in > package.m4
 
 TEST_PROGS = fake-loadee
 fake-loadee: LDLIBS += -lutil
 
-testsuite: package.m4 $(wildcard *.at */*.at)
+testsuite: atlocal package.m4 $(wildcard *.at */*.at)
 	$(AUTOTEST) -o $@.tmp $@.at
 	mv $@.tmp $@
 

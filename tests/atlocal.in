@@ -1,0 +1,7 @@
+abs_builddir=@abs_builddir@
+abs_top_builddir=@abs_top_builddir@
+abs_srcdir=@abs_srcdir@
+abs_top_srcdir=@abs_top_srcdir@
+
+export PATH=$abs_top_builddir:$abs_builddir:$PATH
+export LDR_UTILS_TESTING=yes

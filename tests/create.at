@@ -4,8 +4,8 @@ AT_LDR_CHECK(LDR_BINARY -q -c moo cow, [1], [], [dnl
 ldr: please select a target with -T <target>
 ])
 
-AT_LDR_CHECK(LDR_BINARY -q -T BF537 -c out.ldr /bin/bash, [1], [], [dnl
-ldr: '/bin/bash' is not a Blackfin ELF!
+AT_LDR_CHECK(LDR_BINARY -q -T BF537 -c out.ldr /bin/sh, [1], [], [dnl
+ldr: '/bin/sh' is not a Blackfin ELF!
 Failed to create LDR: Bad file descriptor
 ])
 

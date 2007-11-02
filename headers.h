@@ -12,33 +12,112 @@
 #ifndef __HEADERS_H__
 #define __HEADERS_H__
 
-#include <assert.h>
-#include <ctype.h>
-#include <elf.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <getopt.h>
-#include <libgen.h>
-#include <pthread.h>
-#include <signal.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <termios.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+/* Some sane defaults for POSIX systems.  Everyone else can bite it. */
+#ifndef HAVE_CONFIG_H
+# define HAVE_ASSERT_H 1
+# define HAVE_CTYPE_H 1
+# define HAVE_ELF_H 1
+# define HAVE_ERRNO_H 1
+# define HAVE_FCNTL_H 1
+# define HAVE_FEATURES_H 1
+# define HAVE_GETOPT_H 1
+# define HAVE_LIBGEN_H 1
+# define HAVE_PTHREAD_H 1
+# define HAVE_SIGNAL_H 1
+# define HAVE_STDBOOL_H 1
+# define HAVE_STDINT_H 1
+# define HAVE_STDIO_H 1
+# define HAVE_STDLIB_H 1
+# define HAVE_STRING_H 1
+# define HAVE_STRINGS_H 1
+# define HAVE_TERMIOS_H 1
+# define HAVE_TIME_H 1
+# define HAVE_UNISTD_H 1
+# define HAVE_SYS_MMAN_H 1
+# define HAVE_SYS_STAT_H 1
+# define HAVE_SYS_TYPES_H 1
+# define HAVE_SYS_WAIT_H 1
+# ifdef __linux__
+#  define HAVE_ENDIAN_H 1
+# endif
+#else
+# include <config.h>
+#endif
 
-#if defined(__linux__)
+#ifdef HAVE_ASSERT_H
+# include <assert.h>
+#endif
+#ifdef HAVE_CTYPE_H
+# include <ctype.h>
+#endif
+#ifdef HAVE_FEATURES_H
+# include <features.h>
+#endif
+#ifdef HAVE_ELF_H
+# include <elf.h>
+#endif
+#ifdef HAVE_ENDIAN_H
 # include <endian.h>
-#elif defined(__FreeBSD__)
+#endif
+#ifdef HAVE_ERRNO_H
+# include <errno.h>
+#endif
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#endif
+#ifdef HAVE_LIBGEN_H
+# include <libgen.h>
+#endif
+#ifdef HAVE_PTHREAD_H
+# include <pthread.h>
+#endif
+#ifdef HAVE_SIGNAL_H
+# include <signal.h>
+#endif
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#endif
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
+#ifdef HAVE_STDIO_H
+# include <stdio.h>
+#endif
+#ifdef HAVE_STDLIB_H
+# include <stdlib.h>
+#endif
+#ifdef HAVE_STRING_H
+# include <string.h>
+#endif
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#endif
+#ifdef HAVE_TIME_H
+# include <time.h>
+#endif
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef HAVE_SYS_ENDIAN_H
 # include <sys/endian.h>
+#endif
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
+# include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
+# include <sys/wait.h>
 #endif
 
 #ifndef BYTE_ORDER

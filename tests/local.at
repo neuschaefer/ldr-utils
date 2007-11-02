@@ -1,11 +1,11 @@
-m4_defun([LDR_BINARY], [$top_builddir/ldr])
+m4_defun([LDR_BINARY], [ldr])
 
-m4_defun([LDR_UART_LOADER], [$builddir/fake-loadee])
+m4_defun([LDR_UART_LOADER], [fake-loadee])
 
-m4_defun([LDR_FILTER_VARS], [sed -e "s:$srcdir/::g"])
+m4_defun([LDR_FILTER_VARS], [sed -e "s:$abs_srcdir/::g"])
 
-m4_defun([LDRS_DIR], [$srcdir/ldrs])
-m4_defun([ELFS_DIR], [$srcdir/elfs])
+m4_defun([LDRS_DIR], [$abs_srcdir/ldrs])
+m4_defun([ELFS_DIR], [$abs_srcdir/elfs])
 
 m4_defun([AT_LDR_CHECK],[dnl
 	AT_CHECK([

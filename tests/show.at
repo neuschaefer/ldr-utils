@@ -2,8 +2,8 @@ AT_SETUP(show)
 
 AT_LDR_CHECK(LDR_BINARY --quiet --show nonexistent.ldr, [1], [], [ignore])
 
-AT_CHECK(LDR_BINARY -q -s LDR_BINARY, [1], [], [dnl
-ldr: unable to auto-detect target type of LDR: LDR_BINARY
+AT_CHECK(LDR_BINARY -q -s /bin/sh, [1], [], [dnl
+ldr: unable to auto-detect target type of LDR: /bin/sh
 ldr: please select a target with -T <target>
 ])
 

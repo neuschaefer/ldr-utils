@@ -10,6 +10,7 @@
 #include <pty.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -22,8 +23,10 @@ void child_exited(int sig)
 	/* see if the child bombed */
 	waitpid(child, &status, 0);
 	status = WEXITSTATUS(status);
-	if (status)
+	if (status) {
+		fprintf(stderr, "ERROR: child exited with %i\n", status);
 		_exit(status);
+	}
 }
 
 int main(int argc, char *argv[])
@@ -51,8 +54,11 @@ int main(int argc, char *argv[])
 	signal(SIGCHLD, child_exited);
 
 	child = vfork();
-	if (!child)
-		_exit(execv(argv[0], argv));
+	if (!child) {
+		int ret = execvp(argv[0], argv);
+		fprintf(stderr, "ERROR: failed to execv(\"%s\"): %s\n", argv[0], strerror(errno));
+		_exit(ret);
+	}
 
 	/* wait for the autobaud char */
 	buf = malloc(4);

@@ -1,0 +1,273 @@
+------------------------------------------------------------------------
+r1866 | vapier | 2007-10-17 22:18:19 -0400 (Wed, 17 Oct 2007) | 1 line
+
+add an option to use the VMAs rather than the LMAs when generating addresses
+------------------------------------------------------------------------
+r1865 | vapier | 2007-10-15 10:10:32 -0400 (Mon, 15 Oct 2007) | 1 line
+
+skip weak symbols
+------------------------------------------------------------------------
+r1864 | vapier | 2007-10-15 00:22:01 -0400 (Mon, 15 Oct 2007) | 1 line
+
+dont sleep on the very last block
+------------------------------------------------------------------------
+r1860 | vapier | 2007-10-11 13:29:59 -0400 (Thu, 11 Oct 2007) | 1 line
+
+disable backtraces during testing
+------------------------------------------------------------------------
+r1859 | vapier | 2007-10-11 13:25:11 -0400 (Thu, 11 Oct 2007) | 1 line
+
+add support for dumping a backtrace upon error
+------------------------------------------------------------------------
+r1858 | vapier | 2007-10-11 13:23:59 -0400 (Thu, 11 Oct 2007) | 1 line
+
+set delay during testing to 0
+------------------------------------------------------------------------
+r1856 | vapier | 2007-10-11 12:11:15 -0400 (Thu, 11 Oct 2007) | 1 line
+
+set uart boot to true for bf52x as reported by michael hennerich
+------------------------------------------------------------------------
+r1853 | vapier | 2007-10-10 19:06:59 -0400 (Wed, 10 Oct 2007) | 1 line
+
+allow people to specify a file to stick into the hole punched into the LDR
+------------------------------------------------------------------------
+r1852 | vapier | 2007-10-10 11:52:58 -0400 (Wed, 10 Oct 2007) | 1 line
+
+treat input values first as ints rather than hex
+------------------------------------------------------------------------
+r1851 | vapier | 2007-10-10 11:41:02 -0400 (Wed, 10 Oct 2007) | 1 line
+
+add a controllable inter-block delay of 1 second when loading over the UART since many of our boards dont have RTS actually wired up
+------------------------------------------------------------------------
+r1848 | vapier | 2007-10-09 13:27:45 -0400 (Tue, 09 Oct 2007) | 1 line
+
+fix incorrectly inverted force check on locked ttys
+------------------------------------------------------------------------
+r1844 | vapier | 2007-10-08 07:02:52 -0400 (Mon, 08 Oct 2007) | 1 line
+
+create a background thread to read possible input from the board and tweak the stdin handling so you can press any key rather than having to hit enter
+------------------------------------------------------------------------
+r1843 | vapier | 2007-10-04 16:10:42 -0400 (Thu, 04 Oct 2007) | 1 line
+
+add initial BF52x support
+------------------------------------------------------------------------
+r1839 | vapier | 2007-10-02 11:59:14 -0400 (Tue, 02 Oct 2007) | 1 line
+
+add a debug feature to poison uninitialized memory with bogus values rather than sliding by with the memory probably being 0
+------------------------------------------------------------------------
+r1838 | vapier | 2007-10-02 11:58:14 -0400 (Tue, 02 Oct 2007) | 1 line
+
+if the block lacks data (like a final block), make sure we set the block data to NULL
+------------------------------------------------------------------------
+r1837 | vapier | 2007-10-02 11:55:00 -0400 (Tue, 02 Oct 2007) | 1 line
+
+make sure we actually initialize the ldr header size field
+------------------------------------------------------------------------
+r1836 | vapier | 2007-10-02 10:11:33 -0400 (Tue, 02 Oct 2007) | 1 line
+
+drop bogus memcpy()
+------------------------------------------------------------------------
+r1770 | vapier | 2007-08-27 16:34:06 -0400 (Mon, 27 Aug 2007) | 1 line
+
+make sure input ELF objects dont contain undefined symbols
+------------------------------------------------------------------------
+r1769 | vapier | 2007-08-27 15:02:51 -0400 (Mon, 27 Aug 2007) | 1 line
+
+initial support for injecting arbitrary ignore blocks into the LDR image (so we can punch a hole for embedded environment in u-boot)
+------------------------------------------------------------------------
+r1767 | vapier | 2007-08-24 17:21:02 -0400 (Fri, 24 Aug 2007) | 1 line
+
+add a test suite for all target variants
+------------------------------------------------------------------------
+r1766 | vapier | 2007-08-24 17:20:38 -0400 (Fri, 24 Aug 2007) | 1 line
+
+make sure we allow silicon rev for aliased targets as well (in other words, we accepted BF537-0.3, but no BF536-0.3)
+------------------------------------------------------------------------
+r1765 | vapier | 2007-08-24 17:19:41 -0400 (Fri, 24 Aug 2007) | 1 line
+
+output unsigned values since that is what they are -- size_t
+------------------------------------------------------------------------
+r1764 | vapier | 2007-08-23 14:52:31 -0400 (Thu, 23 Aug 2007) | 1 line
+
+set default creation mode to 666 and let umask take off the bits we dont want
+------------------------------------------------------------------------
+r1759 | vapier | 2007-08-16 23:52:52 -0400 (Thu, 16 Aug 2007) | 1 line
+
+allow people to use same target form as gcc: <cpu>[-<silicon rev>]
+------------------------------------------------------------------------
+r1719 | vapier | 2007-08-02 00:00:21 -0400 (Thu, 02 Aug 2007) | 1 line
+
+document VDSP format of .processor and .attributes for later use
+------------------------------------------------------------------------
+r1707 | vapier | 2007-07-27 01:27:16 -0400 (Fri, 27 Jul 2007) | 1 line
+
+allow people to control the global LDR header settings for BF56x
+------------------------------------------------------------------------
+r1706 | vapier | 2007-07-27 01:25:27 -0400 (Fri, 27 Jul 2007) | 1 line
+
+update create output to match forced jump block we have in BF54x to workaround bootrom bug
+------------------------------------------------------------------------
+r1701 | vapier | 2007-07-24 22:31:00 -0400 (Tue, 24 Jul 2007) | 1 line
+
+fix typo ... we want start of init elf object, not the elf file
+------------------------------------------------------------------------
+r1700 | vapier | 2007-07-24 17:33:46 -0400 (Tue, 24 Jul 2007) | 1 line
+
+implement an --initcode option so people can keep init code sep from the final ELF executable
+------------------------------------------------------------------------
+r1685 | vapier | 2007-07-05 15:35:35 -0400 (Thu, 05 Jul 2007) | 1 line
+
+add a --prompt flag to the loading process to help with debugging
+------------------------------------------------------------------------
+r1684 | vapier | 2007-06-29 03:00:15 -0400 (Fri, 29 Jun 2007) | 1 line
+
+make sure we actually pass down the ELF entry to the target
+------------------------------------------------------------------------
+r1683 | vapier | 2007-06-29 02:58:13 -0400 (Fri, 29 Jun 2007) | 1 line
+
+move the jump block omit step to the target code and enable jump block generation for BF54x again to work around a defect in the 0.0 silicon bootrom
+------------------------------------------------------------------------
+r1680 | vapier | 2007-06-26 20:29:36 -0400 (Tue, 26 Jun 2007) | 1 line
+
+add check for init symbols in diff section
+------------------------------------------------------------------------
+r1679 | vapier | 2007-06-26 20:29:28 -0400 (Tue, 26 Jun 2007) | 1 line
+
+update to match 4 byte checks
+------------------------------------------------------------------------
+r1678 | vapier | 2007-06-26 20:20:26 -0400 (Tue, 26 Jun 2007) | 1 line
+
+do not have elf_lookup_symbol() assume all symbols are found in the .text section; use the symbol itself to figure out what section it is in
+------------------------------------------------------------------------
+r1676 | vapier | 2007-06-25 09:45:36 -0400 (Mon, 25 Jun 2007) | 1 line
+
+add some checks for the 4 byte alignment requirements of target address and block count
+------------------------------------------------------------------------
+r1669 | vapier | 2007-06-20 14:06:08 -0400 (Wed, 20 Jun 2007) | 1 line
+
+the BF54x does not need a jump block since the LDR format supports changing the load address the bootrom will jump to
+------------------------------------------------------------------------
+r1668 | vapier | 2007-06-20 14:05:03 -0400 (Wed, 20 Jun 2007) | 1 line
+
+make sure we set init L1 address properly according to RESVECT and BF53{1,2,8} parts
+------------------------------------------------------------------------
+r1667 | vapier | 2007-06-15 14:43:50 -0400 (Fri, 15 Jun 2007) | 1 line
+
+respect elf load address for BF548 and add test cases for loading LDRs
+------------------------------------------------------------------------
+r1663 | vapier | 2007-06-15 00:17:12 -0400 (Fri, 15 Jun 2007) | 1 line
+
+fixup misc issues running on a big endian host
+------------------------------------------------------------------------
+r1651 | vapier | 2007-06-12 17:11:41 -0400 (Tue, 12 Jun 2007) | 1 line
+
+overhaul ldr-utils and generalize backends so we can drop in support for new processors more easily
+------------------------------------------------------------------------
+r1619 | vapier | 2007-05-11 13:34:40 -0400 (Fri, 11 May 2007) | 1 line
+
+allow people to control the load address and block size rather than forcing 0x1000 / 0x8000 like we always have in the past
+------------------------------------------------------------------------
+r1575 | vapier | 2007-04-11 06:23:02 -0400 (Wed, 11 Apr 2007) | 1 line
+
+[#2894] if possible, use the elf.h from the local uClibc so we can compile on random hosts ... if local uClibc is not available, then solution is to install Linux
+------------------------------------------------------------------------
+r1574 | vapier | 2007-04-11 05:46:51 -0400 (Wed, 11 Apr 2007) | 1 line
+
+rename elf.{c,h} to ldr_elf.{c,h} so we can use "elf.h" to refer to the system elf header
+------------------------------------------------------------------------
+r1504 | vapier | 2007-03-07 16:43:34 -0500 (Wed, 07 Mar 2007) | 1 line
+
+allow people to specify the baud rate while loading
+------------------------------------------------------------------------
+r1503 | vapier | 2007-03-07 15:56:57 -0500 (Wed, 07 Mar 2007) | 1 line
+
+tidy up a bit
+------------------------------------------------------------------------
+r1476 | vapier | 2007-02-28 18:49:23 -0500 (Wed, 28 Feb 2007) | 1 line
+
+[#2804] add support for tty locks
+------------------------------------------------------------------------
+r1475 | vapier | 2007-02-28 18:11:24 -0500 (Wed, 28 Feb 2007) | 1 line
+
+[#2804] make sure we dont always exit with 0; pass back the sum of the return statuses in case of failures
+------------------------------------------------------------------------
+r1474 | vapier | 2007-02-28 18:10:31 -0500 (Wed, 28 Feb 2007) | 1 line
+
+[#2804] add some timeouts to ldr_send
+------------------------------------------------------------------------
+r1346 | vapier | 2007-01-21 14:23:45 -0500 (Sun, 21 Jan 2007) | 1 line
+
+make sure we can read ldrs properly on big endian hosts
+------------------------------------------------------------------------
+r1320 | vapier | 2007-01-12 00:14:29 -0500 (Fri, 12 Jan 2007) | 1 line
+
+make sure ldr creation works with fullpaths to elfs
+------------------------------------------------------------------------
+r1319 | vapier | 2007-01-11 23:51:12 -0500 (Thu, 11 Jan 2007) | 1 line
+
+rename
+------------------------------------------------------------------------
+r1304 | vapier | 2006-12-25 17:23:42 -0500 (Mon, 25 Dec 2006) | 1 line
+
+[#2510] dxe_sdram_init.h no longer exists
+------------------------------------------------------------------------
+r1303 | vapier | 2006-12-22 05:47:14 -0500 (Fri, 22 Dec 2006) | 2 lines
+
+[#2510] add some more comments
+
+------------------------------------------------------------------------
+r1302 | vapier | 2006-12-22 05:39:19 -0500 (Fri, 22 Dec 2006) | 2 lines
+
+[#2510] scrub previous init code and add support for converting ELFs directly
+
+------------------------------------------------------------------------
+r1301 | vapier | 2006-12-16 19:01:31 -0500 (Sat, 16 Dec 2006) | 2 lines
+
+[#2474] make sure we set up the tty parameters before attempting to use it for booting via UART
+
+------------------------------------------------------------------------
+r1300 | vapier | 2006-12-16 18:32:46 -0500 (Sat, 16 Dec 2006) | 2 lines
+
+[#1767] have the autobaud read to temp failure retries to handle some ttys that interrupt before the complete autobaud can be read
+
+------------------------------------------------------------------------
+r1295 | vapier | 2006-12-07 00:08:36 -0500 (Thu, 07 Dec 2006) | 2 lines
+
+should rename this project
+
+------------------------------------------------------------------------
+r1294 | vapier | 2006-12-05 20:09:36 -0500 (Tue, 05 Dec 2006) | 2 lines
+
+only pull in endian.h on linux and sys/endian.h on freebsd
+
+------------------------------------------------------------------------
+r1244 | vapier | 2006-10-19 16:35:48 -0400 (Thu, 19 Oct 2006) | 2 lines
+
+output the whole autobaud to help with diagnosing misbehavior
+
+------------------------------------------------------------------------
+r1215 | vapier | 2006-09-26 13:25:29 -0400 (Tue, 26 Sep 2006) | 2 lines
+
+make sure the compiler supports the -W flag (to support ancient compilers like gcc-2 and gcc-3.3)
+
+------------------------------------------------------------------------
+r1205 | vapier | 2006-09-21 21:44:59 -0400 (Thu, 21 Sep 2006) | 2 lines
+
+import initial pass at creating LDR files
+
+------------------------------------------------------------------------
+r1203 | vapier | 2006-09-21 16:22:16 -0400 (Thu, 21 Sep 2006) | 2 lines
+
+add a little more info about LDRs/DXEs/blocks
+
+------------------------------------------------------------------------
+r1196 | vapier | 2006-09-15 18:35:52 -0400 (Fri, 15 Sep 2006) | 2 lines
+
+note where BF537 flags are documented
+
+------------------------------------------------------------------------
+r1095 | vapier | 2006-08-03 14:12:18 -0400 (Thu, 03 Aug 2006) | 2 lines
+
+small project for handling LDR files
+
+------------------------------------------------------------------------

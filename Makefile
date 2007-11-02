@@ -47,4 +47,4 @@ distclean: clean
 
 -include .depend
 
-.PHONY: all check clean distclean install test
+.PHONY: all autotools check clean distclean install test
