@@ -1,4 +1,4 @@
-AC_INIT(ldr-utils, svn-1873, [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, svn-1879, [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10 dist-bzip2 no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
@@ -34,6 +34,8 @@ sys/types.h \
 sys/wait.h \
 ])
 
+AC_CHECK_FUNCS_ONCE([fseeko ftello mmap])
+
 AC_CHECK_LIB([util], [openpty], [PTY_LIB="-lutil"], [PTY_LIB=""])
 AC_SUBST([PTY_LIB])
 
@@ -64,6 +66,50 @@ fi
 #if test "$USER" = vapier; then
 #	CFLAGS="$CFLAGS -Werror"
 #fi
+
+dnl
+dnl complain to the user if their setup sucks
+dnl
+fail_at_life=no
+
+if test "x$ac_cv_header_termios_h" = "xno" ; then
+	fail_at_life=yes
+AC_MSG_WARN([
+
+Your host system does not provide termios.h as required by POSIX.
+Support for loading LDRs over the UART is disabled.
+])
+fi
+
+if test "x$ac_cv_header_pthread_h" = "xno" ; then
+	fail_at_life=yes
+AC_MSG_WARN([
+
+Your host system does not provide POSIX threads support.
+])
+	LIB_PTHREAD=""
+else
+	LIB_PTHREAD="-lpthread"
+fi
+AC_SUBST(LIB_PTHREAD)
+
+if test "x$ac_cv_func_mmap" = "xno" ; then
+	fail_at_life=yes
+AC_MSG_WARN([
+
+Your host system does not provide mmap() as required by POSIX.
+This function will be emulated by a big fat read().  I hope you
+have bunches of free memory.
+])
+fi
+
+if test "x$fail_at_life" = "xyes" ; then
+AC_MSG_WARN([
+
+Please purchase a Linux machine.  Seriously.  Wal-Mart sells them
+for \$200.  You can afford one.
+])
+fi
 
 AC_OUTPUT([
 Makefile

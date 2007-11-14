@@ -77,6 +77,8 @@ ssize_t read_retry(int fd, void *buf, size_t count)
 	return ret;
 }
 
+#ifdef HAVE_TERMIOS_H
+
 /*
  * tty_speed_to_baud() / tty_baud_to_speed()
  * Annoying function for translating the termios baud representation
@@ -267,6 +269,8 @@ bool tty_unlock(const char *tty)
 	const char *lockfile = _tty_get_lock_name(tty);
 	return (unlink(lockfile) == 0 ? true : false);
 }
+
+#endif /* HAVE_TERMIOS_H */
 
 #ifdef HAVE_BACKTRACE
 # include <execinfo.h>

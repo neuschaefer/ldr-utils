@@ -565,6 +565,7 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
  *    it is ready for more ... we let the kernel worry about this crap
  *    in the call to write()
  */
+#ifdef HAVE_TERMIOS_H
 static void ldr_send_timeout(int sig)
 {
 	warn("received signal %i: timeout while sending; aborting", sig);
@@ -776,6 +777,12 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 		ok &= tty_unlock(tty);
 	return ok;
 }
+#else
+static bool ldr_load_uart(LFD *alfd, const void *void_opts)
+{
+	err("your system does not support POSIX termios functionality");
+}
+#endif
 bool lfd_load_uart(LFD *alfd, const void *opts)
 {
 	if (!alfd->is_open) {

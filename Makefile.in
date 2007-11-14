@@ -52,7 +52,8 @@ am_ldr_OBJECTS = helpers.$(OBJEXT) ldr.$(OBJEXT) ldr_elf.$(OBJEXT) \
 	lfd.$(OBJEXT) lfd_bf527.$(OBJEXT) lfd_bf533.$(OBJEXT) \
 	lfd_bf537.$(OBJEXT) lfd_bf548.$(OBJEXT) lfd_bf561.$(OBJEXT)
 ldr_OBJECTS = $(am_ldr_OBJECTS)
-ldr_DEPENDENCIES =
+am__DEPENDENCIES_1 =
+ldr_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -114,6 +115,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIB_PTHREAD = @LIB_PTHREAD@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
@@ -174,7 +176,7 @@ top_srcdir = @top_srcdir@
 SUBDIRS = tests
 AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
 ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h
-ldr_LDADD = -lpthread
+ldr_LDADD = $(LIB_PTHREAD)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

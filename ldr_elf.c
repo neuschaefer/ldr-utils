@@ -15,6 +15,31 @@
 #include "helpers.h"
 #include "ldr_elf.h"
 
+#ifndef HAVE_MMAP
+#define PROT_READ 0x1
+#define MAP_SHARED 0x001
+#define MAP_FAILED ((void *) -1)
+static void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t offset)
+{
+	void *ret = xmalloc(length);
+
+	assert(start == 0);
+	assert(prot == PROT_READ);
+
+	if (read_retry(fd, ret, length) != length) {
+		free(ret);
+		ret = NULL;
+	}
+
+	return ret;
+}
+static int munmap(void *start, size_t length)
+{
+	free(start);
+	return 0;
+}
+#endif
+
 char do_reverse_endian;
 
 /* valid elf buffer check */
@@ -45,7 +70,7 @@ elfobj *elf_open(const char *filename)
 		goto err_close;
 	elf->len = st.st_size;
 
- 	elf->data = mmap(0, elf->len, PROT_READ, MAP_SHARED, elf->fd, 0);
+	elf->data = mmap(0, elf->len, PROT_READ, MAP_SHARED, elf->fd, 0);
 	if (elf->data == MAP_FAILED)
 		goto err_close;
 	elf->data_end = elf->data + elf->len;

@@ -58,4 +58,11 @@ bool tty_init(const int, const size_t);
 bool tty_lock(const char *);
 bool tty_unlock(const char *);
 
+#ifndef HAVE_FSEEKO
+# define fseeko(stream, offset, whence) fseek(stream, offset, whence)
+#endif
+#ifndef HAVE_FTELLO
+# define ftello(stream) ftell(stream)
+#endif
+
 #endif
