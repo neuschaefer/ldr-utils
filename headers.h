@@ -36,6 +36,9 @@
 # define HAVE_SYS_STAT_H 1
 # define HAVE_SYS_TYPES_H 1
 # define HAVE_SYS_WAIT_H 1
+# define HAVE_FSEEKO 1
+# define HAVE_FTELLO 1
+# define HAVE_MMAP 1
 # ifdef __linux__
 #  define HAVE_ENDIAN_H 1
 #  define HAVE_PTY_H 1
