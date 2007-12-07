@@ -21,6 +21,7 @@
 # define HAVE_FCNTL_H 1
 # define HAVE_GETOPT_H 1
 # define HAVE_LIBGEN_H 1
+# define HAVE_NETDB_H 1
 # define HAVE_PTHREAD_H 1
 # define HAVE_SIGNAL_H 1
 # define HAVE_STDBOOL_H 1
@@ -33,12 +34,17 @@
 # define HAVE_TIME_H 1
 # define HAVE_UNISTD_H 1
 # define HAVE_SYS_MMAN_H 1
+# define HAVE_SYS_SOCKET_H 1
 # define HAVE_SYS_STAT_H 1
 # define HAVE_SYS_TYPES_H 1
 # define HAVE_SYS_WAIT_H 1
+# define HAVE_ALARM 1
+# define HAVE_FDATASYNC 1
 # define HAVE_FSEEKO 1
 # define HAVE_FTELLO 1
+# define HAVE_GETADDRINFO 1
 # define HAVE_MMAP 1
+# define HAVE_USLEEP 1
 # ifdef __linux__
 #  define HAVE_ENDIAN_H 1
 #  define HAVE_PTY_H 1
@@ -74,6 +80,9 @@
 #endif
 #ifdef HAVE_LIBGEN_H
 # include <libgen.h>
+#endif
+#ifdef HAVE_NETDB_H
+# include <netdb.h>
 #endif
 #ifdef HAVE_PTHREAD_H
 # include <pthread.h>
@@ -114,11 +123,20 @@
 #ifdef HAVE_UTIL_H
 # include <util.h>
 #endif
+#ifdef HAVE_WINSOCK2_H
+# include <winsock2.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
 #ifdef HAVE_SYS_ENDIAN_H
 # include <sys/endian.h>
 #endif
 #ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
 #endif
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
@@ -182,6 +200,11 @@
 # elif _LDR_UTILS_ENDIAN == _LDR_UTILS_LITTLE_ENDIAN
 #  define ELF_DATA ELFDATA2LSB
 # endif
+#endif
+
+/* Crappy Windows compatibility for moronic behavior. */
+#ifndef O_BINARY
+# define O_BINARY 0
 #endif
 
 #endif

@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define to 1 if you have the `alarm' function. */
+#undef HAVE_ALARM
+
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 
@@ -18,11 +21,17 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Define to 1 if you have the `fdatasync' function. */
+#undef HAVE_FDATASYNC
+
 /* Define to 1 if you have the `fseeko' function. */
 #undef HAVE_FSEEKO
 
 /* Define to 1 if you have the `ftello' function. */
 #undef HAVE_FTELLO
+
+/* Define to 1 if you have the `getaddrinfo' function. */
+#undef HAVE_GETADDRINFO
 
 /* Define to 1 if you have the <getopt.h> header file. */
 #undef HAVE_GETOPT_H
@@ -41,6 +50,9 @@
 
 /* Define to 1 if you have the `mmap' function. */
 #undef HAVE_MMAP
+
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
 
 /* Define to 1 if you have the <pthread.h> header file. */
 #undef HAVE_PTHREAD_H
@@ -75,6 +87,9 @@
 /* Define to 1 if you have the <sys/mman.h> header file. */
 #undef HAVE_SYS_MMAN_H
 
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
 
@@ -93,8 +108,17 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the `usleep' function. */
+#undef HAVE_USLEEP
+
 /* Define to 1 if you have the <util.h> header file. */
 #undef HAVE_UTIL_H
+
+/* Define to 1 if you have the <winsock2.h> header file. */
+#undef HAVE_WINSOCK2_H
+
+/* Define to 1 if you have the <ws2tcpip.h> header file. */
+#undef HAVE_WS2TCPIP_H
 
 /* Name of package */
 #undef PACKAGE

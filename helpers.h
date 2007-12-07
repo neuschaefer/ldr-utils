@@ -58,11 +58,27 @@ bool tty_init(const int, const size_t);
 bool tty_lock(const char *);
 bool tty_unlock(const char *);
 
+#ifndef HAVE_ALARM
+# define alarm(seconds)
+# define SIGALRM 0
+#endif
+#ifndef HAVE_FDATASYNC
+# define fdatasync(fd)
+#endif
 #ifndef HAVE_FSEEKO
 # define fseeko(stream, offset, whence) fseek(stream, offset, whence)
 #endif
 #ifndef HAVE_FTELLO
 # define ftello(stream) ftell(stream)
+#endif
+#ifndef HAVE_USLEEP
+# define usleep(usecs)
+#endif
+
+#ifndef HAVE_PTHREAD_H
+typedef int pthread_t;
+# define pthread_cancel(thread)
+# define pthread_create(thread, attr, func, arg)
 #endif
 
 #endif

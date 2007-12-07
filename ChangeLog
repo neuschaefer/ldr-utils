@@ -1,4 +1,12 @@
 ------------------------------------------------------------------------
+r1905 | vapier | 2007-11-16 14:37:57 -0500 (Fri, 16 Nov 2007) | 1 line
+
+POSIX systems provide fseeko/ftello/mmap
+------------------------------------------------------------------------
+r1900 | vapier | 2007-11-14 18:09:36 -0500 (Wed, 14 Nov 2007) | 1 line
+
+add support for cross-compiling for windows targets via mingw
+------------------------------------------------------------------------
 r1879 | vapier | 2007-11-05 16:14:03 -0500 (Mon, 05 Nov 2007) | 1 line
 
 add BF547 to accepted list

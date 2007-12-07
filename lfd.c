@@ -553,7 +553,7 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
 
 /*
  * ldr_send()
- * Transmit the specified ldr over the serial line to a BF537.  Used when
+ * Transmit the specified ldr over the serial line to the Blackfin.  Used when
  * you want to boot over the UART.
  *
  * The way this works is:
@@ -565,7 +565,256 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
  *    it is ready for more ... we let the kernel worry about this crap
  *    in the call to write()
  */
+struct ldr_load_method {
+	bool (*init)(void **void_state, const struct ldr_load_options *opts);
+	int (*open)(void *void_state);
+	int (*close)(void *void_state);
+	void (*flush)(void *void_state);
+};
+
 #ifdef HAVE_TERMIOS_H
+static struct termios stdin_orig_attrs;
+void ldr_ldr_load_method_tty_restore_stdin_attrs(void)
+{
+	tcsetattr(0, TCSANOW, &stdin_orig_attrs);
+}
+struct ldr_load_method_tty_state {
+	const struct ldr_load_options *opts;
+	bool tty_locked;
+	char *tty;
+	int fd;
+};
+static bool ldr_load_method_tty_init(void **void_state, const struct ldr_load_options *opts)
+{
+	struct ldr_load_method_tty_state *state;
+	char *tty;
+
+	*void_state = state = xmalloc(sizeof(*state));
+	state->opts = opts;
+	state->fd = -1;
+	tty = state->tty = strdup(state->opts->tty);
+
+	if (!strncmp("tty:", tty, 4))
+		memmove(tty, tty+4, strlen(tty)-4+1);
+
+	state->tty_locked = tty_lock(tty);
+	if (!state->tty_locked) {
+		if (!force) {
+			warn("tty '%s' is locked", tty);
+			return false;
+		} else
+			warn("ignoring lock for tty '%s'", tty);
+	}
+
+	struct termios stdin_attrs;
+	tcgetattr(0, &stdin_orig_attrs);
+	atexit(ldr_ldr_load_method_tty_restore_stdin_attrs);
+	stdin_attrs = stdin_orig_attrs;
+	stdin_attrs.c_lflag &= ~(ECHO | ICANON);
+	tcsetattr(0, TCSADRAIN, &stdin_attrs);
+
+	return true;
+}
+static int ldr_load_method_tty_open(void *void_state)
+{
+	struct ldr_load_method_tty_state *state = void_state;
+	const char *tty = state->tty;
+
+	printf("Opening %s ... ", tty);
+	if (tty[0] != '#') {
+		state->fd = open(tty, O_RDWR);
+		if (state->fd == -1)
+			goto out;
+	} else
+		state->fd = atoi(tty+1);
+	printf("OK!\n");
+
+	printf("Configuring terminal I/O ... ");
+	if (!tty_init(state->fd, state->opts->baud)) {
+		if (!force) {
+			perror("Failed");
+			goto out;
+		} else
+			perror("Skipping");
+	} else
+		printf("OK!\n");
+
+ out:
+	return state->fd;
+}
+static int ldr_load_method_tty_close(void *void_state)
+{
+	struct ldr_load_method_tty_state *state = void_state;
+	int ret = close(state->fd);
+	if (state->tty_locked)
+		tty_unlock(state->tty);
+	free(state->tty);
+	free(state);
+	return ret;
+}
+static void ldr_load_method_tty_flush(void *void_state)
+{
+	struct ldr_load_method_tty_state *state = void_state;
+	tcdrain(state->fd);
+}
+struct ldr_load_method ldr_load_method_tty = {
+	.init  = ldr_load_method_tty_init,
+	.open  = ldr_load_method_tty_open,
+	.close = ldr_load_method_tty_close,
+	.flush = ldr_load_method_tty_flush,
+};
+#else
+static bool ldr_load_method_tty_init(void **void_state, const struct ldr_load_options *opts)
+{
+	err("your system does not support POSIX termios functionality");
+	return false;
+}
+struct ldr_load_method ldr_load_method_tty = {
+	.init  = ldr_load_method_tty_init,
+};
+# define tty_get_baud(fd) 0
+#endif
+
+#ifdef HAVE_GETADDRINFO
+struct ldr_load_method_network_state {
+	const struct ldr_load_options *opts;
+	char *host, *port;
+	int domain, type;
+	int fd;
+};
+static bool ldr_load_method_network_init(void **void_state, const struct ldr_load_options *opts)
+{
+	struct ldr_load_method_network_state *state;
+	char *host, *port;
+	size_t i;
+
+	const struct {
+		const char *name;
+		int domain, type;
+	} domains[] = {
+		/*{ "unix",  PF_UNIX,  SOCK_STREAM, },*/
+		/*{ "local", PF_LOCAL, SOCK_STREAM, },*/
+		{ "tcp",   PF_INET,  SOCK_STREAM, },
+		{ "udp",   PF_INET,  SOCK_DGRAM,  },
+	};
+
+	*void_state = state = xmalloc(sizeof(*state));
+	state->opts = opts;
+	state->fd = -1;
+	host = state->host = strdup(state->opts->tty);
+
+	for (i = 0; i < ARRAY_SIZE(domains); ++i) {
+		size_t len = strlen(domains[i].name);
+		if (!strncmp(domains[i].name, host, len) && host[len] == ':') {
+			memmove(host, host+len, strlen(host)-len+1);
+ jump_back_in:
+			state->domain = domains[i].domain;
+			state->type = domains[i].type;
+			break;
+		}
+	}
+	if (i == ARRAY_SIZE(domains)) {
+		/* assume tcp ... */
+		i = 0;
+		goto jump_back_in;
+	}
+
+	port = strchr(host, ':');
+	if (!port || !port[1])
+		goto error;
+	*port++ = '\0';
+	state->port = port;
+
+	if (strchr(port, ':'))
+		goto error;
+
+	return true;
+
+ error:
+	warn("Invalid remote target specification");
+	free(state->host);
+	free(state);
+	errno = EINVAL;
+	return false;
+}
+static int ldr_load_method_network_open(void *void_state)
+{
+	struct ldr_load_method_network_state *state = void_state;
+	struct addrinfo hints;
+	struct addrinfo *results, *res;
+	int s;
+
+	printf("Connecting to remote target '%s' on port '%s' ... ", state->host, state->port);
+
+	memset(&hints, 0x00, sizeof(hints));
+	hints.ai_flags = 0;
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = state->type;
+	hints.ai_protocol = 0;
+
+	s = getaddrinfo(state->host, state->port, &hints, &results);
+	if (s) {
+		warn("Failed: %s", gai_strerror(s));
+		errno = EHOSTUNREACH;
+		goto out;
+	}
+
+	for (res = results; res; res = res->ai_next) {
+		state->fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+		if (state->fd < 0)
+			goto out;
+
+		if (connect(state->fd, res->ai_addr, res->ai_addrlen) != -1)
+			break;
+
+		close(state->fd);
+		state->fd = -1;
+	}
+
+	printf("OK!\n");
+
+ out:
+	return state->fd;
+}
+static int ldr_load_method_network_close(void *void_state)
+{
+	struct ldr_load_method_network_state *state = void_state;
+	int ret = close(state->fd);
+	free(state->host);
+	free(state);
+	return ret;
+}
+static void ldr_load_method_network_flush(void *void_state)
+{
+	struct ldr_load_method_network_state *state = void_state;
+	fdatasync(state->fd);
+}
+struct ldr_load_method ldr_load_method_network = {
+	.init  = ldr_load_method_network_init,
+	.open  = ldr_load_method_network_open,
+	.close = ldr_load_method_network_close,
+	.flush = ldr_load_method_network_flush,
+};
+#else
+static bool ldr_load_method_network_init(void **void_state, const struct ldr_load_options *opts)
+{
+	err("your system does not support POSIX network address functionality");
+	return false;
+}
+struct ldr_load_method ldr_load_method_network = {
+	.init  = ldr_load_method_network_init,
+};
+#endif
+
+static struct ldr_load_method *ldr_load_method_detect(const char *device)
+{
+	char *prot = strchr(device, ':');
+	if (!prot || !strncmp(device, "tty:", 4))
+		return &ldr_load_method_tty;
+	else
+		return &ldr_load_method_network;
+}
+
 static void ldr_send_timeout(int sig)
 {
 	warn("received signal %i: timeout while sending; aborting", sig);
@@ -603,11 +852,6 @@ static void *ldr_read_board(void *arg)
 
 	return NULL;
 }
-static struct termios stdin_orig_attrs;
-void ldr_restore_stdin_attrs(void)
-{
-	tcsetattr(0, TCSANOW, &stdin_orig_attrs);
-}
 static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 {
 	const struct ldr_load_options *opts = void_opts;
@@ -615,52 +859,31 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	const char *tty = opts->tty;
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
 	int fd = -1;
-	bool ok = false, prompt = opts->prompt, tty_locked;
+	bool ok = false, prompt = opts->prompt;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
+	struct ldr_load_method *method;
+	void *state;
 	pthread_t reader;
-	struct termios stdin_attrs;
 
-	tty_locked = tty_lock(tty);
-	if (!tty_locked) {
-		if (!force) {
-			warn("tty '%s' is locked", tty);
-			return false;
-		} else
-			warn("ignoring lock for tty '%s'", tty);
-	}
-
-	setbuf(stdout, NULL);
-
-	tcgetattr(0, &stdin_orig_attrs);
-	atexit(ldr_restore_stdin_attrs);
-	stdin_attrs = stdin_orig_attrs;
-	stdin_attrs.c_lflag &= ~(ECHO | ICANON);
-	tcsetattr(0, TCSADRAIN, &stdin_attrs);
-	setbuf(stdin, NULL);
+	method = ldr_load_method_detect(tty);
+	if (!method)
+		err("No load handler for '%s' available\n", tty);
 
 	old_alarm = signal(SIGALRM, ldr_send_timeout);
 
-	alarm(10);
-	printf("Opening %s ... ", tty);
-	if (tty[0] != '#') {
-		fd = open(tty, O_RDWR);
-		if (fd == -1)
-			goto out;
-	} else
-		fd = atoi(tty+1);
-	printf("OK!\n");
+	if (!method->init(&state, opts))
+		goto out;
 
-	printf("Configuring terminal I/O ... ");
-	if (!tty_init(fd, opts->baud)) {
-		if (!force) {
-			perror("Failed");
-			goto out;
-		} else
-			perror("Skipping");
-	} else
-		printf("OK!\n");
+	setbuf(stdout, NULL);
+	setbuf(stdin, NULL);
+
+	alarm(10);
+
+	fd = method->open(state);
+	if (fd == -1)
+		goto out;
 
 	if (prompt)
 		ldr_send_prompt("Press any key to send autobaud");
@@ -670,7 +893,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	ret = write(fd, "@", 1);
 	if (ret != 1)
 		goto out;
-	tcdrain(fd);
+	method->flush(state);
 	printf("OK!\n");
 
 	if (prompt)
@@ -710,7 +933,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 		ret = write(fd, ldr->header, ldr->header_size);
 		if (ret != (ssize_t)ldr->header_size)
 			goto pout;
-		tcdrain(fd);
+		method->flush(state);
 		printf("OK!\n");
 	}
 
@@ -733,7 +956,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 			ret = write(fd, block->header, block->header_size);
 			if (ret != (ssize_t)block->header_size)
 				goto pout;
-			tcdrain(fd);
+			method->flush(state);
 
 			if (prompt && block->data != NULL)
 				if (ldr_send_prompt("Press any key to send block data") == 'c')
@@ -745,7 +968,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 				ret = write(fd, block->data, block->data_size);
 				if (ret != (ssize_t)block->data_size)
 					goto pout;
-				tcdrain(fd);
+				method->flush(state);
 			}
 
 			if (!prompt) {
@@ -770,19 +993,11 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	if (!ok)
 		perror("Failed");
 	if (fd != -1)
-		close(fd);
+		method->close(state);
 	alarm(0);
 	signal(SIGALRM, old_alarm);
-	if (tty_locked)
-		ok &= tty_unlock(tty);
 	return ok;
 }
-#else
-static bool ldr_load_uart(LFD *alfd, const void *void_opts)
-{
-	err("your system does not support POSIX termios functionality");
-}
-#endif
 bool lfd_load_uart(LFD *alfd, const void *opts)
 {
 	if (!alfd->is_open) {
