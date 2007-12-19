@@ -28,7 +28,7 @@ ldr: ldr.o helpers.o ldr_elf.o \
 	$(patsubst %.c,%.o,$(wildcard lfd*.c))
 
 .depend: $(wildcard *.c *.h)
-	$(CC) $(CPPFLAGS) -MM *.c > .depend
+	-$(CC) $(CPPFLAGS) -MM *.c > .depend
 
 INSTALL := install -g 0 -o 0
 install:
