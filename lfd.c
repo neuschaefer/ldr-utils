@@ -655,7 +655,8 @@ static int ldr_load_method_tty_close(void *void_state)
 static void ldr_load_method_tty_flush(void *void_state)
 {
 	struct ldr_load_method_tty_state *state = void_state;
-	tcdrain(state->fd);
+	if (tcdrain(state->fd))
+		perror("tcdrain failed");
 }
 struct ldr_load_method ldr_load_method_tty = {
 	.init  = ldr_load_method_tty_init,
@@ -787,7 +788,8 @@ static int ldr_load_method_network_close(void *void_state)
 static void ldr_load_method_network_flush(void *void_state)
 {
 	struct ldr_load_method_network_state *state = void_state;
-	fdatasync(state->fd);
+	if (fdatasync(state->fd))
+		perror("fdatasync failed");
 }
 struct ldr_load_method ldr_load_method_network = {
 	.init  = ldr_load_method_network_init,
@@ -972,10 +974,8 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 			}
 
 			if (!prompt) {
-				if (opts->sleep_time) {
-					if (b < ldr->dxes[d].num_blocks - 1)
-						usleep(opts->sleep_time);
-				}
+				if (opts->sleep_time)
+					usleep(opts->sleep_time);
 				ldr_send_erase_output(del);
 			}
 		}
@@ -993,7 +993,8 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	if (!ok)
 		perror("Failed");
 	if (fd != -1)
-		method->close(state);
+		if (method->close(state))
+			perror("close failed");
 	alarm(0);
 	signal(SIGALRM, old_alarm);
 	return ok;
