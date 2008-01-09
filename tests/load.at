@@ -6,7 +6,11 @@ Loading LDR ldrs/uart.ldr ... OK!
 ldr: target 'BF531' does not support booting via UART
 ])
 
-AT_LDR_CHECK(LDR_BINARY -T BF536 -l LDRS_DIR/uart.ldr nonexistent-output, [1], [dnl
+AT_LDR_CHECK([
+dnl this should probably be $(localstatedir) ...
+test -e /var/lock/LCK..nonexistent-output && rm -f /var/lock/LCK..nonexistent-output
+LDR_BINARY -T BF536 -l LDRS_DIR/uart.ldr nonexistent-output
+], [1], [dnl
 Loading LDR ldrs/uart.ldr ... OK!
 Opening nonexistent-output ... ], [dnl
 Failed: No such file or directory
