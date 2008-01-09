@@ -153,4 +153,26 @@ dnl leading gap (since we couldn't split the punched block)
     Block  3 0x00007436: 0xFF800000 0x00001C70 0x8002 ( resvect final )
 ])
 
+AT_LDR_CHECK([dnl
+LDR_BINARY -T bf526 -c final-split.ldr ELFS_DIR/final-split.elf -b 0x100
+LDR_BINARY -qs final-split.ldr
+], [0], [dnl
+Creating LDR final-split.ldr ...
+ Adding DXE 'elfs/final-split.elf' ... [[jump block] [ELF block: 2048 @ 0xFFA08000]] OK!
+Done!
+  DXE 1 at 0x00000000:
+              Offset      BlockCode  Address    Bytes      Argument
+    Block  1 0x00000000: 0xAD075001 0xFFA00000 0x00000000 0x000008AC ( 8bit-dma-from-8bit ignore first )
+    Block  2 0x00000010: 0xADDD0001 0xFFA00000 0x0000000C 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  3 0x0000002C: 0xAD500001 0xFFA08000 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  4 0x0000013C: 0xAD510001 0xFFA08100 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  5 0x0000024C: 0xAD520001 0xFFA08200 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  6 0x0000035C: 0xAD530001 0xFFA08300 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  7 0x0000046C: 0xAD540001 0xFFA08400 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  8 0x0000057C: 0xAD550001 0xFFA08500 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block  9 0x0000068C: 0xAD560001 0xFFA08600 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block 10 0x0000079C: 0xAD570001 0xFFA08700 0x00000100 0xDEADBEEF ( 8bit-dma-from-8bit )
+    Block 11 0x000008AC: 0xAD738001 0xFFA00000 0x00000000 0x00000000 ( 8bit-dma-from-8bit final )
+])
+
 AT_CLEANUP
