@@ -213,9 +213,6 @@ bool lfd_read(LFD *alfd)
 		} else
 			block->data = NULL;
 		pos += header_len;
-
-		if (final)
-			break;
 	} while (1);
 
 	alfd->private_data = ldr;
