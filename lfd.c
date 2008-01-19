@@ -1,7 +1,7 @@
 /*
  * File: lfd_common.c
  *
- * Copyright 2006-2007 Analog Devices Inc.
+ * Copyright 2006-2008 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
@@ -631,7 +631,7 @@ static int ldr_load_method_tty_open(void *void_state)
 	printf("OK!\n");
 
 	printf("Configuring terminal I/O ... ");
-	if (!tty_init(state->fd, state->opts->baud)) {
+	if (!tty_init(state->fd, state->opts->baud, state->opts->ctsrts)) {
 		if (!force) {
 			perror("Failed");
 			goto out;

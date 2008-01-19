@@ -1,7 +1,7 @@
 /*
  * File: ldr.h
  *
- * Copyright 2006-2007 Analog Devices Inc.
+ * Copyright 2006-2008 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
@@ -58,6 +58,7 @@ struct ldr_create_options {
 struct ldr_load_options {
 	const char *tty;              /* path to the TTY for board */
 	size_t baud;                  /* baud rate to send LDR */
+	bool ctsrts;                  /* use hardware flow control */
 	bool prompt;                  /* prompt before every communication step */
 	int sleep_time;               /* time (in usecs) to sleep between blocks */
 };

@@ -1,7 +1,7 @@
 /*
  * File: helpers.c
  *
- * Copyright 2006-2007 Analog Devices Inc.
+ * Copyright 2006-2008 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
@@ -129,7 +129,7 @@ size_t tty_get_baud(const int fd)
  *  - make sure we are not running in ICANON mode
  *  - set speed to 115200 so transfers go fast
  */
-bool tty_init(const int fd, const size_t baud)
+bool tty_init(const int fd, const size_t baud, const bool ctsrts)
 {
 	const speed_t speed = tty_baud_to_speed(baud);
 	struct termios term;
@@ -143,7 +143,7 @@ bool tty_init(const int fd, const size_t baud)
 		return false;
 	term.c_iflag = IGNBRK | IGNPAR;
 	term.c_oflag = 0;
-	term.c_cflag = CS8 | CREAD | CLOCAL | CRTSCTS;
+	term.c_cflag = CS8 | CREAD | CLOCAL | (ctsrts ? CRTSCTS : 0);
 	term.c_lflag = 0;
 	if (verbose)
 		printf("[setattr] ");

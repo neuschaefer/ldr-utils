@@ -1,7 +1,7 @@
 /*
  * File: ldr.c
  *
- * Copyright 2006-2007 Analog Devices Inc.
+ * Copyright 2006-2008 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
@@ -115,15 +115,17 @@ static struct option_help const create_opts_help[] = {
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
 
-#define LOAD_PARSE_FLAGS COMMON_FLAGS "b:pD:"
+#define LOAD_PARSE_FLAGS COMMON_FLAGS "b:CpD:"
 static struct option const load_long_opts[] = {
-	{"baud",      a_argument, NULL, 'b'},
-	{"prompt",   no_argument, NULL, 'p'},
-	{"delay",     a_argument, NULL, 'D'},
+	{"baud",          a_argument, NULL, 'b'},
+	{"ctsrts",       no_argument, NULL, 'C'},
+	{"prompt",       no_argument, NULL, 'p'},
+	{"delay",         a_argument, NULL, 'D'},
 	COMMON_LONG_OPTS
 };
 static struct option_help const load_opts_help[] = {
 	{"Set baud rate (default 115200)",           "<baud>"},
+	{"Enable hardware flow control",             NULL},
 	{"Prompt for data flow",                     NULL},
 	{"Interblock delay (1 second)",              "<usecs>"},
 	COMMON_HELP_OPTS
@@ -151,7 +153,7 @@ static void show_some_usage(const char *subcommand, struct option const opts[],
 	for (i = 0; opts[i].name; ++i) {
 		if (!help[i].desc)
 			err("someone forgot to update the help text");
-		printf("  -%c, --%-10s %-15s * %s\n",
+		printf("  -%c, --%-15s %-15s * %s\n",
 		       opts[i].val, opts[i].name,
 		       (help[i].opts != NULL ? help[i].opts :
 		          (opts[i].has_arg == no_argument ? "" : "<arg>")),
@@ -256,6 +258,7 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 	struct ldr_load_options opts = {
 		.tty = NULL,
 		.baud = 115200,
+		.ctsrts = false,
 		.prompt = false,
 		.sleep_time = 1000000,
 	};
@@ -263,6 +266,7 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 	while ((i=getopt_long(argc, argv, LOAD_PARSE_FLAGS, load_long_opts, NULL)) != -1) {
 		switch (i) {
 			case 'b': opts.baud = atoi(optarg); break;
+			case 'C': opts.ctsrts = true; break;
 			case 'p': opts.prompt = true; break;
 			case 'D': opts.sleep_time = atoi(optarg); break;
 			case 'h': show_load_usage(0);

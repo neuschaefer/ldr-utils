@@ -1,7 +1,7 @@
 /*
  * File: helpers.h
  *
- * Copyright 2006-2007 Analog Devices Inc.
+ * Copyright 2006-2008 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
@@ -54,7 +54,7 @@ bool parse_bool(const char *);
 ssize_t read_retry(int, void *, size_t);
 
 size_t tty_get_baud(const int);
-bool tty_init(const int, const size_t);
+bool tty_init(const int, const size_t, const bool);
 bool tty_lock(const char *);
 bool tty_unlock(const char *);
 
