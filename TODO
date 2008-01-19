@@ -46,3 +46,7 @@ Verify multi-DXE works for BF548 ... when DXE_FINAL is set, we scan to the
 
 Make sure we treat the count field as signed or unsigned depending on
 	how it's used.
+
+Make output clobber by default.
+
+Add an -o for output option to be like toolchain.
