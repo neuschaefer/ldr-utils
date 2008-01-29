@@ -63,7 +63,7 @@ bool tty_unlock(const char *);
 # define SIGALRM 0
 #endif
 #ifndef HAVE_FDATASYNC
-# define fdatasync(fd)
+# define fdatasync(fd) (void)0
 #endif
 #ifndef HAVE_FSEEKO
 # define fseeko(stream, offset, whence) fseek(stream, offset, whence)
@@ -72,7 +72,7 @@ bool tty_unlock(const char *);
 # define ftello(stream) ftell(stream)
 #endif
 #ifndef HAVE_USLEEP
-# define usleep(usecs)
+# define usleep(usecs) (void)0
 #endif
 
 #ifndef HAVE_PTHREAD_H
