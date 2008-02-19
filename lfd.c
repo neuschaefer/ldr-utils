@@ -301,7 +301,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 	size_t i = 0;
 	int fd;
 
-	fd = open(outfile, O_RDWR|O_CREAT|O_TRUNC| (force?0:O_EXCL), 00666); /* we just want +rw ... let umask sort out the rest */
+	fd = open(outfile, O_RDWR|O_CREAT|O_TRUNC, 00666); /* we just want +rw ... let umask sort out the rest */
 	if (fd == -1)
 		return false;
 
