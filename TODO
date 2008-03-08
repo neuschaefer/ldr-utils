@@ -11,6 +11,9 @@ Document/comment more things
 Tweak ELF code to handle LSB/MSB 32bit/64bit ... not really needed until we
 	have a blackfin chip that handles MSB or 64bit ...
 
+Code base not entirely clean with large file handling on 32bit systems.  But
+	it isn't realistic to have an LDR that large, so don't really care ...
+
 Parse ELF '.processor' section which VDSP produces ?
 	Format of .processor:
 		byte offset into .strtab section for null terminated string which

@@ -175,4 +175,14 @@ Done!
     Block 11 0x000008AC: 0xAD738001 0xFFA00000 0x00000000 0x00000000 ( 8bit-dma-from-8bit final )
 ])
 
+dnl verify both the bf53x and the bf54x handlers work the same way
+AT_LDR_CHECK([dnl
+LDR_BINARY --quiet -T bf523 -c excessive-split.ldr ELFS_DIR/final-split.elf --punchit 0x10000:0x10
+], [1], [], [ldr: Punching holes beyond the end of an LDR is not supported
+])
+AT_LDR_CHECK([dnl
+LDR_BINARY --quiet -T bf531 -c excessive-split.ldr ELFS_DIR/final-split.elf --punchit 0x10000:0x10
+], [1], [], [ldr: Punching holes beyond the end of an LDR is not supported
+])
+
 AT_CLEANUP

@@ -252,7 +252,8 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 	 */
 	if (opts->hole.offset) {
 		size_t off = ftello(fp);
-		if (opts->hole.offset > off && opts->hole.offset < off + LDR_BLOCK_HEADER_LEN + count) {
+		uint32_t disk_count = (src ? count : 0);
+		if (opts->hole.offset > off && opts->hole.offset < off + LDR_BLOCK_HEADER_LEN + disk_count) {
 			uint32_t hole_count = opts->hole.length;
 
 			if (dxe_flags & DXE_BLOCK_INIT)
@@ -266,7 +267,7 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 					err("Unable to punch a hole soon enough");
 				else
 					hole_count += (opts->hole.offset - off - LDR_BLOCK_HEADER_LEN);
-			} else {
+			} else if (src) {
 				/* squeeze out a little of this block first */
 				uint32_t split_count = ssplit_count;
 				ret &= _bf548_lfd_write_header(fp, block_code, addr, split_count, argument);
@@ -274,7 +275,8 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 				src += split_count;
 				addr += split_count;
 				count -= split_count;
-			}
+			} else
+				err("Punching holes with fill blocks?");
 
 			/* finally write out hole */
 			ret &= _bf548_lfd_write_header(fp, block_code | BFLAG_IGNORE, 0, hole_count, 0xBAADF00D);

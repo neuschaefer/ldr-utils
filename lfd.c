@@ -477,6 +477,10 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 
 		elf_close(elf);
 
+		/* make sure the requested punch was not beyond the end of the LDR */
+		if (opts->hole.offset > (size_t)lseek(fd, 0, SEEK_CUR))
+			err("Punching holes beyond the end of an LDR is not supported");
+
 		if (!quiet)
 			printf("OK!\n");
 	}
