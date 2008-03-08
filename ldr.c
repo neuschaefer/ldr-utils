@@ -13,7 +13,7 @@
 
 static const char *rcsid = "$Id$";
 const char *argv0;
-int force = 0, verbose = 0, quiet = 0;
+int force = 0, verbose = 0, quiet = 0, debug = 0;
 
 
 struct option_help {
@@ -25,6 +25,7 @@ struct option_help {
 	{"force",    no_argument, NULL, 'f'}, \
 	{"verbose",  no_argument, NULL, 'v'}, \
 	{"quiet",    no_argument, NULL, 'q'}, \
+	{"debug",    no_argument, NULL, 0x1}, \
 	{"help",     no_argument, NULL, 'h'}, \
 	{"version",  no_argument, NULL, 'V'}, \
 	{NULL,       no_argument, NULL, 0x0}
@@ -32,6 +33,7 @@ struct option_help {
 	{"Ignore problems",          NULL}, \
 	{"Make a lot of noise",      NULL}, \
 	{"Only show errors",         NULL}, \
+	{"Enable debugging",         NULL}, \
 	{"Print this help and exit", NULL}, \
 	{"Print version and exit",   NULL}, \
 	{NULL,NULL}
@@ -39,6 +41,7 @@ struct option_help {
 	case 'f': ++force; break; \
 	case 'v': ++verbose; break; \
 	case 'q': ++quiet; break; \
+	case 0x1: ++debug; break; \
 	case 'V': show_version(); \
 	case ':': err("Option '%c' is missing parameter", optopt); \
 	case '?': err("Unknown option '%c' or argument missing", (optopt ? : '?')); \
@@ -153,8 +156,11 @@ static void show_some_usage(const char *subcommand, struct option const opts[],
 	for (i = 0; opts[i].name; ++i) {
 		if (!help[i].desc)
 			err("someone forgot to update the help text");
-		printf("  -%c, --%-15s %-15s * %s\n",
-		       opts[i].val, opts[i].name,
+		if (opts[i].val < 0x10)
+			printf("  -%c, ", opts[i].val);
+		else
+			printf("      ");
+		printf("--%-15s %-15s * %s\n", opts[i].name,
 		       (help[i].opts != NULL ? help[i].opts :
 		          (opts[i].has_arg == no_argument ? "" : "<arg>")),
 		       help[i].desc);
@@ -413,6 +419,42 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		argv[0] = new_argv0; \
 	} while (0)
 
+static void prog_failure_signaled(int sig)
+{
+	/* strsignal() is not portable */
+	const char *signame;
+	switch (sig) {
+		case SIGSEGV: signame = "SIGSEGV"; break;
+		case SIGILL:  signame = "SIGILL"; break;
+		default:      signame = "???"; break;
+	}
+	printf("\n\nLDR failed at life after receiving signal %i (%s)!\n"
+		"Please report this in order to get it fixed\n", sig, signame);
+
+	/* auto launch gdb! */
+	if (debug) {
+		pid_t crashed_pid = getpid();
+		switch (fork()) {
+			case -1: break;
+			case 0: {
+				int ret;
+				char pid[10];
+				snprintf(pid, sizeof(pid), "%i", crashed_pid);
+				printf("\nAuto launching gdb!\n\n");
+				ret = execlp("gdb", "gdb", "--quiet", "--pid", pid, "-ex", "bt full", NULL);
+				_exit(ret);
+			}
+			default: {
+				int status;
+				wait(&status);
+			}
+		}
+	} else
+		error_backtrace();
+
+	_exit(1);
+}
+
 int main(int argc, char *argv[])
 {
 	typedef enum { SHOW, DUMP, LOAD, CREATE, NONE } actions;
@@ -420,6 +462,9 @@ int main(int argc, char *argv[])
 	const char *lfd_target = NULL;
 	bool ret = true;
 	int i;
+
+	signal(SIGSEGV, prog_failure_signaled);
+	signal(SIGILL, prog_failure_signaled);
 
 	argv0 = strrchr(argv[0], '/');
 	argv0 = (argv0 == NULL ? argv[0] : argv0+1);
