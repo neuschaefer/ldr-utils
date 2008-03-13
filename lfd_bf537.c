@@ -155,8 +155,7 @@ bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 
 	flags = 0;
 	if (!target_is(alfd, "BF531") &&
-	    !target_is(alfd, "BF532") &&
-	    !target_is(alfd, "BF538"))
+	    !target_is(alfd, "BF532"))
 		flags = LDR_FLAG_RESVECT;
 	default_init_addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
 	if (family_is(alfd, "BF537")) {
