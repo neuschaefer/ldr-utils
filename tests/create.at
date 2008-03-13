@@ -15,7 +15,7 @@ echo "### --- ###"
 LDR_BINARY --show post.ldr
 ], [0], [dnl
 Creating LDR post.ldr ...
- Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+ Adding DXE 'elfs/POST.dxe' ... [[jump block to 0xFFA00000] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
 Done!
 ### --- ###
 Showing LDR post.ldr ...
@@ -37,7 +37,7 @@ echo "### --- ###"
 LDR_BINARY --show bss.ldr
 ], [0], [dnl
 Creating LDR bss.ldr ...
- Adding DXE 'elfs/bss.elf' ... [[jump block] [ELF block: 968 @ 0x00000000] [ELF block: 1144 @ 0x000013C8]] OK!
+ Adding DXE 'elfs/bss.elf' ... [[jump block to 0x00000014] [ELF block: 968 @ 0x00000000] [ELF block: 1144 @ 0x000013C8]] OK!
 Done!
 ### --- ###
 Showing LDR bss.ldr ...
@@ -67,7 +67,7 @@ AT_LDR_CHECK([
 LDR_BINARY -T BF536 -c section.ldr ELFS_DIR/section.elf
 ], [0], [dnl
 Creating LDR section.ldr ...
- Adding DXE 'elfs/section.elf' ... [[init block 2] [jump block] [ELF block: 2 @ 0x00000000]] OK!
+ Adding DXE 'elfs/section.elf' ... [[init block 2] [jump block to 0x00000000] [ELF block: 2 @ 0x00000000]] OK!
 Done!
 ])
 
@@ -85,16 +85,16 @@ dnl if the first block is a load into L1 rather than an ignore
 LDR_BINARY --target BF533 --quiet -s hole-3x-expan.ldr
 ], [0], [dnl
 Creating LDR hole-4x-split.ldr ...
- Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+ Adding DXE 'elfs/POST.dxe' ... [[jump block to 0xFFA00000] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
 Done!
 Creating LDR hole-4x-expan.ldr ...
- Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+ Adding DXE 'elfs/POST.dxe' ... [[jump block to 0xFFA00000] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
 Done!
 Creating LDR hole-3x-split.ldr ...
- Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+ Adding DXE 'elfs/POST.dxe' ... [[jump block to 0xFFA00000] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
 Done!
 Creating LDR hole-3x-expan.ldr ...
- Adding DXE 'elfs/POST.dxe' ... [[jump block] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
+ Adding DXE 'elfs/POST.dxe' ... [[jump block to 0xFFA00000] [ELF block: 29612 @ 0xFFA00000] [ELF block: 7280 @ 0xFF800000]] OK!
 Done!
 ### --- ###
 dnl
@@ -158,7 +158,7 @@ LDR_BINARY -T bf526 -c final-split.ldr ELFS_DIR/final-split.elf -b 0x100
 LDR_BINARY -qs final-split.ldr
 ], [0], [dnl
 Creating LDR final-split.ldr ...
- Adding DXE 'elfs/final-split.elf' ... [[jump block] [ELF block: 2048 @ 0xFFA08000]] OK!
+ Adding DXE 'elfs/final-split.elf' ... [[jump block to 0xFFA08000] [ELF block: 2048 @ 0xFFA08000]] OK!
 Done!
   DXE 1 at 0x00000000:
               Offset      BlockCode  Address    Bytes      Argument
