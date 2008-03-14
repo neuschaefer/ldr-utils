@@ -50,6 +50,11 @@ Verify multi-DXE works for BF548 ... when DXE_FINAL is set, we scan to the
 Make sure we treat the count field as signed or unsigned depending on
 	how it's used.
 
-Make output clobber by default.
-
 Add an -o for output option to be like toolchain.
+
+Build up the LDR in memory before writing it all out to disk.  This way we can
+	do validation on the LDR and not have to worry about seeking all over the
+	disk.
+
+Check that the incoming ELF does not load on top of the trampoline block with
+	sections that are not the entry point.
