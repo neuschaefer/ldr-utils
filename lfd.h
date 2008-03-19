@@ -70,7 +70,7 @@ enum {
 void lfd_target_register(struct lfd_target *target);
 struct lfd_target *lfd_target_find(const char *target);
 
-#define target_is(alfd, target) (!strcmp(alfd->selected_target, target))
+#define target_is(alfd, target) (!strcasecmp(alfd->selected_target, target))
 
 static inline bool family_is(LFD *alfd, const char *family)
 {
