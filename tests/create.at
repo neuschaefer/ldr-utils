@@ -185,4 +185,31 @@ LDR_BINARY --quiet -T bf531 -c excessive-split.ldr ELFS_DIR/final-split.elf --pu
 ], [1], [], [ldr: Punching holes beyond the end of an LDR is not supported
 ])
 
+AT_LDR_CHECK([dnl
+for target in 531 532 533 534 536 537 538 539 561 ; do
+	for prefix in BF Bf bF bf ; do
+		echo LDR_BINARY -T $prefix$target -c res.ldr ELFS_DIR/POST.dxe
+		LDR_BINARY -T $prefix$target -c res.ldr ELFS_DIR/POST.dxe || exit 1
+		case ${target} in
+			531|532) exp="cleared";;
+			*)       exp="set";;
+		esac
+		LDR_BINARY -qs res.ldr
+		if LDR_BINARY -qs res.ldr | grep -qs resvect ; then
+			res="set"
+		else
+			res="cleared"
+		fi
+		if test "${exp}" != "${res}" ; then
+			echo "the expected resvect flag does not match reality for $prefix$target"
+			echo "  -- expected: '${exp}'"
+			echo "  -- reality:  '${res}'"
+			exit 1
+		else
+			echo
+		fi
+	done
+done
+], [0], [ignore], [ignore])
+
 AT_CLEANUP
