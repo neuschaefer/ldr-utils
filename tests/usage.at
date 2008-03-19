@@ -10,8 +10,8 @@ AT_LDR_CHECK(LDR_BINARY -T BAD .,  [1], [], [dnl
 ldr: unable to handle specified target: BAD
 ])
 
-AT_LDR_CHECK([
-for target in 522 523 524 525 526 527 531 532 533 534 536 537 542 544 547 548 549 561 ; do
+AT_LDR_CHECK([dnl
+for target in 522 523 524 525 526 527 531 532 533 534 536 537 538 539 542 544 547 548 549 561 ; do
 	for prefix in BF Bf bF bf ; do
 		if ! LDR_BINARY -T $prefix$target --show -h ; then
 			echo "Failed at $prefix$target"
