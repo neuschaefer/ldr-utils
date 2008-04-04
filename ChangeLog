@@ -1,4 +1,92 @@
 ------------------------------------------------------------------------
+r2206 | vapier | 2008-03-19 18:03:01 -0400 (Wed, 19 Mar 2008) | 1 line
+
+add a test for the BF53x and the resvect flags
+------------------------------------------------------------------------
+r2205 | vapier | 2008-03-19 18:02:32 -0400 (Wed, 19 Mar 2008) | 1 line
+
+add the 538/539 to the usage test
+------------------------------------------------------------------------
+r2204 | vapier | 2008-03-19 18:02:10 -0400 (Wed, 19 Mar 2008) | 1 line
+
+do case insensitive matching against target names so that BF### is the same as bf###
+------------------------------------------------------------------------
+r2189 | vapier | 2008-03-13 20:25:37 -0400 (Thu, 13 Mar 2008) | 1 line
+
+update TODO -- need to split filesystem logic with creation logic
+------------------------------------------------------------------------
+r2188 | vapier | 2008-03-13 17:52:02 -0400 (Thu, 13 Mar 2008) | 1 line
+
+announce the target of the jump block
+------------------------------------------------------------------------
+r2186 | vapier | 2008-03-13 04:05:43 -0400 (Thu, 13 Mar 2008) | 1 line
+
+newer loader manual says resvect flag gets set for BF538
+------------------------------------------------------------------------
+r2185 | vapier | 2008-03-13 04:02:29 -0400 (Thu, 13 Mar 2008) | 1 line
+
+the BF538/BF539 uses the same LDR format as the BF533
+------------------------------------------------------------------------
+r2184 | vapier | 2008-03-08 06:22:41 -0500 (Sat, 08 Mar 2008) | 1 line
+
+make sure we handle fill blocks and hole punching correctly
+------------------------------------------------------------------------
+r2183 | vapier | 2008-03-08 05:47:33 -0500 (Sat, 08 Mar 2008) | 1 line
+
+catch segv/ill signals and add a --debug option to auto launch gdb
+------------------------------------------------------------------------
+r2176 | vapier | 2008-02-18 21:43:00 -0500 (Mon, 18 Feb 2008) | 1 line
+
+like any standard tool, clobber the output by default
+------------------------------------------------------------------------
+r2169 | vapier | 2008-01-30 15:01:53 -0500 (Wed, 30 Jan 2008) | 1 line
+
+dont bother trying to silence warnings ... if your system sucks and lacks POSIX functions, then you get a warning while building
+------------------------------------------------------------------------
+r2161 | vapier | 2008-01-29 06:13:01 -0500 (Tue, 29 Jan 2008) | 1 line
+
+tweak the fdatasync()/usleep() stubs in case the functions get used in a statement as reported by Mark Noonchester on the forums
+------------------------------------------------------------------------
+r2151 | vapier | 2008-01-19 00:09:53 -0500 (Sat, 19 Jan 2008) | 1 line
+
+add an option to control hardware flow control and disable it by default as it can cause read/write hangs on ports that do not have crtrts hooked up
+------------------------------------------------------------------------
+r2150 | vapier | 2008-01-19 00:07:32 -0500 (Sat, 19 Jan 2008) | 1 line
+
+a few more things todo
+------------------------------------------------------------------------
+r2131 | vapier | 2008-01-09 17:20:08 -0500 (Wed, 09 Jan 2008) | 1 line
+
+add a test for final flag handling when the final block needs to be split
+------------------------------------------------------------------------
+r2130 | vapier | 2008-01-09 17:02:49 -0500 (Wed, 09 Jan 2008) | 1 line
+
+fix from Olaf W. J. Zerres so that if we are splitting the final block, we dont label each split block as final
+------------------------------------------------------------------------
+r2129 | vapier | 2008-01-09 16:52:24 -0500 (Wed, 09 Jan 2008) | 1 line
+
+clean /var/lock/LCK..nonexistent-output ahead of time so we dont worry about its output
+------------------------------------------------------------------------
+r2128 | vapier | 2008-01-09 16:12:47 -0500 (Wed, 09 Jan 2008) | 1 line
+
+do not stop parsing the LDR when the final flag is reached as an LDR with multiple DXEs will have the final flag set multiple times
+------------------------------------------------------------------------
+r2095 | vapier | 2008-01-03 19:21:47 -0500 (Thu, 03 Jan 2008) | 1 line
+
+add error checking to sync/close steps and restore sleep after final block in case the host system is buggy and doesnt properly flush the fd in the kernel upon application exit
+------------------------------------------------------------------------
+r2076 | vapier | 2007-12-19 19:44:00 -0500 (Wed, 19 Dec 2007) | 1 line
+
+add support for BF523/BF524/BF526
+------------------------------------------------------------------------
+r2070 | vapier | 2007-12-18 20:21:50 -0500 (Tue, 18 Dec 2007) | 1 line
+
+ignore errors from .depend generation
+------------------------------------------------------------------------
+r2032 | vapier | 2007-12-06 21:18:00 -0500 (Thu, 06 Dec 2007) | 1 line
+
+add support for loading LDRs via TCP/UDP/IP to remote systems
+------------------------------------------------------------------------
 r1905 | vapier | 2007-11-16 14:37:57 -0500 (Fri, 16 Nov 2007) | 1 line
 
 POSIX systems provide fseeko/ftello/mmap

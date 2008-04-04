@@ -1,4 +1,4 @@
-AC_INIT(ldr-utils, svn-1905, [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, svn-2206, [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10 dist-bzip2 no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
@@ -38,7 +38,7 @@ sys/types.h \
 sys/wait.h \
 ])
 
-AC_CHECK_FUNCS_ONCE([alarm fdatasync fseeko ftello getaddrinfo mmap usleep])
+AC_CHECK_FUNCS_ONCE([alarm fdatasync fork fseeko ftello getaddrinfo mmap usleep])
 
 AC_CHECK_LIB([util], [openpty], [PTY_LIB="-lutil"], [PTY_LIB=""])
 AC_SUBST([PTY_LIB])

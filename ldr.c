@@ -404,21 +404,6 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 }
 
 
-#define set_action(action) \
-	do { \
-		if (a != NONE) \
-			err("Cannot specify more than one action at a time"); \
-		a = action; \
-	} while (0)
-#define reload_sub_args(new_argv0) \
-	do { \
-		--optind; \
-		argc -= optind; \
-		argv += optind; \
-		optind = 0; \
-		argv[0] = new_argv0; \
-	} while (0)
-
 static void prog_failure_signaled(int sig)
 {
 	/* strsignal() is not portable */
@@ -431,6 +416,7 @@ static void prog_failure_signaled(int sig)
 	printf("\n\nLDR failed at life after receiving signal %i (%s)!\n"
 		"Please report this in order to get it fixed\n", sig, signame);
 
+#ifdef HAVE_FORK
 	/* auto launch gdb! */
 	if (debug) {
 		pid_t crashed_pid = getpid();
@@ -450,10 +436,27 @@ static void prog_failure_signaled(int sig)
 			}
 		}
 	} else
+#endif
 		error_backtrace();
 
 	_exit(1);
 }
+
+
+#define set_action(action) \
+	do { \
+		if (a != NONE) \
+			err("Cannot specify more than one action at a time"); \
+		a = action; \
+	} while (0)
+#define reload_sub_args(new_argv0) \
+	do { \
+		--optind; \
+		argc -= optind; \
+		argv += optind; \
+		optind = 0; \
+		argv[0] = new_argv0; \
+	} while (0)
 
 int main(int argc, char *argv[])
 {
