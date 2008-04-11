@@ -156,7 +156,7 @@ static void show_some_usage(const char *subcommand, struct option const opts[],
 	for (i = 0; opts[i].name; ++i) {
 		if (!help[i].desc)
 			err("someone forgot to update the help text");
-		if (opts[i].val < 0x10)
+		if (opts[i].val >= 0x10)
 			printf("  -%c, ", opts[i].val);
 		else
 			printf("      ");
