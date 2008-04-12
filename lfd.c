@@ -118,8 +118,8 @@ bool lfd_open(LFD *alfd, const char *filename)
 		alfd->target = lfd_target_find(alfd->selected_target);
 		if (!alfd->target)
 			return false;
-		else if (!quiet)
-			printf("auto detected LDR as '%s'\n", alfd->selected_target);
+		else if (verbose)
+			printf("auto detected LDR as '%s' compatible format\n", alfd->selected_target);
 	}
 
 	if (filename && alfd->target->iovec.open) {
