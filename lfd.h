@@ -97,17 +97,18 @@ static inline uint8_t compute_hdrchk(uint8_t *data, size_t len)
 }
 
 /* let the BF53x family share funcs for now */
-void *bf53x_lfd_read_block_header(struct lfd *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len);
-bool bf53x_lfd_display_dxe(struct lfd *alfd, size_t d);
-bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
+bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts);
+void *bf53x_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len);
+bool bf53x_lfd_display_dxe(LFD *alfd, size_t d);
+bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
                            const void *void_opts, uint32_t addr,
                            uint32_t count, void *src);
 uint32_t bf53x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill);
 
 /* let the BF52x and BF54x family share funcs */
-void *bf54x_lfd_read_block_header(struct lfd *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len);
-bool bf54x_lfd_display_dxe(struct lfd *alfd, size_t d);
-bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
+void *bf54x_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len);
+bool bf54x_lfd_display_dxe(LFD *alfd, size_t d);
+bool bf54x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
                            const void *void_opts, uint32_t addr,
                            uint32_t count, void *src);
 uint32_t bf54x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill);

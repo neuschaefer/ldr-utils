@@ -89,6 +89,7 @@ static struct option_help const dump_opts_help[] = {
 
 #define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:B:w:H:s:b:i:P:M"
 static struct option const create_long_opts[] = {
+	{"bmode",     a_argument, NULL, 0x2},
 	{"port",      a_argument, NULL, 'p'},
 	{"gpio",      a_argument, NULL, 'g'},
 	{"dma",       a_argument, NULL, 'd'},
@@ -103,6 +104,7 @@ static struct option const create_long_opts[] = {
 	COMMON_LONG_OPTS
 };
 static struct option_help const create_opts_help[] = {
+	{"(BF53x) Desired boot mode",           "<mode>"},
 	{"(BF53x) PORT for HWAIT signal",       "<F|G|H>"},
 	{"(BF53x) GPIO for HWAIT signal",       "<#>"},
 	{"(BF54x) DMA flag",                    "<#>"},
@@ -311,6 +313,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 	int i;
 
 	struct ldr_create_options opts = {
+		.bmode = NULL,
 		.port = '?',
 		.gpio = 0,
 		.dma = 1,
@@ -327,6 +330,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 
 	while ((i=getopt_long(argc, argv, CREATE_PARSE_FLAGS, create_long_opts, NULL)) != -1) {
 		switch (i) {
+			case 0x2: opts.bmode = optarg; break;
 			case 'p': opts.port = toupper(optarg[0]); break;
 			case 'g': opts.gpio = atoi(optarg); break;
 			case 'd': opts.dma = atoi(optarg); break;

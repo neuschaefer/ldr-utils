@@ -20,6 +20,7 @@ static struct lfd_target bf533_lfd_target = {
 	.iovec = {
 		.read_block_header = bf53x_lfd_read_block_header,
 		.display_dxe = bf53x_lfd_display_dxe,
+		.write_ldr = bf53x_lfd_write_ldr,
 		.write_block = bf53x_lfd_write_block,
 		.dump_block = bf53x_lfd_dump_block,
 	},

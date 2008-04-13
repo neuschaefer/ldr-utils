@@ -144,7 +144,48 @@ static void _bf53x_lfd_write_header(FILE *fp, uint16_t flags,
 	fwrite(&count, sizeof(count), 1, fp);
 	fwrite(&flags, sizeof(flags), 1, fp);
 }
-bool bf53x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
+
+bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
+{
+	const struct ldr_create_options *opts = void_opts;
+	FILE *fp = alfd->fp;
+	uint16_t flags;
+	uint32_t addr, count;
+
+	/* This dummy block is only needed in flash/fifo boot modes */
+	if (opts->bmode == NULL ||
+	    (strcasecmp(opts->bmode, "parallel") &&
+	     strcasecmp(opts->bmode, "fifo")))
+		return true;
+
+	/* The address field doubles up as extra flag bits:
+	 * 0x40: 8-bit flash, no dma
+	 * 0x60: 16-bit flash, 8-bit dma
+	 * 0x20: 16-bit flash, 16-bit dma
+	 */
+	addr = 0xFFA00000;
+	if (opts->flash_bits == 16) {
+		if (opts->dma == 8)
+			addr |= 0x60;
+		else
+			addr |= 0x20;
+	} else
+		addr |= 0x40;
+
+	/* this is what the manual says */
+	count = 0xCCCCCCCC;
+
+	/* make sure this block gets ignored */
+	flags = LDR_FLAG_IGNORE | LDR_FLAG_ZEROFILL;
+	if (!target_is(alfd, "BF531") &&
+	    !target_is(alfd, "BF532"))
+		flags |= LDR_FLAG_RESVECT;
+
+	_bf53x_lfd_write_header(fp, flags, addr, count);
+	return true;
+}
+
+bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
                            const void *void_opts, uint32_t addr,
                            uint32_t count, void *src)
 {
@@ -285,6 +326,7 @@ static struct lfd_target bf537_lfd_target = {
 	.iovec = {
 		.read_block_header = bf53x_lfd_read_block_header,
 		.display_dxe = bf53x_lfd_display_dxe,
+		.write_ldr = bf53x_lfd_write_ldr,
 		.write_block = bf53x_lfd_write_block,
 		.dump_block = bf53x_lfd_dump_block,
 	},

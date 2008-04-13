@@ -41,6 +41,7 @@ typedef struct {
 } hole;
 
 struct ldr_create_options {
+	char *bmode;                  /* (BF53x) Desired boot mode */
 	char port;                    /* (BF53x) PORT on CPU for HWAIT signals */
 	unsigned int gpio;            /* (BF53x) GPIO on CPU for HWAIT signals */
 	uint16_t dma;                 /* (BF54x) DMA setting */
