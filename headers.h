@@ -33,6 +33,7 @@
 # define HAVE_TERMIOS_H 1
 # define HAVE_TIME_H 1
 # define HAVE_UNISTD_H 1
+# define HAVE_ARPA_INET_H 1
 # define HAVE_NETINET_IN_H 1
 # define HAVE_NETINET_TCP_H 1
 # define HAVE_SYS_MMAN_H 1
@@ -131,6 +132,9 @@
 #endif
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+# include <arpa/inet.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>

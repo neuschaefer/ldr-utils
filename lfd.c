@@ -712,7 +712,7 @@ static bool ldr_load_method_network_init(void **void_state, const struct ldr_loa
 	for (i = 0; i < ARRAY_SIZE(domains); ++i) {
 		size_t len = strlen(domains[i].name);
 		if (!strncmp(domains[i].name, host, len) && host[len] == ':') {
-			memmove(host, host+len, strlen(host)-len+1);
+			memmove(host, host+len+1, strlen(host)-len+1);
  jump_back_in:
 			state->domain = domains[i].domain;
 			state->type = domains[i].type;
@@ -781,9 +781,11 @@ static int ldr_load_method_network_open(void *void_state)
 	}
 
 	if (state->fd >= 0) {
-		int on = 1;
-		if (setsockopt(state->fd, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)))
-			perror("setting TCP_NODELAY failed");
+		if (res->ai_protocol == IPPROTO_TCP) {
+			int on = 1;
+			if (setsockopt(state->fd, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)))
+				perror("setting TCP_NODELAY failed");
+		}
 		printf("OK!\n");
 	}
 
