@@ -734,6 +734,9 @@ static bool ldr_load_method_network_init(void **void_state, const struct ldr_loa
 	if (strchr(port, ':'))
 		goto error;
 
+	if (!*host)
+		goto error;
+
 	return true;
 
  error:
