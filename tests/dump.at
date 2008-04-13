@@ -10,7 +10,6 @@ for ldr in LDRS_DIR/*.ldr ; do
 done
 ], [0], [dnl
 Dumping LDR bf548.ldr ...
-auto detected LDR as 'BF548'
   Dumping DXE 0 to bf548.ldr-0.dxe
     Dumping block 1 to bf548.ldr-0.dxe-1.block
     Dumping block 2 to bf548.ldr-0.dxe-2.block
@@ -23,7 +22,6 @@ d41d8cd98f00b204e9800998ecf8427e  bf548.ldr-0.dxe-1.block
 d41d8cd98f00b204e9800998ecf8427e  bf548.ldr-0.dxe-30.block
 
 Dumping LDR spi.ldr ...
-auto detected LDR as 'BF537'
   Dumping DXE 0 to spi.ldr-0.dxe
     Dumping block 1 to spi.ldr-0.dxe-1.block
     Dumping block 2 to spi.ldr-0.dxe-2.block
@@ -38,7 +36,6 @@ c72ef8fb02b50b998531f4a4446a943d  spi.ldr-0.dxe-1.block
 fd73a9855486c9baa0b7c304086c7d53  spi.ldr-0.dxe-5.block
 
 Dumping LDR uart.ldr ...
-auto detected LDR as 'BF537'
   Dumping DXE 0 to uart.ldr-0.dxe
     Dumping block 1 to uart.ldr-0.dxe-1.block
     Dumping block 2 to uart.ldr-0.dxe-2.block

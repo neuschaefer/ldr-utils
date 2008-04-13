@@ -20,8 +20,7 @@ AT_LDR_CHECK([
 LDR_UART_LOADER LDR_BINARY --load --delay 0 LDRS_DIR/uart.ldr
 LDR_UART_LOADER LDR_BINARY --load --delay 0 LDRS_DIR/bf548.ldr
 ], [0], [dnl
-Loading LDR ldrs/uart.ldr ... auto detected LDR as 'BF537'
-OK!
+Loading LDR ldrs/uart.ldr ... OK!
 Opening #4 ... OK!
 Configuring terminal I/O ... OK!
 Trying to send autobaud ... OK!
@@ -31,8 +30,7 @@ Autobaud result: 115200bps 0.0mhz (header:0xBF DLL:0x00 DLH:0x00 fin:0x00)
 Sending blocks of DXE 1 ... [[1/8] (12%)           [2/8] (25%)           [3/8] (38%)           [4/8] (50%)           [5/8] (62%)           [6/8] (75%)           [7/8] (88%)           [8/8] (100%)            OK!]
 You may want to run minicom or kermit now
 Quick tip: run 'ldr <ldr> <tty> && minicom'
-Loading LDR ldrs/bf548.ldr ... auto detected LDR as 'BF548'
-OK!
+Loading LDR ldrs/bf548.ldr ... OK!
 Opening #4 ... OK!
 Configuring terminal I/O ... OK!
 Trying to send autobaud ... OK!

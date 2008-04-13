@@ -19,7 +19,6 @@ Creating LDR post.ldr ...
 Done!
 ### --- ###
 Showing LDR post.ldr ...
-auto detected LDR as 'BF548'
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
          Addr: 0xFFA00000 BCode: 0xAD7F5001 Bytes: 0x00000000 Args: 0x0000904C ( 8bit-dma-from-8bit ignore first )
@@ -41,7 +40,6 @@ Creating LDR bss.ldr ...
 Done!
 ### --- ###
 Showing LDR bss.ldr ...
-auto detected LDR as 'BF561'
   LDR header: A00000DE ( 8-bit-flash wait:15 hold:3 spi:500K )
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000

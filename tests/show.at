@@ -18,7 +18,7 @@ for ldr in LDRS_DIR/*.ldr ; do
 done
 ], [0], [dnl
 Showing LDR ldrs/bf548.ldr ...
-auto detected LDR as 'BF548'
+auto detected LDR as 'BF548' compatible format
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
 		Target Address: 0xFFA00000 ( L1 )
@@ -172,7 +172,6 @@ auto detected LDR as 'BF548'
 		      Argument: 0x00000000 ( 16bit-dma-from-16bit final )
 
 Showing LDR ldrs/bf548.ldr ...
-auto detected LDR as 'BF548'
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
          Addr: 0xFFA00000 BCode: 0xADF55006 Bytes: 0x00000000 Args: 0x00004312 ( 16bit-dma-from-16bit ignore first )
@@ -269,7 +268,7 @@ auto detected LDR as 'BF548'
     Block 30 0x00004312: 0xAD748006 0xFFA00000 0x00000000 0x00000000 ( 16bit-dma-from-16bit final )
 
 Showing LDR ldrs/spi.ldr ...
-auto detected LDR as 'BF537'
+auto detected LDR as 'BF537' compatible format
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
 		Target Address: 0xFF800040 ( L1 )
@@ -305,7 +304,6 @@ auto detected LDR as 'BF537'
 		         Flags: 0x8002     ( resvect final )
 
 Showing LDR ldrs/spi.ldr ...
-auto detected LDR as 'BF537'
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
          Addr: 0xFF800040 Bytes: 0x00000004 Flags: 0x0012 ( resvect ignore )
@@ -336,7 +334,7 @@ auto detected LDR as 'BF537'
     Block  8 0x00018162: 0x00019000 0x00006FD8 0x8002 ( resvect final )
 
 Showing LDR ldrs/uart.ldr ...
-auto detected LDR as 'BF537'
+auto detected LDR as 'BF537' compatible format
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
 		Target Address: 0xFF800040 ( L1 )
@@ -372,7 +370,6 @@ auto detected LDR as 'BF537'
 		         Flags: 0x84C2     ( portg gpio6 resvect final )
 
 Showing LDR ldrs/uart.ldr ...
-auto detected LDR as 'BF537'
   DXE 1 at 0x00000000:
     Block  1 at 0x00000000
          Addr: 0xFF800040 Bytes: 0x00000004 Flags: 0x04D2 ( portg gpio6 resvect ignore )
