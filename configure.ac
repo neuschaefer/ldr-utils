@@ -30,6 +30,7 @@ unistd.h \
 util.h \
 winsock2.h \
 ws2tcpip.h \
+arpa/inet.h \
 netinet/in.h \
 netinet/tcp.h \
 sys/endian.h \

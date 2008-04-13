@@ -1754,6 +1754,7 @@ ac_header_list="$ac_header_list unistd.h"
 ac_header_list="$ac_header_list util.h"
 ac_header_list="$ac_header_list winsock2.h"
 ac_header_list="$ac_header_list ws2tcpip.h"
+ac_header_list="$ac_header_list arpa/inet.h"
 ac_header_list="$ac_header_list netinet/in.h"
 ac_header_list="$ac_header_list netinet/tcp.h"
 ac_header_list="$ac_header_list sys/endian.h"
@@ -4629,6 +4630,10 @@ _ACEOF
 fi
 
 done
+
+
+
+
 
 
 
