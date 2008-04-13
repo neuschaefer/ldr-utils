@@ -140,6 +140,7 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = fake-loadee.c Makefile.in atlocal.in package.m4.in elfs/POST.dxe elfs/bad.elf elfs/bss.elf elfs/final-split.elf elfs/section.elf ldrs/bf548.ldr ldrs/spi.ldr ldrs/uart.ldr $(AT_FILES) $(TESTSUITE)

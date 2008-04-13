@@ -1,4 +1,24 @@
 ------------------------------------------------------------------------
+r2245 | vapier | 2008-04-13 02:59:14 -0400 (Sun, 13 Apr 2008) | 1 line
+
+[#4027] add support for a --bmode flag and generate a fake ignore block for parallel/fifo bootmodes where the first byte is used to indicate the bitsize/dma
+------------------------------------------------------------------------
+r2244 | vapier | 2008-04-13 02:57:32 -0400 (Sun, 13 Apr 2008) | 1 line
+
+update tests with auto-detect changes
+------------------------------------------------------------------------
+r2243 | vapier | 2008-04-12 13:05:03 -0400 (Sat, 12 Apr 2008) | 1 line
+
+tweak auto detection format as it just confuses people
+------------------------------------------------------------------------
+r2242 | vapier | 2008-04-11 14:05:01 -0400 (Fri, 11 Apr 2008) | 1 line
+
+fix help output parsing for short char options
+------------------------------------------------------------------------
+r2230 | vapier | 2008-04-04 10:34:51 -0400 (Fri, 04 Apr 2008) | 1 line
+
+add a check to see if the target supports fork()
+------------------------------------------------------------------------
 r2206 | vapier | 2008-03-19 18:03:01 -0400 (Wed, 19 Mar 2008) | 1 line
 
 add a test for the BF53x and the resvect flags

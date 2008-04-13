@@ -1,5 +1,5 @@
-AC_INIT(ldr-utils, svn-2206, [vapier@blackfin.uclinux.org])
-AM_INIT_AUTOMAKE([1.10 dist-bzip2 no-dist-gzip])
+AC_INIT(ldr-utils, svn-2245, [vapier@blackfin.uclinux.org])
+AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
 AC_PROG_CC
@@ -30,6 +30,8 @@ unistd.h \
 util.h \
 winsock2.h \
 ws2tcpip.h \
+netinet/in.h \
+netinet/tcp.h \
 sys/endian.h \
 sys/mman.h \
 sys/socket.h \
