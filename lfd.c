@@ -762,13 +762,13 @@ static int ldr_load_method_network_open(void *void_state)
 	if (s) {
 		warn("Failed: %s", gai_strerror(s));
 		errno = EHOSTUNREACH;
-		goto out;
+		return state->fd;
 	}
 
 	for (res = results; res; res = res->ai_next) {
 		state->fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 		if (state->fd < 0)
-			goto out;
+			break;
 
 		if (connect(state->fd, res->ai_addr, res->ai_addrlen) != -1)
 			break;
@@ -777,9 +777,13 @@ static int ldr_load_method_network_open(void *void_state)
 		state->fd = -1;
 	}
 
-	printf("OK!\n");
+	if (state->fd >= 0) {
+		int on = 1;
+		if (setsockopt(state->fd, IPPROTO_TCP, TCP_NODELAY, &on, sizeof(on)))
+			perror("setting TCP_NODELAY failed");
+		printf("OK!\n");
+	}
 
- out:
 	return state->fd;
 }
 static int ldr_load_method_network_close(void *void_state)
@@ -792,9 +796,7 @@ static int ldr_load_method_network_close(void *void_state)
 }
 static void ldr_load_method_network_flush(void *void_state)
 {
-	struct ldr_load_method_network_state *state = void_state;
-	if (fdatasync(state->fd))
-		perror("fdatasync failed");
+	(void)void_state;
 }
 struct ldr_load_method ldr_load_method_network = {
 	.init  = ldr_load_method_network_init,

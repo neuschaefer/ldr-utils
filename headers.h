@@ -33,6 +33,8 @@
 # define HAVE_TERMIOS_H 1
 # define HAVE_TIME_H 1
 # define HAVE_UNISTD_H 1
+# define HAVE_NETINET_IN_H 1
+# define HAVE_NETINET_TCP_H 1
 # define HAVE_SYS_MMAN_H 1
 # define HAVE_SYS_SOCKET_H 1
 # define HAVE_SYS_STAT_H 1
@@ -40,6 +42,7 @@
 # define HAVE_SYS_WAIT_H 1
 # define HAVE_ALARM 1
 # define HAVE_FDATASYNC 1
+# define HAVE_FORK 1
 # define HAVE_FSEEKO 1
 # define HAVE_FTELLO 1
 # define HAVE_GETADDRINFO 1
@@ -128,6 +131,12 @@
 #endif
 #ifdef HAVE_WS2TCPIP_H
 # include <ws2tcpip.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_NETINET_TCP_H
+# include <netinet/tcp.h>
 #endif
 #ifdef HAVE_SYS_ENDIAN_H
 # include <sys/endian.h>
