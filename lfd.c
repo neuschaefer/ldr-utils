@@ -204,6 +204,16 @@ bool lfd_read(LFD *alfd)
 		block->header = tmp_header;
 		block->data_size = data_len;
 
+		if (debug) {
+			printf("LDR block %i: ", dxe->num_blocks);
+			printf("[off:0x%08x] ", block->offset);
+			size_t i;
+			printf("[header(0x%x):", block->header_size);
+			for (i = 0; i < block->header_size; ++i)
+				printf("%s%02x", (i % 4 ? "" : " "), ((char *)block->header)[i]);
+			printf("] [data(0x%08x)]\n", block->data_size);
+		}
+
 		if (fill)
 			block->data = NULL;
 		else if (block->data_size) {

@@ -15,7 +15,7 @@
 # define VERSION "cvs"
 #endif
 
-extern int force, verbose, quiet;
+extern int force, verbose, quiet, debug;
 
 extern const char *argv0;
 
