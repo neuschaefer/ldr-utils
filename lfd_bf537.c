@@ -274,14 +274,19 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 			if (opts->hole.filler_file) {
 				FILE *filler_fp = fopen(opts->hole.filler_file, "r");
 				if (filler_fp) {
-					size_t bytes;
+					size_t bytes, filled = 0;
 					uint8_t filler_buf[8192];	/* random size */
 					while (!feof(filler_fp)) {
 						bytes = fread(filler_buf, 1, sizeof(filler_buf), filler_fp);
+						filled += bytes;
 						fwrite(filler_buf, 1, bytes, fp);
 					}
 					if (ferror(filler_fp))
 						return false;
+					if (filled > hole_count)
+						err("filler file was bigger than the requested hole size");
+					if (filled < hole_count)
+						fseeko(fp, hole_count - filled, SEEK_CUR);
 				} else
 					return false;
 			} else
