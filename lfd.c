@@ -225,7 +225,7 @@ bool lfd_read(LFD *alfd)
 		pos += header_len;
 	} while (1);
 
-	alfd->private_data = ldr;
+	alfd->ldr = ldr;
 
 	return true;
 }
@@ -241,7 +241,7 @@ bool lfd_display(LFD *alfd)
 		return false;
 	}
 
-	LDR *ldr = alfd->private_data;
+	LDR *ldr = alfd->ldr;
 	bool ret = true;
 	size_t d;
 
@@ -515,7 +515,7 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
 	}
 
 	const struct ldr_dump_options *opts = void_opts;
-	LDR *ldr = alfd->private_data;
+	LDR *ldr = alfd->ldr;
 	const char *base = opts->filename;
 	char file_dxe[1024], file_block[1024];
 	FILE *fp_dxe, *fp_block;
@@ -879,7 +879,7 @@ static void *ldr_read_board(void *arg)
 static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 {
 	const struct ldr_load_options *opts = void_opts;
-	LDR *ldr = alfd->private_data;
+	LDR *ldr = alfd->ldr;
 	const char *tty = opts->tty;
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
 	int fd = -1;
@@ -1045,11 +1045,8 @@ bool lfd_close(LFD *alfd)
 		return false;
 	}
 
-	if (alfd->target->iovec.close) {
-		if (!alfd->target->iovec.close(alfd))
-			return false;
-	} else if (alfd->private_data) {
-		LDR *ldr = alfd->private_data;
+	if (alfd->ldr) {
+		LDR *ldr = alfd->ldr;
 		size_t d, b;
 
 		for (d = 0; d < ldr->num_dxes; ++d) {
@@ -1063,7 +1060,7 @@ bool lfd_close(LFD *alfd)
 		free(ldr->header);
 		free(ldr);
 
-		alfd->private_data = NULL;
+		alfd->ldr = NULL;
 	}
 
 	if (fclose(alfd->fp))

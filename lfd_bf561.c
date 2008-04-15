@@ -52,7 +52,7 @@ static void *bf561_lfd_read_ldr_header(LFD *alfd, size_t *header_size)
 
 static bool bf561_lfd_display_ldr(LFD *alfd)
 {
-	LDR *ldr = alfd->private_data;
+	LDR *ldr = alfd->ldr;
 	uint32_t header = *((uint32_t*)ldr->header);
 
 	printf("  LDR header: %08X ( %s-bit-flash wait:%i hold:%i ", header,

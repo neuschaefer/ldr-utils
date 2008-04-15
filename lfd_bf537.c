@@ -78,7 +78,7 @@ void *bf53x_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *fin
 
 bool bf53x_lfd_display_dxe(LFD *alfd, size_t d)
 {
-	LDR *ldr = alfd->private_data;
+	LDR *ldr = alfd->ldr;
 	size_t i, b;
 	uint16_t hflags, flags, ignore_flags;
 

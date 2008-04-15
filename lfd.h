@@ -34,7 +34,6 @@ struct lfd_iovec {
 	bool     (*write_ldr)         (struct lfd *alfd, const void *opts);
 	bool     (*write_block)       (struct lfd *alfd, uint8_t dxe_flags, const void *opts, uint32_t addr, uint32_t count, void *src);
 	uint32_t (*dump_block)        (BLOCK *block, FILE *fp, bool dump_fill);
-	bool     (*close)             (struct lfd *alfd);
 };
 
 struct lfd_target {
@@ -48,6 +47,7 @@ struct lfd_target {
 
 typedef struct lfd {
 	struct lfd_target *target;
+	LDR *ldr;
 
 	char *dupped_mem;
 	const char *filename;
@@ -55,7 +55,6 @@ typedef struct lfd {
 	const char *selected_sirev;
 	FILE *fp;
 	bool is_open;
-	void *private_data;
 } LFD;
 
 enum {
