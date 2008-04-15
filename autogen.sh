@@ -26,6 +26,14 @@ autoreconf -f -i
 # stupid automake bug
 svn revert INSTALL || :
 
+# update copyrights automatically
+for f in $(grep -lI 'Copyright.*Analog Devices Inc.' `svn ls`) ; do
+	year=$(svn info $f | awk '$0 ~ /^Last Changed Date:/ {print $4}' | cut -d- -f1)
+	sed -i \
+		-e "s:\(Copyright\) [-0-9]* \(Analog Devices Inc.\):\1 2006-${year} \2:" \
+		${f}
+done
+
 # test building
 if [ -d build ] ; then
 	chmod -R 777 build

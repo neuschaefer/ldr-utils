@@ -3,9 +3,9 @@
 -------
 
 ldr-utils is a simple command line program for handling LDR files.  LDR files 
-are a Visual DSP invention for running code on the Blackfin CPU.  Sometimes 
-we need to handle these things in the world of Linux as it is the native 
-executable format for the boot rom built into the Blackfin CPU.
+are the executable format for the Blackfin on-chip Boot ROM.  We need to handle
+this format for initial booting of the processor (so boot loaders or bare metal
+applications).
 
 To put it simply, LDRs are just a container format for DXEs (which are just a
 fancy name for programs in the Blackfin binary object code format).  A single
@@ -18,19 +18,17 @@ flags).
  HELP
 ------
 
-Support: http://blackfin.uclinux.org/forum/forum.php?forum_id=39
-Bugs: http://blackfin.uclinux.org/tracker/index.php?group_id=17&atid=141
+Support: http://blackfin.uclinux.org/gf/project/toolchain/forum/
+Bugs:    http://blackfin.uclinux.org/gf/project/toolchain/tracker/
 
 
 ------------
  REFERENCES 
 ------------
 
-VisualDSP++ 4.0 Loader Manual:
-http://www.analog.com/UploadedFiles/Associated_Docs/438698055513140_loader_man.pdf
+All manuals can be found here:
+ http://www.analog.com/processors/blackfin/technicalLibrary/manuals/
 
-ADSP-BF537 Blackfin Processor Hardware Reference:
-http://www.analog.com/UploadedFiles/Data_Sheets/369013884ADSP_BF534_536_537_b.pdf
-
-EE-240: ADSP-BF533 Blackfin Booting Process
-http://www.analog.com/UploadedFiles/Application_Notes/304621268EE240v03.pdf
+The interesting ones for LDR formats / booting:
+ - VisualDSP++ 5.0 Loader and Utilities Manual
+ - The System & Booting chapter in the HRM for your Blackfin variant
