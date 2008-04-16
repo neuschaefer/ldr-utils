@@ -1,5 +1,7 @@
 SUBDIRS = tests
 
+EXTRA_DIST = HACKING
+
 AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
 
 bin_PROGRAMS = ldr
