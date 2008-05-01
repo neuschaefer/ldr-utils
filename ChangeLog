@@ -1,4 +1,28 @@
 ------------------------------------------------------------------------
+r2321 | vapier | 2008-04-30 21:41:16 -0400 (Wed, 30 Apr 2008) | 1 line
+
+accept "para" as a short boot name for "parallel" to make u-boot integration simpler, and fix up the ignore block for bf53x parallel ldr flashing so it works
+------------------------------------------------------------------------
+r2259 | vapier | 2008-04-16 00:54:22 -0400 (Wed, 16 Apr 2008) | 1 line
+
+add HACKING file to explain layout of things
+------------------------------------------------------------------------
+r2254 | vapier | 2008-04-15 00:48:14 -0400 (Tue, 15 Apr 2008) | 1 line
+
+update docs / autotool files
+------------------------------------------------------------------------
+r2253 | vapier | 2008-04-14 23:37:20 -0400 (Mon, 14 Apr 2008) | 1 line
+
+if the file given to fill a punched hole is not the same size as the hole, make sure we either fill the gap or abort
+------------------------------------------------------------------------
+r2252 | vapier | 2008-04-14 22:05:13 -0400 (Mon, 14 Apr 2008) | 1 line
+
+rename "private_data" member of lfd structure to "ldr" as this is what it is actually used for ... drop the unused close() method of the iovec structure in the process
+------------------------------------------------------------------------
+r2251 | vapier | 2008-04-14 21:35:41 -0400 (Mon, 14 Apr 2008) | 1 line
+
+add debug output during loading in case things go south
+------------------------------------------------------------------------
 r2250 | vapier | 2008-04-13 17:20:29 -0400 (Sun, 13 Apr 2008) | 1 line
 
 rebuild autotool code

@@ -21,6 +21,9 @@ sed -i \
 	-e "/^AT_FILES/s:=.*:= ${testatfiles}:" \
 	tests/Makefile.am
 
+PATH=/usr/local/src/gnu/gnulib:${PATH}
+gnulib-tool --source-base=gnulib/lib --m4-base=gnulib/m4 --import printf-posix
+
 autoreconf -f -i
 
 # stupid automake bug

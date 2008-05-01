@@ -1,8 +1,10 @@
-AC_INIT(ldr-utils, svn-2250, [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, svn-2321, [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
 AC_PROG_CC
+gl_EARLY
+gl_INIT
 AM_MISSING_PROG([AUTOM4TE], [autom4te])
 
 AC_C_BIGENDIAN
@@ -116,10 +118,13 @@ AC_MSG_WARN([
 Please purchase a Linux machine.  Seriously.  Wal-Mart sells them
 for \$200.  You can afford one.
 ])
+	CPPFLAGS="$CPPFLAGS "'-I$(top_builddir)/gnulib/lib -I$(top_srcdir)/gnulib/lib'
+	LIBS="$LIBS "'$(top_builddir)/gnulib/lib/libgnu.a'
 fi
 
 AC_OUTPUT([
 Makefile
+gnulib/lib/Makefile
 tests/atlocal
 tests/Makefile
 tests/package.m4
