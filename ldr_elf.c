@@ -28,7 +28,7 @@ static void *mmap(void *start, size_t length, int prot, int flags, int fd, off_t
 
 	if (read_retry(fd, ret, length) != length) {
 		free(ret);
-		ret = NULL;
+		ret = MAP_FAILED;
 	}
 
 	return ret;
