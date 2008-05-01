@@ -155,6 +155,7 @@ bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
 	/* This dummy block is only needed in flash/fifo boot modes */
 	if (opts->bmode == NULL ||
 	    (strcasecmp(opts->bmode, "parallel") &&
+	     strcasecmp(opts->bmode, "para") &&
 	     strcasecmp(opts->bmode, "fifo")))
 		return true;
 
@@ -172,11 +173,11 @@ bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
 	} else
 		addr |= 0x40;
 
-	/* this is what the manual says */
-	count = 0xCCCCCCCC;
+	/* the manual says to use 0xCCCCCCCC but it, like the cake, is a lie */
+	count = 0;
 
 	/* make sure this block gets ignored */
-	flags = LDR_FLAG_IGNORE | LDR_FLAG_ZEROFILL;
+	flags = LDR_FLAG_IGNORE;
 	if (!target_is(alfd, "BF531") &&
 	    !target_is(alfd, "BF532"))
 		flags |= LDR_FLAG_RESVECT;
