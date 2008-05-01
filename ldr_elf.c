@@ -62,7 +62,7 @@ elfobj *elf_open(const char *filename)
 
 	elf = xmalloc(sizeof(*elf));
 
-	elf->fd = open(filename, O_RDONLY);
+	elf->fd = open(filename, O_RDONLY | O_BINARY);
 	if (elf->fd < 0)
 		goto err_free;
 

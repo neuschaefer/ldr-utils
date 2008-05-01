@@ -281,7 +281,7 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 			/* finally write out hole */
 			ret &= _bf548_lfd_write_header(fp, block_code | BFLAG_IGNORE, 0, hole_count, 0xBAADF00D);
 			if (opts->hole.filler_file) {
-				FILE *filler_fp = fopen(opts->hole.filler_file, "r");
+				FILE *filler_fp = fopen(opts->hole.filler_file, "rb");
 				if (filler_fp) {
 					size_t bytes, filled = 0;
 					uint8_t filler_buf[8192];	/* random size */

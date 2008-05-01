@@ -222,7 +222,7 @@ bool tty_lock(const char *tty)
 
 	/* see if the lock is stale */
 	lockfile = _tty_get_lock_name(tty);
-	fp = fopen(lockfile, "r");
+	fp = fopen(lockfile, "rb");
 	if (fp != NULL) {
 		unsigned long pid;
 		if (fscanf(fp, "%lu", &pid) == 1) {
@@ -238,10 +238,10 @@ bool tty_lock(const char *tty)
 
 	/* now create a new lock and write our pid into it */
 	mask = umask(022);
-	fd = open(lockfile, O_WRONLY | O_CREAT | O_EXCL, 0666);
+	fd = open(lockfile, O_WRONLY | O_CREAT | O_EXCL | O_BINARY, 0666);
 	umask(mask);
 	if (fd != -1) {
-		fp = fdopen(fd, "w");
+		fp = fdopen(fd, "wb");
 		if (fp != NULL) {
 			fprintf(fp, "%lu\n", (unsigned long)getpid());
 			fclose(fp);

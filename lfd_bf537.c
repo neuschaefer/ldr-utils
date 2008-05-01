@@ -273,7 +273,7 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 			/* finally write out hole */
 			_bf53x_lfd_write_header(fp, flags | LDR_FLAG_IGNORE, 0, hole_count);
 			if (opts->hole.filler_file) {
-				FILE *filler_fp = fopen(opts->hole.filler_file, "r");
+				FILE *filler_fp = fopen(opts->hole.filler_file, "rb");
 				if (filler_fp) {
 					size_t bytes, filled = 0;
 					uint8_t filler_buf[8192];	/* random size */

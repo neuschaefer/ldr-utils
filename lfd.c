@@ -98,7 +98,7 @@ bool lfd_open(LFD *alfd, const char *filename)
 		err("please select a target with -T <target>");
 	} else if (!alfd->target) {
 		uint8_t bytes[4];
-		FILE *fp = fopen(filename, "r");
+		FILE *fp = fopen(filename, "rb");
 		if (!fp)
 			return false;
 		if (fread(bytes, sizeof(bytes[0]), ARRAY_SIZE(bytes), fp) != sizeof(bytes)) {
@@ -127,7 +127,7 @@ bool lfd_open(LFD *alfd, const char *filename)
 	} else {
 		alfd->filename = filename;
 		if (filename) {
-			alfd->fp = fopen(alfd->filename, "r");
+			alfd->fp = fopen(alfd->filename, "rb");
 			alfd->is_open = (alfd->fp == NULL ? false : true);
 		} else
 			alfd->is_open = true;
@@ -311,11 +311,11 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 	size_t i = 0;
 	int fd;
 
-	fd = open(outfile, O_RDWR|O_CREAT|O_TRUNC, 00666); /* we just want +rw ... let umask sort out the rest */
+	fd = open(outfile, O_RDWR|O_CREAT|O_TRUNC|O_BINARY, 00666); /* we just want +rw ... let umask sort out the rest */
 	if (fd == -1)
 		return false;
 
-	alfd->fp = fdopen(fd, "w+");
+	alfd->fp = fdopen(fd, "wb+");
 	if (alfd->fp == NULL) {
 		close(fd);
 		return false;
@@ -527,7 +527,7 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
 		snprintf(file_dxe, sizeof(file_dxe), "%s-%zi.dxe", base, d);
 		if (!quiet)
 			printf("  Dumping DXE %zi to %s\n", d, file_dxe);
-		fp_dxe = fopen(file_dxe, "w");
+		fp_dxe = fopen(file_dxe, "wb");
 		if (fp_dxe == NULL) {
 			warnp("Unable to open DXE output '%s'", file_dxe);
 			ret = false;
@@ -551,7 +551,7 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
 				snprintf(file_block, sizeof(file_block), "%s-%zi.dxe-%zi.block", base, d, b+1);
 				if (!quiet)
 					printf("    Dumping block %zi to %s\n", b+1, file_block);
-				fp_block = fopen(file_block, "w");
+				fp_block = fopen(file_block, "wb");
 				if (fp_block == NULL)
 					perror("Unable to open block output");
 			}
@@ -637,7 +637,7 @@ static int ldr_load_method_tty_open(void *void_state)
 
 	printf("Opening %s ... ", tty);
 	if (tty[0] != '#') {
-		state->fd = open(tty, O_RDWR);
+		state->fd = open(tty, O_RDWR | O_BINARY);
 		if (state->fd == -1)
 			goto out;
 	} else
