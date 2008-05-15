@@ -82,6 +82,9 @@
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
 #endif
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif
 #ifdef HAVE_LIBGEN_H
 # include <libgen.h>
 #endif

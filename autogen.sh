@@ -22,7 +22,7 @@ sed -i \
 	tests/Makefile.am
 
 PATH=/usr/local/src/gnu/gnulib:${PATH}
-gnulib-tool --source-base=gnulib/lib --m4-base=gnulib/m4 --import printf-posix
+gnulib-tool --source-base=gnulib/lib --m4-base=gnulib/m4 --import printf-posix || :
 
 autoreconf -f -i
 

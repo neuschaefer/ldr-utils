@@ -1,4 +1,28 @@
 ------------------------------------------------------------------------
+r2366 | vapier | 2008-05-15 17:46:28 -0400 (Thu, 15 May 2008) | 1 line
+
+relocate termios functions out of lfd code so that replacements can easily be added
+------------------------------------------------------------------------
+r2328 | vapier | 2008-05-01 17:56:51 -0400 (Thu, 01 May 2008) | 1 line
+
+add a small file explaining this subdir
+------------------------------------------------------------------------
+r2327 | vapier | 2008-05-01 17:51:49 -0400 (Thu, 01 May 2008) | 1 line
+
+import a POSIX compliant printf() replacement from gnulib as some systems (like mingw) do not support the "z" printf modifier used heavily in the source which results in horribly useless output
+------------------------------------------------------------------------
+r2326 | vapier | 2008-05-01 17:13:33 -0400 (Thu, 01 May 2008) | 1 line
+
+start a source code set of tests
+------------------------------------------------------------------------
+r2325 | vapier | 2008-05-01 17:11:00 -0400 (Thu, 01 May 2008) | 1 line
+
+add binary flags to make windows not crap itself due to working with brain dead ascii mode by default
+------------------------------------------------------------------------
+r2324 | vapier | 2008-05-01 15:35:13 -0400 (Thu, 01 May 2008) | 1 line
+
+have local mmap() emulation return MAP_FAILED instead of NULL
+------------------------------------------------------------------------
 r2321 | vapier | 2008-04-30 21:41:16 -0400 (Wed, 30 Apr 2008) | 1 line
 
 accept "para" as a short boot name for "parallel" to make u-boot integration simpler, and fix up the ignore block for bf53x parallel ldr flashing so it works

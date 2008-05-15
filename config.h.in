@@ -156,6 +156,9 @@
    declares uintmax_t. */
 #undef HAVE_INTTYPES_H_WITH_UINTMAX
 
+/* Define to 1 if you have the <io.h> header file. */
+#undef HAVE_IO_H
+
 /* Define if the isnan(double) function is available in libc. */
 #undef HAVE_ISNAND_IN_LIBC
 

@@ -85,7 +85,8 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_ldr_OBJECTS = helpers.$(OBJEXT) ldr.$(OBJEXT) ldr_elf.$(OBJEXT) \
 	lfd.$(OBJEXT) lfd_bf527.$(OBJEXT) lfd_bf533.$(OBJEXT) \
-	lfd_bf537.$(OBJEXT) lfd_bf548.$(OBJEXT) lfd_bf561.$(OBJEXT)
+	lfd_bf537.$(OBJEXT) lfd_bf548.$(OBJEXT) lfd_bf561.$(OBJEXT) \
+	termios-mingw.$(OBJEXT)
 ldr_OBJECTS = $(am_ldr_OBJECTS)
 am__DEPENDENCIES_1 =
 ldr_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -351,7 +352,7 @@ SUBDIRS = gnulib/lib tests
 EXTRA_DIST = HACKING
 ACLOCAL_AMFLAGS = -I gnulib/m4
 AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
-ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h link-warning.h
+ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c termios-mingw.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h link-warning.h
 ldr_LDADD = $(LIB_PTHREAD)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -450,6 +451,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lfd_bf537.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lfd_bf548.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lfd_bf561.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/termios-mingw.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
