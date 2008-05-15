@@ -588,11 +588,6 @@ struct ldr_load_method {
 };
 
 #ifdef HAVE_TERMIOS_H
-static struct termios stdin_orig_attrs;
-void ldr_ldr_load_method_tty_restore_stdin_attrs(void)
-{
-	tcsetattr(0, TCSANOW, &stdin_orig_attrs);
-}
 struct ldr_load_method_tty_state {
 	const struct ldr_load_options *opts;
 	bool tty_locked;
@@ -621,12 +616,7 @@ static bool ldr_load_method_tty_init(void **void_state, const struct ldr_load_op
 			warn("ignoring lock for tty '%s'", tty);
 	}
 
-	struct termios stdin_attrs;
-	tcgetattr(0, &stdin_orig_attrs);
-	atexit(ldr_ldr_load_method_tty_restore_stdin_attrs);
-	stdin_attrs = stdin_orig_attrs;
-	stdin_attrs.c_lflag &= ~(ECHO | ICANON);
-	tcsetattr(0, TCSADRAIN, &stdin_attrs);
+	tty_stdin_init();
 
 	return true;
 }

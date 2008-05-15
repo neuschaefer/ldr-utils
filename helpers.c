@@ -270,6 +270,24 @@ bool tty_unlock(const char *tty)
 	return (unlink(lockfile) == 0 ? true : false);
 }
 
+/*
+ * tty_stdin_init()
+ */
+static struct termios stdin_orig_attrs;
+static void tty_stdin_restore(void)
+{
+	tcsetattr(0, TCSANOW, &stdin_orig_attrs);
+}
+void tty_stdin_init(void)
+{
+	struct termios stdin_attrs;
+	tcgetattr(0, &stdin_orig_attrs);
+	atexit(tty_stdin_restore);
+	stdin_attrs = stdin_orig_attrs;
+	stdin_attrs.c_lflag &= ~(ECHO | ICANON);
+	tcsetattr(0, TCSADRAIN, &stdin_attrs);
+}
+
 #endif /* HAVE_TERMIOS_H */
 
 #ifdef HAVE_BACKTRACE
