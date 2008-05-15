@@ -123,6 +123,11 @@ size_t tty_get_baud(const int fd)
 	return tty_speed_to_baud(cfgetispeed(&term));
 }
 
+int tty_open(const char *filename, int flags)
+{
+	return open(filename, flags);
+}
+
 /*
  * tty_init()
  * Make sure the tty we're going to be working with is properly setup.

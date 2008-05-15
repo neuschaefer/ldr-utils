@@ -1,4 +1,4 @@
-AC_INIT(ldr-utils, svn-2321, [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, svn-2366, [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
@@ -16,6 +16,7 @@ endian.h \
 errno.h \
 fcntl.h \
 getopt.h \
+io.h \
 libgen.h \
 netdb.h \
 pthread.h \

@@ -587,7 +587,6 @@ struct ldr_load_method {
 	void (*flush)(void *void_state);
 };
 
-#ifdef HAVE_TERMIOS_H
 struct ldr_load_method_tty_state {
 	const struct ldr_load_options *opts;
 	bool tty_locked;
@@ -627,7 +626,7 @@ static int ldr_load_method_tty_open(void *void_state)
 
 	printf("Opening %s ... ", tty);
 	if (tty[0] != '#') {
-		state->fd = open(tty, O_RDWR | O_BINARY);
+		state->fd = tty_open(tty, O_RDWR | O_BINARY);
 		if (state->fd == -1)
 			goto out;
 	} else
@@ -669,17 +668,6 @@ struct ldr_load_method ldr_load_method_tty = {
 	.close = ldr_load_method_tty_close,
 	.flush = ldr_load_method_tty_flush,
 };
-#else
-static bool ldr_load_method_tty_init(void **void_state, const struct ldr_load_options *opts)
-{
-	err("your system does not support POSIX termios functionality");
-	return false;
-}
-struct ldr_load_method ldr_load_method_tty = {
-	.init  = ldr_load_method_tty_init,
-};
-# define tty_get_baud(fd) 0
-#endif
 
 #ifdef HAVE_GETADDRINFO
 struct ldr_load_method_network_state {

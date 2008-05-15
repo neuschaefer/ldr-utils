@@ -54,9 +54,11 @@ bool parse_bool(const char *);
 ssize_t read_retry(int, void *, size_t);
 
 size_t tty_get_baud(const int);
+int tty_open(const char *, int);
 bool tty_init(const int, const size_t, const bool);
 bool tty_lock(const char *);
 bool tty_unlock(const char *);
+void tty_stdin_init(void);
 
 #ifndef HAVE_ALARM
 # define alarm(seconds) 0
