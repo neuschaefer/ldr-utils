@@ -9,6 +9,7 @@
  */
 
 #include "headers.h"
+#include "helpers.h"
 
 #ifdef WIN32
 
@@ -18,14 +19,25 @@
 
 int tty_open(const char *filename, int flags)
 {
+	int ret = -1;
 	HANDLE h;
 
 	h = CreateFile(filename, GENERIC_READ | GENERIC_WRITE, 0, NULL,
 	               OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	if (h == INVALID_HANDLE_VALUE)
-		return -1;
+	if (h == INVALID_HANDLE_VALUE) {
+		/* some extended device names require UNC convention ... auto-prepend
+		 * this magic so users dont need to go insane.
+		 */
+		if (strncmp(filename, "\\\\.\\", 4)) {
+			char *unc = xmalloc(strlen(filename) + 1 + 4);
+			sprintf(unc, "\\\\.\\%s", filename);
+			ret = tty_open(unc, flags);
+			free(unc);
+		}
+	} else
+		ret = _open_osfhandle((long)h, flags);
 
-	return _open_osfhandle((long)h, flags);
+	return ret;
 }
 
 bool tty_init(const int fd, const size_t baud, const bool ctsrts)
