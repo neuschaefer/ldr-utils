@@ -83,10 +83,15 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
+am__ldr_SOURCES_DIST = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c \
+	lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c \
+	termios-mingw.c blackfin_defines.h dxe_jump.h dxes.h headers.h \
+	helpers.h ldr.h ldr_elf.h lfd.h link-warning.h icon.rc
+@USE_RC_SOURCES_TRUE@am__objects_1 = icon.$(OBJEXT)
 am_ldr_OBJECTS = helpers.$(OBJEXT) ldr.$(OBJEXT) ldr_elf.$(OBJEXT) \
 	lfd.$(OBJEXT) lfd_bf527.$(OBJEXT) lfd_bf533.$(OBJEXT) \
 	lfd_bf537.$(OBJEXT) lfd_bf548.$(OBJEXT) lfd_bf561.$(OBJEXT) \
-	termios-mingw.$(OBJEXT)
+	termios-mingw.$(OBJEXT) $(am__objects_1)
 ldr_OBJECTS = $(am_ldr_OBJECTS)
 am__DEPENDENCIES_1 =
 ldr_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -98,7 +103,7 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(ldr_SOURCES)
-DIST_SOURCES = $(ldr_SOURCES)
+DIST_SOURCES = $(am__ldr_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -293,6 +298,7 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 WCHAR_H = @WCHAR_H@
 WCHAR_T_SUFFIX = @WCHAR_T_SUFFIX@
+WINDRES = @WINDRES@
 WINT_T_SUFFIX = @WINT_T_SUFFIX@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
@@ -352,13 +358,15 @@ SUBDIRS = gnulib/lib tests
 EXTRA_DIST = HACKING
 ACLOCAL_AMFLAGS = -I gnulib/m4
 AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
-ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c termios-mingw.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h link-warning.h
+@USE_RC_SOURCES_FALSE@RC_SOURCES = 
+@USE_RC_SOURCES_TRUE@RC_SOURCES = icon.rc
+ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c termios-mingw.c blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h link-warning.h $(RC_SOURCES)
 ldr_LDADD = $(LIB_PTHREAD)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .o .obj .rc
 am--refresh:
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -856,6 +864,11 @@ uninstall-am: uninstall-binPROGRAMS
 	ps ps-am tags tags-recursive uninstall uninstall-am \
 	uninstall-binPROGRAMS
 
+
+.rc.o:
+	$(WINDRES) $< -o $@
+%.o : %.rc
+	$(WINDRES) $^ -o $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

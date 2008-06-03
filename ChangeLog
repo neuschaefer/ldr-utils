@@ -1,4 +1,16 @@
 ------------------------------------------------------------------------
+r2377 | vapier | 2008-05-22 18:32:44 -0400 (Thu, 22 May 2008) | 1 line
+
+automatically convert names to unc if opening them failed so windows users dont need to use full unc naming convention
+------------------------------------------------------------------------
+r2368 | vapier | 2008-05-15 18:43:08 -0400 (Thu, 15 May 2008) | 1 line
+
+rebuild autotools
+------------------------------------------------------------------------
+r2367 | vapier | 2008-05-15 18:41:54 -0400 (Thu, 15 May 2008) | 1 line
+
+abstract away the tty open step and implement termios replacement functions for windows so that we can load over the serial port
+------------------------------------------------------------------------
 r2366 | vapier | 2008-05-15 17:46:28 -0400 (Thu, 15 May 2008) | 1 line
 
 relocate termios functions out of lfd code so that replacements can easily be added
