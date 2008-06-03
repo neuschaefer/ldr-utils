@@ -1,4 +1,4 @@
-AC_INIT(ldr-utils, svn-2366, [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, svn-2377, [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
@@ -122,6 +122,15 @@ for \$200.  You can afford one.
 	CPPFLAGS="$CPPFLAGS "'-I$(top_builddir)/gnulib/lib -I$(top_srcdir)/gnulib/lib'
 	LIBS="$LIBS "'$(top_builddir)/gnulib/lib/libgnu.a'
 fi
+
+USE_RC_SOURCES="false"
+case $host_os in
+	mingw*)
+    AC_CHECK_TOOL([WINDRES], [windres], :)
+    USE_RC_SOURCES="true"
+	;;
+esac
+AM_CONDITIONAL(USE_RC_SOURCES, $USE_RC_SOURCES)
 
 AC_OUTPUT([
 Makefile

@@ -11,7 +11,7 @@ make distclean
 # prep files for autotoolization
 svn log > ChangeLog
 topfiles=$(echo *.c *.h)
-sed -i "/^ldr_SOURCES/s:=.*:= ${topfiles}:" Makefile.am
+sed -i "/^ldr_SOURCES/s:=.*:= ${topfiles} \$(RC_SOURCES):" Makefile.am
 ver=$(./local-version.sh)
 sed -i "/^AC_INIT/s:\([^,]*,\)[^,]*:\1 ${ver}:" configure.ac
 testatfiles=$(cd tests; echo *.at)
