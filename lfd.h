@@ -26,7 +26,6 @@ struct lfd_flag {
 };
 
 struct lfd_iovec {
-	bool     (*open)              (struct lfd *alfd, const char *filename);
 	void*    (*read_ldr_header)   (struct lfd *alfd, size_t *header_size);
 	void*    (*read_block_header) (struct lfd *alfd, bool *ignore, bool *fill, bool *final, size_t *header_len, size_t *data_len);
 	bool     (*display_ldr)       (struct lfd *alfd);

@@ -121,17 +121,13 @@ bool lfd_open(LFD *alfd, const char *filename)
 			printf("auto detected LDR as '%s' compatible format\n", alfd->selected_target);
 	}
 
-	if (filename && alfd->target->iovec.open) {
-		return alfd->target->iovec.open(alfd, filename);
-	} else {
-		alfd->filename = filename;
-		if (filename) {
-			alfd->fp = fopen(alfd->filename, "rb");
-			alfd->is_open = (alfd->fp == NULL ? false : true);
-		} else
-			alfd->is_open = true;
-		return alfd->is_open;
-	}
+	alfd->filename = filename;
+	if (filename) {
+		alfd->fp = fopen(alfd->filename, "rb");
+		alfd->is_open = (alfd->fp == NULL ? false : true);
+	} else
+		alfd->is_open = true;
+	return alfd->is_open;
 }
 
 /**
