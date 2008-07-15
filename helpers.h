@@ -48,6 +48,7 @@ void error_backtrace(void);
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 void *xmalloc(size_t);
+void *xzalloc(size_t);
 void *xrealloc(void *, size_t);
 char *xstrdup(const char *);
 bool parse_bool(const char *);

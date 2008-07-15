@@ -57,8 +57,7 @@ void lfd_target_list(void)
 
 LFD *lfd_malloc(const char *target)
 {
-	LFD *alfd = xmalloc(sizeof(*alfd));
-	memset(alfd, 0x00, sizeof(*alfd));
+	LFD *alfd = xzalloc(sizeof(*alfd));
 	if (target) {
 		char *p;
 		alfd->dupped_mem = xstrdup(target);

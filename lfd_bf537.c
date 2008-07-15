@@ -313,8 +313,7 @@ uint32_t bf53x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 	if (!(header->flags & LDR_FLAG_ZEROFILL))
 		fwrite(block->data, 1, header->byte_count, fp);
 	else if (dump_fill) {
-		void *filler = xmalloc(header->byte_count);
-		memset(filler, 0x00, header->byte_count);
+		void *filler = xzalloc(header->byte_count);
 		fwrite(filler, 1, header->byte_count, fp);
 		free(filler);
 	}
