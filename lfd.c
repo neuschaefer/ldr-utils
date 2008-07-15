@@ -23,6 +23,14 @@ void lfd_target_register(struct lfd_target *target)
 	struct list_item *new_node = xmalloc(sizeof(*new_node));
 	if (!target->name || !target->description || !target->aliases)
 		err("lfd_target's must fill out name/desc/aliases");
+	if (!target->iovec.read_block_header)
+		warn("target '%s' does not support reading LDRs", target->name);
+	if (!target->iovec.display_dxe)
+		warn("target '%s' does not support displaying LDRs", target->name);
+	if (!target->iovec.write_block)
+		warn("target '%s' does not support creating LDRs", target->name);
+	if (!target->iovec.dump_block)
+		warn("target '%s' does not support dumping LDRs", target->name);
 	new_node->target = target;
 	new_node->next = target_list;
 	target_list = new_node;
@@ -154,10 +162,6 @@ bool lfd_read(LFD *alfd)
 		errno = -EBADF;
 		return false;
 	}
-	if (!alfd->target->iovec.read_block_header) {
-		warn("target '%s' does not support reading LDRs", alfd->target->name);
-		return false;
-	}
 
 	FILE *fp = alfd->fp;
 	LDR *ldr;
@@ -231,10 +235,6 @@ bool lfd_display(LFD *alfd)
 		errno = -EBADF;
 		return false;
 	}
-	if (!alfd->target->iovec.display_dxe) {
-		warn("target '%s' does not support displaying LDRs", alfd->target->name);
-		return false;
-	}
 
 	LDR *ldr = alfd->ldr;
 	bool ret = true;
@@ -289,11 +289,6 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 {
 	if (!alfd->is_open) {
 		errno = -EBADF;
-		return false;
-	}
-
-	if (!alfd->target->iovec.write_block) {
-		warn("target '%s' does not support creating LDRs", alfd->target->name);
 		return false;
 	}
 
@@ -501,11 +496,6 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
 {
 	if (!alfd->is_open) {
 		errno = -EBADF;
-		return false;
-	}
-
-	if (!alfd->target->iovec.dump_block) {
-		warn("target '%s' does not support dumping LDRs", alfd->target->name);
 		return false;
 	}
 
