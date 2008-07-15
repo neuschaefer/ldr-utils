@@ -866,9 +866,9 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 .rc.o:
-	$(WINDRES) $< -o $@
+	$(WINDRES) -I $(srcdir) $< -o $@
 %.o : %.rc
-	$(WINDRES) $^ -o $@
+	$(WINDRES) -I $(srcdir) $< -o $@
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
