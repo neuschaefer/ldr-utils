@@ -20,6 +20,7 @@
 # define HAVE_ERRNO_H 1
 # define HAVE_FCNTL_H 1
 # define HAVE_GETOPT_H 1
+# define HAVE_INTTYPES_H 1
 # define HAVE_LIBGEN_H 1
 # define HAVE_NETDB_H 1
 # define HAVE_PTHREAD_H 1
@@ -81,6 +82,9 @@
 #endif
 #ifdef HAVE_GETOPT_H
 # include <getopt.h>
+#endif
+#ifdef HAVE_INTTYPES_H
+# include <inttypes.h>
 #endif
 #ifdef HAVE_IO_H
 # include <io.h>
