@@ -204,13 +204,13 @@ bool lfd_read(LFD *alfd)
 		block->data_size = data_len;
 
 		if (debug) {
-			printf("LDR block %i: ", dxe->num_blocks);
-			printf("[off:0x%08x] ", block->offset);
+			printf("LDR block %zu: ", dxe->num_blocks);
+			printf("[off:0x%08zx] ", block->offset);
 			size_t i;
-			printf("[header(0x%x):", block->header_size);
+			printf("[header(0x%zx):", block->header_size);
 			for (i = 0; i < block->header_size; ++i)
 				printf("%s%02x", (i % 4 ? "" : " "), ((char *)block->header)[i]);
-			printf("] [data(0x%08x)]\n", block->data_size);
+			printf("] [data(0x%08zx)]\n", block->data_size);
 		}
 
 		if (fill)
@@ -442,7 +442,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 		 * if it can ommit the jump.
 		 */
 		if (!quiet)
-			printf("[jump block to 0x%08zX] ", EGET(ehdr->e_entry));
+			printf("[jump block to 0x%08"PRIX32"] ", EGET(ehdr->e_entry));
 		alfd->target->iovec.write_block(alfd, DXE_BLOCK_JUMP, opts, EGET(ehdr->e_entry), DXE_JUMP_CODE_SIZE, dxe_jump_code(EGET(ehdr->e_entry)));
 
 		/* extract each PT_LOAD program header */
