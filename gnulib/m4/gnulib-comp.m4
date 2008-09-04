@@ -70,10 +70,10 @@ AC_DEFUN([gl_INIT],
   gl_WCHAR_H
   gl_XSIZE
   m4_ifval(gl_LIBSOURCES_LIST, [
-    m4_syscmd([test ! -d ]gl_LIBSOURCES_DIR[ ||
+    m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl_LIBSOURCES_LIST[ ; do
-        if test ! -r ]gl_LIBSOURCES_DIR[/$gl_file ; then
-          echo "missing file ]gl_LIBSOURCES_DIR[/$gl_file" >&2
+        if test ! -r ]m4_defn([gl_LIBSOURCES_DIR])[/$gl_file ; then
+          echo "missing file ]m4_defn([gl_LIBSOURCES_DIR])[/$gl_file" >&2
           exit 1
         fi
       done])dnl
@@ -109,10 +109,10 @@ AC_DEFUN([gl_INIT],
   gl_COMMON
   gl_source_base='tests'
   m4_ifval(gltests_LIBSOURCES_LIST, [
-    m4_syscmd([test ! -d ]gltests_LIBSOURCES_DIR[ ||
+    m4_syscmd([test ! -d ]m4_defn([gltests_LIBSOURCES_DIR])[ ||
       for gl_file in ]gltests_LIBSOURCES_LIST[ ; do
-        if test ! -r ]gltests_LIBSOURCES_DIR[/$gl_file ; then
-          echo "missing file ]gltests_LIBSOURCES_DIR[/$gl_file" >&2
+        if test ! -r ]m4_defn([gltests_LIBSOURCES_DIR])[/$gl_file ; then
+          echo "missing file ]m4_defn([gltests_LIBSOURCES_DIR])[/$gl_file" >&2
           exit 1
         fi
       done])dnl
@@ -212,10 +212,10 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fseterr.c
   lib/fseterr.h
   lib/isnan.c
+  lib/isnand-nolibm.h
   lib/isnand.c
-  lib/isnand.h
+  lib/isnanf-nolibm.h
   lib/isnanf.c
-  lib/isnanf.h
   lib/isnanl-nolibm.h
   lib/isnanl.c
   lib/math.in.h
@@ -242,6 +242,9 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   m4/alloca.m4
   m4/eoverflow.m4
+  m4/exponentd.m4
+  m4/exponentf.m4
+  m4/exponentl.m4
   m4/float_h.m4
   m4/fpieee.m4
   m4/frexp.m4

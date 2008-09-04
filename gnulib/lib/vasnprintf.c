@@ -95,7 +95,7 @@
 
 #if (NEED_PRINTF_DOUBLE || NEED_PRINTF_INFINITE_DOUBLE) && !defined IN_LIBINTL
 # include <math.h>
-# include "isnand.h"
+# include "isnand-nolibm.h"
 #endif
 
 #if (NEED_PRINTF_LONG_DOUBLE || NEED_PRINTF_INFINITE_LONG_DOUBLE) && !defined IN_LIBINTL
@@ -106,7 +106,7 @@
 
 #if (NEED_PRINTF_DIRECTIVE_A || NEED_PRINTF_DOUBLE) && !defined IN_LIBINTL
 # include <math.h>
-# include "isnand.h"
+# include "isnand-nolibm.h"
 # include "printf-frexp.h"
 #endif
 
@@ -4176,7 +4176,7 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
 		      abort ();
 		    prefixes[prefix_count++] = a.arg[dp->width_arg_index].a.a_int;
 		  }
-		if (dp->precision_arg_index != ARG_NONE)
+		if (!prec_ourselves && dp->precision_arg_index != ARG_NONE)
 		  {
 		    if (!(a.arg[dp->precision_arg_index].type == TYPE_INT))
 		      abort ();

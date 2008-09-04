@@ -17,6 +17,8 @@
 
 #ifndef _GL_MATH_H
 
+@PRAGMA_SYSTEM_HEADER@
+
 /* The include_next requires a split double-inclusion guard.  */
 #@INCLUDE_NEXT@ @NEXT_MATH_H@
 
@@ -375,6 +377,57 @@ extern int gl_isfinitel (long double x);
    (sizeof (x) == sizeof (long double) ? gl_isfinitel (x) : \
     sizeof (x) == sizeof (double) ? gl_isfinited (x) : \
     gl_isfinitef (x))
+# endif
+#elif defined GNULIB_POSIXCHECK
+  /* How to override a macro?  */
+#endif
+
+
+#if @GNULIB_ISINF@
+# if @REPLACE_ISINF@
+extern int gl_isinff (float x);
+extern int gl_isinfd (double x);
+extern int gl_isinfl (long double x);
+#  undef isinf
+#  define isinf(x) \
+   (sizeof (x) == sizeof (long double) ? gl_isinfl (x) : \
+    sizeof (x) == sizeof (double) ? gl_isinfd (x) : \
+    gl_isinff (x))
+# endif
+#elif defined GNULIB_POSIXCHECK
+  /* How to override a macro?  */
+#endif
+
+
+#if @GNULIB_ISNAN@
+# if @REPLACE_ISNAN@
+/* We can't just use the isnanf macro (e.g.) as exposed by
+   isnanf.h (e.g.) here, because those may end up being macros
+   that recursively expand back to isnan.  So use the gnulib
+   replacements for them directly. */
+#  if HAVE_ISNANF && __GNUC__ >= 4
+#   define gl_isnan_f(x) __builtin_isnan ((float)(x))
+#  else
+extern int rpl_isnanf (float x);
+#   define gl_isnan_f(x) rpl_isnanf (x)
+#  endif
+#  if HAVE_ISNAND && __GNUC__ >= 4
+#   define gl_isnan_d(x) __builtin_isnan ((double)(x))
+#  else
+extern int rpl_isnand (double x);
+#   define gl_isnan_d(x) rpl_isnand (x)
+#  endif
+#  if HAVE_ISNANL && __GNUC__ >= 4
+#   define gl_isnan_l(x) __builtin_isnan ((long double)(x))
+#  else
+extern int rpl_isnanl (long double x);
+#   define gl_isnan_l(x) rpl_isnanl (x)
+#  endif
+#  undef isnan
+#  define isnan(x) \
+   (sizeof (x) == sizeof (long double) ? gl_isnan_l (x) : \
+    sizeof (x) == sizeof (double) ? gl_isnan_d (x) : \
+    gl_isnan_f (x))
 # endif
 #elif defined GNULIB_POSIXCHECK
   /* How to override a macro?  */

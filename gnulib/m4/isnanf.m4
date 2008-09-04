@@ -1,8 +1,42 @@
-# isnanf.m4 serial 6
+# isnanf.m4 serial 8
 dnl Copyright (C) 2007-2008 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
+
+dnl Check how to get or define isnanf().
+
+AC_DEFUN([gl_FUNC_ISNANF],
+[
+  ISNANF_LIBM=
+  gl_HAVE_ISNANF_NO_LIBM
+  if test $gl_cv_func_isnanf_no_libm = no; then
+    gl_HAVE_ISNANF_IN_LIBM
+    if test $gl_cv_func_isnanf_in_libm = yes; then
+      ISNANF_LIBM=-lm
+    fi
+  fi
+  if test $gl_cv_func_isnanf_no_libm = yes \
+     || test $gl_cv_func_isnanf_in_libm = yes; then
+    save_LIBS="$LIBS"
+    LIBS="$LIBS $ISNANF_LIBM"
+    gl_ISNANF_WORKS
+    LIBS="$save_LIBS"
+    case "$gl_cv_func_isnanf_works" in
+      *yes) gl_func_isnanf=yes ;;
+      *)    gl_func_isnanf=no; ISNANF_LIBM= ;;
+    esac
+  else
+    gl_func_isnanf=no
+  fi
+  if test $gl_func_isnanf = yes; then
+    AC_DEFINE([HAVE_ISNANF], 1,
+      [Define if the isnan(float) function is available.])
+  else
+    gl_BUILD_ISNANF
+  fi
+  AC_SUBST([ISNANF_LIBM])
+])
 
 dnl Check how to get or define isnanf() without linking with libm.
 
@@ -21,9 +55,15 @@ AC_DEFUN([gl_FUNC_ISNANF_NO_LIBM],
     AC_DEFINE([HAVE_ISNANF_IN_LIBC], 1,
       [Define if the isnan(float) function is available in libc.])
   else
-    AC_LIBOBJ([isnanf])
-    gl_FLOAT_EXPONENT_LOCATION
+    gl_BUILD_ISNANF
   fi
+])
+
+dnl Pull in replacement isnanf definition. It does not need -lm.
+AC_DEFUN([gl_BUILD_ISNANF],
+[
+  AC_LIBOBJ([isnanf])
+  gl_FLOAT_EXPONENT_LOCATION
 ])
 
 dnl Test whether isnanf() can be used without libm.
@@ -44,6 +84,30 @@ AC_DEFUN([gl_HAVE_ISNANF_NO_LIBM],
                   [return isnanf (x);],
         [gl_cv_func_isnanf_no_libm=yes],
         [gl_cv_func_isnanf_no_libm=no])
+    ])
+])
+
+dnl Test whether isnanf() can be used with libm.
+AC_DEFUN([gl_HAVE_ISNANF_IN_LIBM],
+[
+  AC_CACHE_CHECK([whether isnan(float) can be used with libm],
+    [gl_cv_func_isnanf_in_libm],
+    [
+      save_LIBS="$LIBS"
+      LIBS="$LIBS -lm"
+      AC_TRY_LINK([#include <math.h>
+                   #if __GNUC__ >= 4
+                   # undef isnanf
+                   # define isnanf(x) __builtin_isnanf ((float)(x))
+                   #elif defined isnan
+                   # undef isnanf
+                   # define isnanf(x) isnan ((float)(x))
+                   #endif
+                   float x;],
+                  [return isnanf (x);],
+        [gl_cv_func_isnanf_in_libm=yes],
+        [gl_cv_func_isnanf_in_libm=no])
+      LIBS="$save_LIBS"
     ])
 ])
 
@@ -113,91 +177,4 @@ int main()
          esac
         ])
     ])
-])
-
-AC_DEFUN([gl_FLOAT_EXPONENT_LOCATION],
-[
-  AC_CACHE_CHECK([where to find the exponent in a 'float'],
-    [gl_cv_cc_float_expbit0],
-    [
-      AC_TRY_RUN([
-#include <float.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#define NWORDS \
-  ((sizeof (float) + sizeof (unsigned int) - 1) / sizeof (unsigned int))
-typedef union { float value; unsigned int word[NWORDS]; } memory_float;
-static unsigned int ored_words[NWORDS];
-static unsigned int anded_words[NWORDS];
-static void add_to_ored_words (float x)
-{
-  memory_float m;
-  size_t i;
-  /* Clear it first, in case
-     sizeof (float) < sizeof (memory_float).  */
-  memset (&m, 0, sizeof (memory_float));
-  m.value = x;
-  for (i = 0; i < NWORDS; i++)
-    {
-      ored_words[i] |= m.word[i];
-      anded_words[i] &= m.word[i];
-    }
-}
-int main ()
-{
-  size_t j;
-  FILE *fp = fopen ("conftest.out", "w");
-  if (fp == NULL)
-    return 1;
-  for (j = 0; j < NWORDS; j++)
-    anded_words[j] = ~ (unsigned int) 0;
-  add_to_ored_words (0.25f);
-  add_to_ored_words (0.5f);
-  add_to_ored_words (1.0f);
-  add_to_ored_words (2.0f);
-  add_to_ored_words (4.0f);
-  /* Remove bits that are common (e.g. if representation of the first mantissa
-     bit is explicit).  */
-  for (j = 0; j < NWORDS; j++)
-    ored_words[j] &= ~anded_words[j];
-  /* Now find the nonzero word.  */
-  for (j = 0; j < NWORDS; j++)
-    if (ored_words[j] != 0)
-      break;
-  if (j < NWORDS)
-    {
-      size_t i;
-      for (i = j + 1; i < NWORDS; i++)
-        if (ored_words[i] != 0)
-          {
-            fprintf (fp, "unknown");
-            return (fclose (fp) != 0);
-          }
-      for (i = 0; ; i++)
-        if ((ored_words[j] >> i) & 1)
-          {
-            fprintf (fp, "word %d bit %d", (int) j, (int) i);
-            return (fclose (fp) != 0);
-          }
-    }
-  fprintf (fp, "unknown");
-  return (fclose (fp) != 0);
-}
-        ],
-        [gl_cv_cc_float_expbit0=`cat conftest.out`],
-        [gl_cv_cc_float_expbit0="unknown"],
-        [gl_cv_cc_float_expbit0="word 0 bit 23"])
-      rm -f conftest.out
-    ])
-  case "$gl_cv_cc_float_expbit0" in
-    word*bit*)
-      word=`echo "$gl_cv_cc_float_expbit0" | sed -e 's/word //' -e 's/ bit.*//'`
-      bit=`echo "$gl_cv_cc_float_expbit0" | sed -e 's/word.*bit //'`
-      AC_DEFINE_UNQUOTED([FLT_EXPBIT0_WORD], [$word],
-        [Define as the word index where to find the exponent of 'float'.])
-      AC_DEFINE_UNQUOTED([FLT_EXPBIT0_BIT], [$bit],
-        [Define as the bit index in the word where to find bit 0 of the exponent of 'float'.])
-      ;;
-  esac
 ])

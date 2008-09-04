@@ -60,7 +60,8 @@ BUILT_SOURCES += $(FLOAT_H)
 float.h: float.in.h
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
-	  sed -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
+	  sed -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
 	      -e 's|@''NEXT_FLOAT_H''@|$(NEXT_FLOAT_H)|g' \
 	      < $(srcdir)/float.in.h; \
 	} > $@-t
@@ -107,7 +108,7 @@ EXTRA_DIST += fseterr.h stdio-impl.h
 ## begin gnulib module isnand-nolibm
 
 
-EXTRA_DIST += float+.h isnan.c isnand.c isnand.h
+EXTRA_DIST += float+.h isnan.c isnand-nolibm.h isnand.c
 
 EXTRA_libgnu_a_SOURCES += isnan.c isnand.c
 
@@ -116,7 +117,7 @@ EXTRA_libgnu_a_SOURCES += isnan.c isnand.c
 ## begin gnulib module isnanf-nolibm
 
 
-EXTRA_DIST += float+.h isnan.c isnanf.c isnanf.h
+EXTRA_DIST += float+.h isnan.c isnanf-nolibm.h isnanf.c
 
 EXTRA_libgnu_a_SOURCES += isnan.c isnanf.c
 
@@ -148,7 +149,8 @@ BUILT_SOURCES += math.h
 math.h: math.in.h
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
-	  sed -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
+	  sed -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
 	      -e 's|@''NEXT_MATH_H''@|$(NEXT_MATH_H)|g' \
 	      -e 's|@''GNULIB_CEILF''@|$(GNULIB_CEILF)|g' \
 	      -e 's|@''GNULIB_CEILL''@|$(GNULIB_CEILL)|g' \
@@ -157,6 +159,8 @@ math.h: math.in.h
 	      -e 's|@''GNULIB_FREXP''@|$(GNULIB_FREXP)|g' \
 	      -e 's|@''GNULIB_FREXPL''@|$(GNULIB_FREXPL)|g' \
 	      -e 's|@''GNULIB_ISFINITE''@|$(GNULIB_ISFINITE)|g' \
+	      -e 's|@''GNULIB_ISINF''@|$(GNULIB_ISINF)|g' \
+	      -e 's|@''GNULIB_ISNAN''@|$(GNULIB_ISNAN)|g' \
 	      -e 's|@''GNULIB_LDEXPL''@|$(GNULIB_LDEXPL)|g' \
 	      -e 's|@''GNULIB_MATHL''@|$(GNULIB_MATHL)|g' \
 	      -e 's|@''GNULIB_ROUND''@|$(GNULIB_ROUND)|g' \
@@ -187,6 +191,8 @@ math.h: math.in.h
 	      -e 's|@''REPLACE_FREXPL''@|$(REPLACE_FREXPL)|g' \
 	      -e 's|@''REPLACE_HUGE_VAL''@|$(REPLACE_HUGE_VAL)|g' \
 	      -e 's|@''REPLACE_ISFINITE''@|$(REPLACE_ISFINITE)|g' \
+	      -e 's|@''REPLACE_ISINF''@|$(REPLACE_ISINF)|g' \
+	      -e 's|@''REPLACE_ISNAN''@|$(REPLACE_ISNAN)|g' \
 	      -e 's|@''REPLACE_LDEXPL''@|$(REPLACE_LDEXPL)|g' \
 	      -e 's|@''REPLACE_NAN''@|$(REPLACE_NAN)|g' \
 	      -e 's|@''REPLACE_ROUND''@|$(REPLACE_ROUND)|g' \
@@ -257,7 +263,8 @@ stdint.h: stdint.in.h
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
 	  sed -e 's/@''HAVE_STDINT_H''@/$(HAVE_STDINT_H)/g' \
-	      -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
+	      -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
 	      -e 's|@''NEXT_STDINT_H''@|$(NEXT_STDINT_H)|g' \
 	      -e 's/@''HAVE_SYS_TYPES_H''@/$(HAVE_SYS_TYPES_H)/g' \
 	      -e 's/@''HAVE_INTTYPES_H''@/$(HAVE_INTTYPES_H)/g' \
@@ -296,10 +303,13 @@ BUILT_SOURCES += stdio.h
 stdio.h: stdio.in.h
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */' && \
-	  sed -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
+	  sed -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
 	      -e 's|@''NEXT_STDIO_H''@|$(NEXT_STDIO_H)|g' \
 	      -e 's|@''GNULIB_FPRINTF_POSIX''@|$(GNULIB_FPRINTF_POSIX)|g' \
 	      -e 's|@''GNULIB_PRINTF_POSIX''@|$(GNULIB_PRINTF_POSIX)|g' \
+	      -e 's|@''GNULIB_OBSTACK_PRINTF''@|$(GNULIB_OBSTACK_PRINTF)|g' \
+	      -e 's|@''GNULIB_OBSTACK_PRINTF_POSIX''@|$(GNULIB_OBSTACK_PRINTF_POSIX)|g' \
 	      -e 's|@''GNULIB_SNPRINTF''@|$(GNULIB_SNPRINTF)|g' \
 	      -e 's|@''GNULIB_SPRINTF_POSIX''@|$(GNULIB_SPRINTF_POSIX)|g' \
 	      -e 's|@''GNULIB_VFPRINTF_POSIX''@|$(GNULIB_VFPRINTF_POSIX)|g' \
@@ -338,6 +348,8 @@ stdio.h: stdio.in.h
 	      -e 's|@''HAVE_DECL_GETDELIM''@|$(HAVE_DECL_GETDELIM)|g' \
 	      -e 's|@''HAVE_DECL_GETLINE''@|$(HAVE_DECL_GETLINE)|g' \
 	      -e 's|@''REPLACE_GETLINE''@|$(REPLACE_GETLINE)|g' \
+	      -e 's|@''HAVE_DECL_OBSTACK_PRINTF''@|$(HAVE_DECL_OBSTACK_PRINTF)|g' \
+	      -e 's|@''REPLACE_OBSTACK_PRINTF''@|$(REPLACE_OBSTACK_PRINTF)|g' \
 	      -e '/definition of GL_LINK_WARNING/r $(LINK_WARNING_H)' \
 	      < $(srcdir)/stdio.in.h; \
 	} > $@-t
@@ -375,7 +387,8 @@ BUILT_SOURCES += $(WCHAR_H)
 wchar.h: wchar.in.h
 	rm -f $@-t $@
 	{ echo '/* DO NOT EDIT! GENERATED AUTOMATICALLY! */'; \
-	  sed -e 's/@''INCLUDE_NEXT''@/$(INCLUDE_NEXT)/g' \
+	  sed -e 's|@''INCLUDE_NEXT''@|$(INCLUDE_NEXT)|g' \
+	      -e 's|@''PRAGMA_SYSTEM_HEADER''@|@PRAGMA_SYSTEM_HEADER@|g' \
 	      -e 's|@''NEXT_WCHAR_H''@|$(NEXT_WCHAR_H)|g' \
 	      -e 's/@''HAVE_WCHAR_H''@/$(HAVE_WCHAR_H)/g' \
 	      -e 's|@''GNULIB_WCWIDTH''@|$(GNULIB_WCWIDTH)|g' \

@@ -1,4 +1,28 @@
 ------------------------------------------------------------------------
+r2768 | vapier | 2008-07-15 05:38:37 -0400 (Tue, 15 Jul 2008) | 1 line
+
+make sure the iovec is sane when registering a handler
+------------------------------------------------------------------------
+r2767 | vapier | 2008-07-15 05:36:58 -0400 (Tue, 15 Jul 2008) | 1 line
+
+remove open() from iovec since no target implements it
+------------------------------------------------------------------------
+r2766 | vapier | 2008-07-15 05:36:01 -0400 (Tue, 15 Jul 2008) | 1 line
+
+introduce a xzalloc() helper func
+------------------------------------------------------------------------
+r2765 | vapier | 2008-07-15 05:34:56 -0400 (Tue, 15 Jul 2008) | 1 line
+
+fix icon generation when building out of tree
+------------------------------------------------------------------------
+r2405 | vapier | 2008-06-02 20:15:07 -0400 (Mon, 02 Jun 2008) | 1 line
+
+rebuild autotools
+------------------------------------------------------------------------
+r2404 | vapier | 2008-06-02 20:14:09 -0400 (Mon, 02 Jun 2008) | 1 line
+
+add windows icon support
+------------------------------------------------------------------------
 r2377 | vapier | 2008-05-22 18:32:44 -0400 (Thu, 22 May 2008) | 1 line
 
 automatically convert names to unc if opening them failed so windows users dont need to use full unc naming convention

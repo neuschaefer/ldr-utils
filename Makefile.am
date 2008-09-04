@@ -1,6 +1,6 @@
 SUBDIRS = gnulib/lib tests
 
-EXTRA_DIST = HACKING
+EXTRA_DIST = HACKING gnulib/m4/gnulib-cache.m4
 
 ACLOCAL_AMFLAGS = -I gnulib/m4
 AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
