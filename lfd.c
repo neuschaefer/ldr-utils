@@ -92,7 +92,7 @@ bool lfd_free(LFD *alfd)
 bool lfd_open(LFD *alfd, const char *filename)
 {
 	if (alfd->is_open) {
-		errno = -EBUSY;
+		errno = EBUSY;
 		return false;
 	}
 
@@ -173,7 +173,7 @@ bool lfd_open(LFD *alfd, const char *filename)
 bool lfd_read(LFD *alfd)
 {
 	if (!alfd->is_open) {
-		errno = -EBADF;
+		errno = EBADF;
 		return false;
 	}
 
@@ -246,7 +246,7 @@ bool lfd_read(LFD *alfd)
 bool lfd_display(LFD *alfd)
 {
 	if (!alfd->is_open) {
-		errno = -EBADF;
+		errno = EBADF;
 		return false;
 	}
 
@@ -302,7 +302,7 @@ static bool lfd_blockify(LFD *alfd, const struct ldr_create_options *opts, uint8
 bool lfd_create(LFD *alfd, const void *void_opts)
 {
 	if (!alfd->is_open) {
-		errno = -EBADF;
+		errno = EBADF;
 		return false;
 	}
 
@@ -509,7 +509,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 bool lfd_dump(LFD *alfd, const void *void_opts)
 {
 	if (!alfd->is_open) {
-		errno = -EBADF;
+		errno = EBADF;
 		return false;
 	}
 
@@ -1001,7 +1001,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 bool lfd_load_uart(LFD *alfd, const void *opts)
 {
 	if (!alfd->is_open) {
-		errno = -EBADF;
+		errno = EBADF;
 		return false;
 	}
 
@@ -1018,7 +1018,7 @@ bool lfd_load_uart(LFD *alfd, const void *opts)
 bool lfd_close(LFD *alfd)
 {
 	if (!alfd->is_open) {
-		errno = -EBADF;
+		errno = EBADF;
 		return false;
 	}
 
