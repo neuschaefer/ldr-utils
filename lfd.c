@@ -96,6 +96,20 @@ bool lfd_open(LFD *alfd, const char *filename)
 		return false;
 	}
 
+	/* Abnormal sources probably will not work */
+	if (!force) {
+		struct stat st;
+		if (stat(filename, &st)) {
+			warnp("unable to stat(%s)", filename);
+			return false;
+		}
+		if (!S_ISREG(st.st_mode)) {
+			warn("LDR file is not a normal file: %s\nRe-run with --force to skip this check", filename);
+			errno = EINVAL;
+			return false;
+		}
+	}
+
 	/* Do autodetection here if need be by looking at the 4th byte.
 	 *  - BF53x -> "0xFF"
 	 *  - BF561 -> "0xA0"

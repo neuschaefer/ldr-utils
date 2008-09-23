@@ -290,6 +290,7 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 	if (!quiet)
 		printf("Loading LDR %s ... ", filename);
 	if (!lfd_open(alfd, filename)) {
+		printf("\n");
 		warnp("unable to open LDR");
 		ret &= false;
 	} else {
