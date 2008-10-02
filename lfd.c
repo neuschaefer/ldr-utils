@@ -97,7 +97,7 @@ bool lfd_open(LFD *alfd, const char *filename)
 	}
 
 	/* Abnormal sources probably will not work */
-	if (!force) {
+	if (!force && filename) {
 		struct stat st;
 		if (stat(filename, &st)) {
 			warnp("unable to stat(%s)", filename);
