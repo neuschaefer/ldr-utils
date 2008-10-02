@@ -5,7 +5,7 @@
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
- * Format handlers for LDR files on the BF52[257].
+ * Format handlers for LDR files on the BF52[234567].
  */
 
 #define __LFD_INTERNAL
