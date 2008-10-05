@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
 /* Define to the number of bits in type 'ptrdiff_t'. */
 #undef BITSIZEOF_PTRDIFF_T
 
@@ -39,9 +42,6 @@
 
 /* Define as the word index where to find the sign of 'double'. */
 #undef DBL_SIGNBIT_WORD
-
-/* Define as good substitute value for EOVERFLOW. */
-#undef EOVERFLOW
 
 /* Define as the bit index in the word where to find bit 0 of the exponent of
    'float'. */
@@ -387,8 +387,16 @@
    'ptrdiff_t'. */
 #undef PTRDIFF_T_SUFFIX
 
+/* Define if printf is overridden by a POSIX compliant gnulib implementation.
+   */
+#undef REPLACE_PRINTF_POSIX
+
 /* Define if vasnprintf exists but is overridden by gnulib. */
 #undef REPLACE_VASNPRINTF
+
+/* Define if vfprintf is overridden by a POSIX compliant gnulib
+   implementation. */
+#undef REPLACE_VFPRINTF_POSIX
 
 /* Define to l, ll, u, ul, ull, etc., as suitable for constants of type
    'sig_atomic_t'. */
@@ -424,9 +432,17 @@
    'wint_t'. */
 #undef WINT_T_SUFFIX
 
-/* Define to 1 if your processor stores words with the most significant byte
-   first (like Motorola and SPARC, unlike Intel and VAX). */
-#undef WORDS_BIGENDIAN
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
 
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */

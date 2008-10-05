@@ -13,8 +13,8 @@
 
 m4_ifndef([AC_AUTOCONF_VERSION],
   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
-m4_if(AC_AUTOCONF_VERSION, [2.62],,
-[m4_warning([this file was generated for autoconf 2.62.
+m4_if(AC_AUTOCONF_VERSION, [2.63],,
+[m4_warning([this file was generated for autoconf 2.63.
 You have another version of autoconf.  It may work, but is not guaranteed to.
 If you have problems, you may need to regenerate the build system entirely.
 To do so, use the procedure documented by the package, typically `autoreconf'.])])
@@ -867,7 +867,7 @@ AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
 m4_include([gnulib/m4/alloca.m4])
-m4_include([gnulib/m4/eoverflow.m4])
+m4_include([gnulib/m4/errno_h.m4])
 m4_include([gnulib/m4/exponentd.m4])
 m4_include([gnulib/m4/exponentf.m4])
 m4_include([gnulib/m4/exponentl.m4])

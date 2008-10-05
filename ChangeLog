@@ -1,4 +1,44 @@
 ------------------------------------------------------------------------
+r2918 | vapier | 2008-10-05 17:49:51 -0400 (Sun, 05 Oct 2008) | 1 line
+
+add bf51x to usage list
+------------------------------------------------------------------------
+r2917 | vapier | 2008-10-05 17:49:39 -0400 (Sun, 05 Oct 2008) | 1 line
+
+add comment explaining test purpose
+------------------------------------------------------------------------
+r2909 | vapier | 2008-10-02 13:50:16 -0400 (Thu, 02 Oct 2008) | 1 line
+
+only check source file when opening an existing one ... not when creating one
+------------------------------------------------------------------------
+r2908 | vapier | 2008-10-02 01:51:50 -0400 (Thu, 02 Oct 2008) | 1 line
+
+add support for BF51x
+------------------------------------------------------------------------
+r2907 | vapier | 2008-10-02 01:51:00 -0400 (Thu, 02 Oct 2008) | 1 line
+
+tweak comment to match reality
+------------------------------------------------------------------------
+r2891 | vapier | 2008-09-23 12:34:18 -0400 (Tue, 23 Sep 2008) | 1 line
+
+fix errno setting -- kernel inverts value, not userspace
+------------------------------------------------------------------------
+r2890 | vapier | 2008-09-23 12:33:33 -0400 (Tue, 23 Sep 2008) | 1 line
+
+do not allow source ldr file to be a non-normal file by default in case people reverse arguments by accident (specify a device as LDR source instead of destination)
+------------------------------------------------------------------------
+r2850 | vapier | 2008-09-04 16:10:44 -0400 (Thu, 04 Sep 2008) | 1 line
+
+regenerate autotools
+------------------------------------------------------------------------
+r2849 | vapier | 2008-09-04 16:08:08 -0400 (Thu, 04 Sep 2008) | 1 line
+
+fixup formatting strings
+------------------------------------------------------------------------
+r2848 | vapier | 2008-09-04 16:07:42 -0400 (Thu, 04 Sep 2008) | 1 line
+
+add support for pulling in inttypes.h for formatting strings
+------------------------------------------------------------------------
 r2768 | vapier | 2008-07-15 05:38:37 -0400 (Tue, 15 Jul 2008) | 1 line
 
 make sure the iovec is sane when registering a handler

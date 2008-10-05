@@ -43,8 +43,8 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='gnulib/lib'
-  gl_EOVERFLOW
   gl_FUNC_ALLOCA
+  gl_HEADER_ERRNO_H
   gl_FLOAT_H
   gl_FUNC_FREXP_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexp])
@@ -204,6 +204,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/link-warning.h
   lib/alloca.in.h
   lib/asnprintf.c
+  lib/errno.in.h
   lib/float+.h
   lib/float.in.h
   lib/fpucw.h
@@ -234,6 +235,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/size_max.h
   lib/stdint.in.h
   lib/stdio-impl.h
+  lib/stdio-write.c
   lib/stdio.in.h
   lib/vasnprintf.c
   lib/vasnprintf.h
@@ -241,7 +243,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/wchar.in.h
   lib/xsize.h
   m4/alloca.m4
-  m4/eoverflow.m4
+  m4/errno_h.m4
   m4/exponentd.m4
   m4/exponentf.m4
   m4/exponentl.m4
