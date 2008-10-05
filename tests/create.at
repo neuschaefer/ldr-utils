@@ -183,6 +183,7 @@ LDR_BINARY --quiet -T bf531 -c excessive-split.ldr ELFS_DIR/final-split.elf --pu
 ], [1], [], [ldr: Punching holes beyond the end of an LDR is not supported
 ])
 
+dnl verify the resvect flag is set properly for all bf53x/bf56x targets
 AT_LDR_CHECK([dnl
 for target in 531 532 533 534 536 537 538 539 561 ; do
 	for prefix in BF Bf bF bf ; do
