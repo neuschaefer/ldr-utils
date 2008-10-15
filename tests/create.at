@@ -56,7 +56,7 @@ AT_LDR_CHECK([
 LDR_BINARY -T BF532 -c bad.ldr ELFS_DIR/bad.elf
 ], [1], [dnl
 Creating LDR bad.ldr ...
- Adding DXE 'elfs/bad.elf' ... ], [dnl
+ Adding DXE 'elfs/bad.elf' ...], [dnl
 ldr: 'elfs/bad.elf' is not a static ELF!
 Failed to create LDR: Bad file descriptor
 ])
@@ -210,5 +210,29 @@ for target in 531 532 533 534 536 537 538 539 561 ; do
 	done
 done
 ], [0], [ignore], [ignore])
+
+dnl make sure we dont accept invalid targets
+AT_LDR_CHECK([dnl
+for inv in -f -c f- c- "" a b c bf BF 1 2 3 BF1111 bf000 ; do
+	dnl echo LDR_BINARY -T "${inv}" -c /bin/sh
+	LDR_BINARY -T "${inv}" -c /bin/sh
+done
+], [1], [], [dnl
+ldr: unable to handle specified target: -f
+ldr: unable to handle specified target: -c
+ldr: unable to handle specified target: f-
+ldr: unable to handle specified target: c-
+ldr: unable to handle specified target: 
+ldr: unable to handle specified target: a
+ldr: unable to handle specified target: b
+ldr: unable to handle specified target: c
+ldr: unable to handle specified target: bf
+ldr: unable to handle specified target: BF
+ldr: unable to handle specified target: 1
+ldr: unable to handle specified target: 2
+ldr: unable to handle specified target: 3
+ldr: unable to handle specified target: BF1111
+ldr: unable to handle specified target: bf000
+])
 
 AT_CLEANUP

@@ -12,7 +12,7 @@ test -e /var/lock/LCK..nonexistent-output && rm -f /var/lock/LCK..nonexistent-ou
 LDR_BINARY -T BF536 -l LDRS_DIR/uart.ldr nonexistent-output
 ], [1], [dnl
 Loading LDR ldrs/uart.ldr ... OK!
-Opening nonexistent-output ... ], [dnl
+Opening nonexistent-output ...], [dnl
 Failed: No such file or directory
 ])
 
