@@ -12,7 +12,7 @@
 #include "ldr.h"
 
 static const char *rcsid = "$Id$";
-const char *argv0;
+const char *argv0 = "ldr-utils";
 int force = 0, verbose = 0, quiet = 0, debug = 0;
 
 
