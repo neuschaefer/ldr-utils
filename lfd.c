@@ -42,15 +42,15 @@ struct lfd_target *lfd_target_find(const char *name)
 	size_t i, checklen;
 	struct list_item *curr = target_list;
 	checklen = (p ? (size_t)(p - name) : strlen(name));
-	if (!checklen)
-		return NULL;
 	while (curr) {
 		if (!strncasecmp(name, curr->target->name, checklen))
-			return curr->target;
+			if (checklen == strlen(curr->target->name))
+				return curr->target;
 		if (curr->target->aliases)
 			for (i = 0; curr->target->aliases[i]; ++i)
 				if (!strncasecmp(name, curr->target->aliases[i], checklen))
-					return curr->target;
+					if (checklen == strlen(curr->target->aliases[i]))
+						return curr->target;
 		curr = curr->next;
 	}
 	return NULL;
