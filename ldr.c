@@ -113,7 +113,7 @@ static struct option_help const create_opts_help[] = {
 	{"(BF56x) Wait states (15)",            "<num>"},
 	{"(BF56x) Flash Hold time cycles (3)",  "<num>"},
 	{"(BF56x) SPI boot baud rate (500k)",   "<baud>"},
-	{"Block size of DXE (0x8000)",          "<size>"},
+	{"Block size of DXE (0 = phdr size)",   "<size>"},
 	{"Init code",                           "<file>"},
 	{"Punch an ignore hole",                "<off:size[:filler]>"},
 	{"Use ELF VMAs for target addresses",   NULL},
@@ -324,7 +324,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.wait_states = 15,
 		.flash_holdtimes = 3,
 		.spi_baud = 500,
-		.block_size = 0x8000,
+		.block_size = 0,
 		.init_code = NULL,
 		.hole = { 0, 0, NULL },
 		.use_vmas = false,
@@ -384,8 +384,6 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		err("Invalid GPIO '%i'.  Valid GPIO values are 0 - 16.", opts.gpio);
 	if (opts.dma < 1 || opts.dma > 15)
 		err("Invalid DMA '%i'.  Valid DMA values are 1 - 15.", opts.dma);
-	if (opts.block_size == 0)
-		err("Invalid block size '%i'.  Valid block sizes are 1 <= size < 2^32.", opts.block_size);
 	if (opts.flash_bits != 8 && opts.flash_bits != 16)
 		err("Invalid flash bits '%i'.  Valid bits are '8' and '16'.", opts.flash_bits);
 	if (opts.wait_states > 15)
