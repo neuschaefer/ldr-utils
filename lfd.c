@@ -279,7 +279,7 @@ static bool lfd_blockify(LFD *alfd, const struct ldr_create_options *opts, uint8
 
 	bytes_written = 0;
 	do {
-		if (byte_count - bytes_written < opts->block_size)
+		if (!opts->block_size || byte_count - bytes_written < opts->block_size)
 			bytes_to_write = byte_count - bytes_written;
 		else
 			bytes_to_write = opts->block_size;
