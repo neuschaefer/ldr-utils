@@ -53,6 +53,7 @@ struct ldr_create_options {
 	char *init_code;              /* initialization routine */
 	hole hole;                    /* punch a hole in LDR image */
 	bool use_vmas;                /* use the VMA addresses rather than LMA */
+	bool jump_block;              /* create a jump block at start of L1 */
 	char **filelist;
 };
 

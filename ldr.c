@@ -87,7 +87,7 @@ static struct option_help const dump_opts_help[] = {
 };
 #define show_dump_usage(status) show_some_usage("dump", dump_long_opts, dump_opts_help, DUMP_PARSE_FLAGS, status)
 
-#define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:B:w:H:s:b:i:P:M"
+#define CREATE_PARSE_FLAGS COMMON_FLAGS "p:g:d:B:w:H:s:b:i:P:MJ"
 static struct option const create_long_opts[] = {
 	{"bmode",     a_argument, NULL, 0x2},
 	{"port",      a_argument, NULL, 'p'},
@@ -101,6 +101,7 @@ static struct option const create_long_opts[] = {
 	{"initcode",  a_argument, NULL, 'i'},
 	{"punchit",   a_argument, NULL, 'P'},
 	{"use-vmas", no_argument, NULL, 'M'},
+	{"no-jump",  no_argument, NULL, 'J'},
 	COMMON_LONG_OPTS
 };
 static struct option_help const create_opts_help[] = {
@@ -116,6 +117,7 @@ static struct option_help const create_opts_help[] = {
 	{"Init code",                           "<file>"},
 	{"Punch an ignore hole",                "<off:size[:filler]>"},
 	{"Use ELF VMAs for target addresses",   NULL},
+	{"Do not insert an L1 jump block",      NULL},
 	COMMON_HELP_OPTS
 };
 #define show_create_usage(status) show_some_usage("create", create_long_opts, create_opts_help, CREATE_PARSE_FLAGS, status)
@@ -326,6 +328,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.init_code = NULL,
 		.hole = { 0, 0, NULL },
 		.use_vmas = false,
+		.jump_block = true,
 		.filelist = NULL,
 	};
 
@@ -368,6 +371,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 				}
 				break;
 			case 'M': opts.use_vmas = true; break;
+			case 'J': opts.jump_block = false; break;
 			case 'h': show_create_usage(0);
 			CASE_common_errors
 		}

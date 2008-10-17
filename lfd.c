@@ -457,9 +457,11 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 		 * on the target, so we have to let the target figure out
 		 * if it can ommit the jump.
 		 */
-		if (!quiet)
-			printf("[jump block to 0x%08"PRIX32"] ", EGET(ehdr->e_entry));
-		alfd->target->iovec.write_block(alfd, DXE_BLOCK_JUMP, opts, EGET(ehdr->e_entry), DXE_JUMP_CODE_SIZE, dxe_jump_code(EGET(ehdr->e_entry)));
+		if (opts->jump_block) {
+			if (!quiet)
+				printf("[jump block to 0x%08"PRIX32"] ", EGET(ehdr->e_entry));
+			alfd->target->iovec.write_block(alfd, DXE_BLOCK_JUMP, opts, EGET(ehdr->e_entry), DXE_JUMP_CODE_SIZE, dxe_jump_code(EGET(ehdr->e_entry)));
+		}
 
 		/* extract each PT_LOAD program header */
 		for (p = 0; p < EGET(ehdr->e_phnum); ++p) {
