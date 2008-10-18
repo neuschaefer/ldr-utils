@@ -324,7 +324,7 @@ static bool create_ldr(const int argc, char **argv, const char *target)
 		.wait_states = 15,
 		.flash_holdtimes = 3,
 		.spi_baud = 500,
-		.block_size = 0,
+		.block_size = 0x8000,
 		.init_code = NULL,
 		.hole = { 0, 0, NULL },
 		.use_vmas = false,
