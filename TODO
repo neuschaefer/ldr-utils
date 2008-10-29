@@ -58,3 +58,12 @@ Build up the LDR in memory before writing it all out to disk.  This way we can
 
 Check that the incoming ELF does not load on top of the trampoline block with
 	sections that are not the entry point.
+
+One PHDR gets split for sections ?
+  LOAD           0x001000 0x01fc0000 0x01fc0000 0x13a8c 0x13a8c RWE 0x1000
+   00     .text .rodata .data .u_boot_cmd
+    Block  2 0x0000012A: 0x01FC0000 0x00003EC2 0x0000 ( )
+    Block  3 0x00003FF6: 0x00000000 0x00002000 0x0010 ( ignore )
+    Block  4 0x00006000: 0x01FC3EC2 0x0000C13E 0x0000 ( )
+    Block  5 0x00012148: 0x01FD0000 0x00003A8C 0x0000 ( )
+
