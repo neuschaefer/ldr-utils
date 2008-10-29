@@ -99,13 +99,13 @@ bool lfd_open(LFD *alfd, const char *filename)
 	}
 
 	/* Abnormal sources probably will not work */
-	if (!force && filename) {
-		struct stat st;
-		if (stat(filename, &st)) {
+	if (filename) {
+		if (stat(filename, &alfd->st)) {
 			warnp("unable to stat(%s)", filename);
 			return false;
 		}
-		if (!S_ISREG(st.st_mode)) {
+
+		if (!force && !S_ISREG(alfd->st.st_mode)) {
 			warn("LDR file is not a normal file: %s\nRe-run with --force to skip this check", filename);
 			errno = EINVAL;
 			return false;
@@ -232,6 +232,14 @@ bool lfd_read(LFD *alfd)
 		if (fill)
 			block->data = NULL;
 		else if (block->data_size) {
+			if (!force && block->data_size > (size_t)alfd->st.st_size) {
+				err("corrupt LDR detected: %s\n"
+					"\tfile size is %zi bytes, but block %zi is %zi bytes long??\n"
+					"\tUse --force to skip this test\n"
+					"\tUse --debug to dump block headers\n",
+					alfd->filename, (size_t)alfd->st.st_size,
+					dxe->num_blocks, block->data_size);
+			}
 			block->data = xmalloc(block->data_size);
 			fread(block->data, 1, block->data_size, fp);
 			pos += block->data_size;

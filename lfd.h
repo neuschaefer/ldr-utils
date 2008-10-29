@@ -54,6 +54,7 @@ typedef struct lfd {
 	const char *selected_sirev;
 	FILE *fp;
 	bool is_open;
+	struct stat st;
 } LFD;
 
 enum {
