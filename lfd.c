@@ -225,7 +225,7 @@ bool lfd_read(LFD *alfd)
 			size_t i;
 			printf("[header(0x%zx):", block->header_size);
 			for (i = 0; i < block->header_size; ++i)
-				printf("%s%02x", (i % 4 ? "" : " "), ((char *)block->header)[i]);
+				printf("%s%02x", (i % 4 ? "" : " "), ((unsigned char *)block->header)[i]);
 			printf("] [data(0x%08zx)]\n", block->data_size);
 		}
 
