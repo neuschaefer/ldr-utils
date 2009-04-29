@@ -22,8 +22,10 @@ extern const char *argv0;
 #if defined(__GLIBC__) && !defined(__UCLIBC__) && !defined(NDEBUG)
 # define HAVE_BACKTRACE
 void error_backtrace(void);
+void error_backtrace_maybe(void);
 #else
 # define error_backtrace()
+# define error_backtrace_maybe()
 #endif
 
 #define warn(fmt, args...) \
@@ -33,7 +35,7 @@ void error_backtrace(void);
 #define _err(wfunc, fmt, args...) \
 	do { \
 		wfunc(fmt, ## args); \
-		error_backtrace(); \
+		error_backtrace_maybe(); \
 		exit(EXIT_FAILURE); \
 	} while (0)
 #define err(fmt, args...) _err(warn, fmt, ## args)

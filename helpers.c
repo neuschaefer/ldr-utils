@@ -314,4 +314,8 @@ void error_backtrace(void)
 	num_funcs = backtrace(funcs, sizeof(funcs));
 	backtrace_symbols_fd(funcs, num_funcs, 1);
 }
+void error_backtrace_maybe(void)
+{
+	if (debug) error_backtrace();
+}
 #endif
