@@ -85,7 +85,7 @@ bool bf53x_lfd_display_dxe(LFD *alfd, size_t d)
 	/* since we let the BF533/BF561 LFDs jump here, let's mask some
 	 * flags that aren't used for those targets ...
 	 */
-	ignore_flags = (family_is(alfd, "BF537") ? 0 : LDR_FLAG_PPORT_MASK | LDR_FLAG_PFLAG_MASK);
+	ignore_flags = family_is(alfd, "BF537") ? 0 : LDR_FLAG_PPORT_MASK;
 
 	if (quiet)
 		printf("              Offset      Address     Bytes    Flags\n");
@@ -200,8 +200,8 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 	    !target_is(alfd, "BF532"))
 		flags = LDR_FLAG_RESVECT;
 	default_init_addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
+	flags |= (opts->gpio << LDR_FLAG_PFLAG_SHIFT) & LDR_FLAG_PFLAG_MASK;
 	if (family_is(alfd, "BF537")) {
-		flags |= (opts->gpio << LDR_FLAG_PFLAG_SHIFT) & LDR_FLAG_PFLAG_MASK;
 		switch (toupper(opts->port)) {
 			case 'F': flags |= LDR_FLAG_PPORT_PORTF; break;
 			case 'G': flags |= LDR_FLAG_PPORT_PORTG; break;
