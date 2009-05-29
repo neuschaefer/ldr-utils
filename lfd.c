@@ -126,6 +126,8 @@ bool lfd_open(LFD *alfd, const char *filename)
 			return false;
 		if (fread(bytes, sizeof(bytes[0]), ARRAY_SIZE(bytes), fp) != sizeof(bytes)) {
 			fclose(fp);
+			warn("file too small (%zi bytes)", (ssize_t)alfd->st.st_size);
+			errno = EINVAL;
 			return false;
 		}
 		fclose(fp);
