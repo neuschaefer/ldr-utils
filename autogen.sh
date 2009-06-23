@@ -21,6 +21,7 @@ sed -i \
 	-e "/^AT_FILES/s:=.*:= ${testatfiles}:" \
 	tests/Makefile.am
 
+rm -f gnulib/lib/* gnulib/m4/*
 PATH=/usr/local/src/gnu/gnulib:${PATH}
 gnulib-tool --source-base=gnulib/lib --m4-base=gnulib/m4 --import printf-posix || :
 

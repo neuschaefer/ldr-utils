@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2008 Free Software Foundation, Inc.
+# Copyright (C) 2002-2009 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -25,6 +25,7 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([gl_FP_IEEE])
 ])
 
@@ -50,10 +51,15 @@ AC_DEFUN([gl_INIT],
   gl_MATH_MODULE_INDICATOR([frexp])
   gl_FUNC_FREXPL_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexpl])
+  gl_FUNC_GETPAGESIZE
+  gl_UNISTD_MODULE_INDICATOR([getpagesize])
   gl_FUNC_ISNAND_NO_LIBM
   gl_FUNC_ISNANF_NO_LIBM
   gl_FUNC_ISNANL_NO_LIBM
   gl_MATH_H
+  gl_FUNC_MEMCHR
+  gl_STRING_MODULE_INDICATOR([memchr])
+  gl_MULTIARCH
   gl_FUNC_PRINTF_FREXP
   gl_FUNC_PRINTF_FREXPL
   gl_FUNC_PRINTF_POSIX
@@ -64,6 +70,8 @@ AC_DEFUN([gl_INIT],
   gl_SIZE_MAX
   gl_STDINT_H
   gl_STDIO_H
+  gl_HEADER_STRING_H
+  gl_UNISTD_H
   gl_FUNC_VASNPRINTF
   gl_FUNC_VFPRINTF_POSIX
   gl_STDIO_MODULE_INDICATOR([vfprintf-posix])
@@ -212,6 +220,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/frexpl.c
   lib/fseterr.c
   lib/fseterr.h
+  lib/getpagesize.c
   lib/isnan.c
   lib/isnand-nolibm.h
   lib/isnand.c
@@ -220,6 +229,8 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanl-nolibm.h
   lib/isnanl.c
   lib/math.in.h
+  lib/memchr.c
+  lib/memchr.valgrind
   lib/printf-args.c
   lib/printf-args.h
   lib/printf-frexp.c
@@ -237,20 +248,25 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/stdio-impl.h
   lib/stdio-write.c
   lib/stdio.in.h
+  lib/string.in.h
+  lib/unistd.in.h
   lib/vasnprintf.c
   lib/vasnprintf.h
   lib/vfprintf.c
   lib/wchar.in.h
   lib/xsize.h
+  m4/00gnulib.m4
   m4/alloca.m4
   m4/errno_h.m4
   m4/exponentd.m4
   m4/exponentf.m4
   m4/exponentl.m4
+  m4/extensions.m4
   m4/float_h.m4
   m4/fpieee.m4
   m4/frexp.m4
   m4/frexpl.m4
+  m4/getpagesize.m4
   m4/gnulib-common.m4
   m4/include_next.m4
   m4/intmax_t.m4
@@ -261,6 +277,9 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/ldexpl.m4
   m4/longlong.m4
   m4/math_h.m4
+  m4/memchr.m4
+  m4/mmap-anon.m4
+  m4/multiarch.m4
   m4/nocrash.m4
   m4/onceonly.m4
   m4/printf-frexp.m4
@@ -272,6 +291,8 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdio_h.m4
+  m4/string_h.m4
+  m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vfprintf-posix.m4
   m4/wchar.m4

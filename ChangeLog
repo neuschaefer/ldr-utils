@@ -1,4 +1,68 @@
 ------------------------------------------------------------------------
+r3413 | vapier | 2009-05-29 11:23:23 -0400 (Fri, 29 May 2009) | 1 line
+
+if the file is short, dump a message rather than a confusing "error: success"
+------------------------------------------------------------------------
+r3358 | vapier | 2009-04-30 12:54:40 -0400 (Thu, 30 Apr 2009) | 1 line
+
+respect pflags settings for all BF53x/BF56x targets as pointed out by Eduardo Tagle
+------------------------------------------------------------------------
+r3355 | vapier | 2009-04-29 18:16:04 -0400 (Wed, 29 Apr 2009) | 1 line
+
+dont dump a backtrace by default as most people dont get it ... have it show up with --debug
+------------------------------------------------------------------------
+r2975 | vapier | 2008-11-04 18:27:59 -0500 (Tue, 04 Nov 2008) | 1 line
+
+add .gitignore
+------------------------------------------------------------------------
+r2969 | vapier | 2008-10-29 01:26:18 -0400 (Wed, 29 Oct 2008) | 1 line
+
+add TODO for phdr issue
+------------------------------------------------------------------------
+r2968 | vapier | 2008-10-29 01:25:54 -0400 (Wed, 29 Oct 2008) | 1 line
+
+store ldr stat info so we can avoid trying to allocate gigs of memory when showing a broken/corrupt ldr
+------------------------------------------------------------------------
+r2967 | vapier | 2008-10-29 01:11:44 -0400 (Wed, 29 Oct 2008) | 1 line
+
+make sure we use unsigned char bytes for display
+------------------------------------------------------------------------
+r2952 | vapier | 2008-10-18 04:00:15 -0400 (Sat, 18 Oct 2008) | 1 line
+
+set default block size back to 0x8000 as bootroms tend to die with large blocks ...
+------------------------------------------------------------------------
+r2951 | vapier | 2008-10-17 01:15:28 -0400 (Fri, 17 Oct 2008) | 1 line
+
+do not blockify phdrs by default
+------------------------------------------------------------------------
+r2950 | vapier | 2008-10-17 01:15:21 -0400 (Fri, 17 Oct 2008) | 1 line
+
+do not blockify phdrs by default
+------------------------------------------------------------------------
+r2949 | vapier | 2008-10-17 01:06:38 -0400 (Fri, 17 Oct 2008) | 1 line
+
+allow jump blocks to be omitted
+------------------------------------------------------------------------
+r2944 | vapier | 2008-10-14 21:03:09 -0400 (Tue, 14 Oct 2008) | 1 line
+
+make sure argv0 is set to a sane value before main() runs
+------------------------------------------------------------------------
+r2943 | vapier | 2008-10-14 20:20:03 -0400 (Tue, 14 Oct 2008) | 1 line
+
+make sure invalid/partial targets get rejected
+------------------------------------------------------------------------
+r2942 | vapier | 2008-10-14 20:18:45 -0400 (Tue, 14 Oct 2008) | 1 line
+
+make sure the target lengths match so we dont do partial matches
+------------------------------------------------------------------------
+r2941 | vapier | 2008-10-14 19:37:48 -0400 (Tue, 14 Oct 2008) | 1 line
+
+make sure we abort on invalid targets that begin with a dash
+------------------------------------------------------------------------
+r2919 | vapier | 2008-10-05 19:58:41 -0400 (Sun, 05 Oct 2008) | 1 line
+
+rebuild autotools
+------------------------------------------------------------------------
 r2918 | vapier | 2008-10-05 17:49:51 -0400 (Sun, 05 Oct 2008) | 1 line
 
 add bf51x to usage list
