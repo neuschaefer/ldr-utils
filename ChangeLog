@@ -1,4 +1,8 @@
 ------------------------------------------------------------------------
+r3459 | vapier | 2009-06-23 16:24:11 -0400 (Tue, 23 Jun 2009) | 1 line
+
+ldr-utils: update autotools
+------------------------------------------------------------------------
 r3413 | vapier | 2009-05-29 11:23:23 -0400 (Fri, 29 May 2009) | 1 line
 
 if the file is short, dump a message rather than a confusing "error: success"

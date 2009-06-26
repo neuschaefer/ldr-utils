@@ -15,12 +15,22 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=gnulib/lib --m4-base=gnulib/m4 --doc-base=doc --tests-base=tests --aux-dir=. --no-libtool --macro-prefix=gl printf-posix
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=gnulib/lib --m4-base=gnulib/m4 --doc-base=doc --tests-base=tests --aux-dir=. --no-libtool --macro-prefix=gl assert fprintf-posix fseeko ftello func inline printf-posix snprintf-posix sprintf-posix stdbool strsignal
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([
+  assert
+  fprintf-posix
+  fseeko
+  ftello
+  func
+  inline
   printf-posix
+  snprintf-posix
+  sprintf-posix
+  stdbool
+  strsignal
 ])
 gl_AVOID([])
 gl_SOURCE_BASE([gnulib/lib])

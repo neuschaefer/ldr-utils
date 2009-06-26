@@ -70,12 +70,6 @@ void tty_stdin_init(void);
 #ifndef HAVE_FDATASYNC
 # define fdatasync(fd) 0
 #endif
-#ifndef HAVE_FSEEKO
-# define fseeko(stream, offset, whence) fseek(stream, offset, whence)
-#endif
-#ifndef HAVE_FTELLO
-# define ftello(stream) ftell(stream)
-#endif
 #ifndef HAVE_USLEEP
 # define usleep(usecs) 0
 #endif

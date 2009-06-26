@@ -25,8 +25,12 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
+  AC_REQUIRE([AM_PROG_CC_C_O])
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([gl_FP_IEEE])
+  AC_REQUIRE([AC_FUNC_FSEEKO])
+  AC_REQUIRE([AC_FUNC_FSEEKO])
+  gl_THREADLIB_EARLY
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -45,17 +49,31 @@ AC_DEFUN([gl_INIT],
   gl_COMMON
   gl_source_base='gnulib/lib'
   gl_FUNC_ALLOCA
+  gl_ASSERT
   gl_HEADER_ERRNO_H
   gl_FLOAT_H
+  gl_FUNC_FPRINTF_POSIX
+  gl_STDIO_MODULE_INDICATOR([fprintf-posix])
   gl_FUNC_FREXP_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexp])
   gl_FUNC_FREXPL_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexpl])
+  gl_FUNC_FSEEKO
+  gl_STDIO_MODULE_INDICATOR([fseeko])
+  gl_FUNC_FTELLO
+  gl_STDIO_MODULE_INDICATOR([ftello])
+  gl_FUNC
   gl_FUNC_GETPAGESIZE
   gl_UNISTD_MODULE_INDICATOR([getpagesize])
+  AC_SUBST([LIBINTL])
+  AC_SUBST([LTLIBINTL])
+  gl_INLINE
   gl_FUNC_ISNAND_NO_LIBM
   gl_FUNC_ISNANF_NO_LIBM
   gl_FUNC_ISNANL_NO_LIBM
+  gl_LOCK
+  gl_FUNC_LSEEK
+  gl_UNISTD_MODULE_INDICATOR([lseek])
   gl_MATH_H
   gl_FUNC_MEMCHR
   gl_STRING_MODULE_INDICATOR([memchr])
@@ -68,9 +86,19 @@ AC_DEFUN([gl_INIT],
   gl_SIGNBIT
   gl_MATH_MODULE_INDICATOR([signbit])
   gl_SIZE_MAX
+  gl_FUNC_SNPRINTF
+  gl_STDIO_MODULE_INDICATOR([snprintf])
+  gl_FUNC_SNPRINTF_POSIX
+  gl_FUNC_SPRINTF_POSIX
+  gl_STDIO_MODULE_INDICATOR([sprintf-posix])
+  AM_STDBOOL_H
   gl_STDINT_H
   gl_STDIO_H
   gl_HEADER_STRING_H
+  gl_FUNC_STRSIGNAL
+  gl_STRING_MODULE_INDICATOR([strsignal])
+  gl_THREADLIB
+  gl_TLS
   gl_UNISTD_H
   gl_FUNC_VASNPRINTF
   gl_FUNC_VFPRINTF_POSIX
@@ -209,18 +237,28 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/config.rpath
   build-aux/link-warning.h
   lib/alloca.in.h
   lib/asnprintf.c
   lib/errno.in.h
   lib/float+.h
   lib/float.in.h
+  lib/fprintf.c
   lib/fpucw.h
   lib/frexp.c
   lib/frexpl.c
+  lib/fseeko.c
   lib/fseterr.c
   lib/fseterr.h
+  lib/ftello.c
   lib/getpagesize.c
+  lib/gettext.h
+  lib/glthread/lock.c
+  lib/glthread/lock.h
+  lib/glthread/threadlib.c
+  lib/glthread/tls.c
+  lib/glthread/tls.h
   lib/isnan.c
   lib/isnand-nolibm.h
   lib/isnand.c
@@ -228,6 +266,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/isnanf.c
   lib/isnanl-nolibm.h
   lib/isnanl.c
+  lib/lseek.c
   lib/math.in.h
   lib/memchr.c
   lib/memchr.valgrind
@@ -240,15 +279,20 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/printf-parse.c
   lib/printf-parse.h
   lib/printf.c
+  lib/siglist.h
   lib/signbitd.c
   lib/signbitf.c
   lib/signbitl.c
   lib/size_max.h
+  lib/snprintf.c
+  lib/sprintf.c
+  lib/stdbool.in.h
   lib/stdint.in.h
   lib/stdio-impl.h
   lib/stdio-write.c
   lib/stdio.in.h
   lib/string.in.h
+  lib/strsignal.c
   lib/unistd.in.h
   lib/vasnprintf.c
   lib/vasnprintf.h
@@ -257,6 +301,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
+  m4/assert.m4
   m4/errno_h.m4
   m4/exponentd.m4
   m4/exponentf.m4
@@ -264,18 +309,28 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/extensions.m4
   m4/float_h.m4
   m4/fpieee.m4
+  m4/fprintf-posix.m4
   m4/frexp.m4
   m4/frexpl.m4
+  m4/fseeko.m4
+  m4/ftello.m4
+  m4/func.m4
   m4/getpagesize.m4
   m4/gnulib-common.m4
   m4/include_next.m4
+  m4/inline.m4
   m4/intmax_t.m4
   m4/inttypes_h.m4
   m4/isnand.m4
   m4/isnanf.m4
   m4/isnanl.m4
   m4/ldexpl.m4
+  m4/lib-ld.m4
+  m4/lib-link.m4
+  m4/lib-prefix.m4
+  m4/lock.m4
   m4/longlong.m4
+  m4/lseek.m4
   m4/math_h.m4
   m4/memchr.m4
   m4/mmap-anon.m4
@@ -288,10 +343,17 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/printf.m4
   m4/signbit.m4
   m4/size_max.m4
+  m4/snprintf-posix.m4
+  m4/snprintf.m4
+  m4/sprintf-posix.m4
+  m4/stdbool.m4
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdio_h.m4
   m4/string_h.m4
+  m4/strsignal.m4
+  m4/threadlib.m4
+  m4/tls.m4
   m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vfprintf-posix.m4
