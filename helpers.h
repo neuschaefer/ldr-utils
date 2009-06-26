@@ -12,7 +12,7 @@
 #define __HELPERS_H__
 
 #ifndef VERSION
-# define VERSION "cvs"
+# define VERSION "live"
 #endif
 
 extern int force, verbose, quiet, debug;
