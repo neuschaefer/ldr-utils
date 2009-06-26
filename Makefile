@@ -7,11 +7,12 @@
 cc-option = $(shell $(CC) $(CFLAGS) $(1) -S -o /dev/null -xc /dev/null \
               > /dev/null 2>&1 && echo "$(1)" || echo "$(2)")
 
-WFLAGS  := $(call cc-option,-Wall,) $(call cc-option,-Wextra,)
-CFLAGS  ?= -g -O0
-CFLAGS  += $(WFLAGS)
-LDFLAGS += $(CFLAGS) -rdynamic
-LDLIBS  += -lpthread
+WFLAGS   := $(call cc-option,-Wall,) $(call cc-option,-Wextra,)
+CFLAGS   ?= -g -O0
+CFLAGS   += $(WFLAGS)
+CPPFLAGS += -D_GNU_SOURCE
+LDFLAGS  += $(CFLAGS) -rdynamic
+LDLIBS   += -lpthread
 
 DESTDIR :=
 PREFIX  := /usr
