@@ -1,4 +1,17 @@
 .depend
+.deps
+.libs
 *.o
+*~
+
+/autom4te.cache
 
 /ldr
+
+/tests/atconfig
+/tests/atlocal
+/tests/fake-loadee
+/tests/package.m4
+/tests/testsuite
+/tests/testsuite.dir/
+/tests/testsuite.log
