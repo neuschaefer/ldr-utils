@@ -50,6 +50,8 @@ AC_DEFUN([gl_INIT],
   gl_source_base='gnulib/lib'
   gl_FUNC_ALLOCA
   gl_ASSERT
+  gl_FUNC_DUP2
+  gl_UNISTD_MODULE_INDICATOR([dup2])
   gl_HEADER_ERRNO_H
   gl_FLOAT_H
   gl_FUNC_FPRINTF_POSIX
@@ -63,8 +65,6 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_FTELLO
   gl_STDIO_MODULE_INDICATOR([ftello])
   gl_FUNC
-  gl_FUNC_GETPAGESIZE
-  gl_UNISTD_MODULE_INDICATOR([getpagesize])
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
   gl_INLINE
@@ -92,6 +92,7 @@ AC_DEFUN([gl_INIT],
   gl_FUNC_SPRINTF_POSIX
   gl_STDIO_MODULE_INDICATOR([sprintf-posix])
   AM_STDBOOL_H
+  gl_STDDEF_H
   gl_STDINT_H
   gl_STDIO_H
   gl_HEADER_STRING_H
@@ -241,6 +242,7 @@ AC_DEFUN([gl_FILE_LIST], [
   build-aux/link-warning.h
   lib/alloca.in.h
   lib/asnprintf.c
+  lib/dup2.c
   lib/errno.in.h
   lib/float+.h
   lib/float.in.h
@@ -252,7 +254,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/fseterr.c
   lib/fseterr.h
   lib/ftello.c
-  lib/getpagesize.c
   lib/gettext.h
   lib/glthread/lock.c
   lib/glthread/lock.h
@@ -287,6 +288,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/snprintf.c
   lib/sprintf.c
   lib/stdbool.in.h
+  lib/stddef.in.h
   lib/stdint.in.h
   lib/stdio-impl.h
   lib/stdio-write.c
@@ -302,6 +304,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/00gnulib.m4
   m4/alloca.m4
   m4/assert.m4
+  m4/dup2.m4
   m4/errno_h.m4
   m4/exponentd.m4
   m4/exponentf.m4
@@ -315,7 +318,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fseeko.m4
   m4/ftello.m4
   m4/func.m4
-  m4/getpagesize.m4
   m4/gnulib-common.m4
   m4/include_next.m4
   m4/inline.m4
@@ -347,6 +349,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/snprintf.m4
   m4/sprintf-posix.m4
   m4/stdbool.m4
+  m4/stddef_h.m4
   m4/stdint.m4
   m4/stdint_h.m4
   m4/stdio_h.m4

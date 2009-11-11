@@ -1,4 +1,4 @@
-AC_INIT(ldr-utils, [svn-3459], [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, [svn-3464], [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 

@@ -29,8 +29,8 @@ sed -i \
 	-e "/^AT_FILES/s:=.*:= ${testatfiles}:" \
 	tests/Makefile.am
 
+find gnulib/{lib,m4}/ '(' -type f -print ')' -o '(' -name .svn -prune ')' | xargs -r rm -f
 PATH=/usr/local/src/gnu/gnulib:${PATH}
-rm -f gnulib/{lib,m4}/*
 gnulib-tool --source-base=gnulib/lib --m4-base=gnulib/m4 --import $(<gnulib/modules) || :
 rm -f gnulib/*/.gitignore
 find gnulib -name '*~' -exec rm {} +
