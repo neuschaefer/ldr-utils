@@ -174,7 +174,8 @@ int main(int argc, char *argv[])
 			break;
 		else if (!ret)
 			break;
-		fwrite(buf, 1, ret, out_fp);
+		if (fwrite(buf, 1, ret, out_fp) != ret)
+			perror("fake-loadee: fwrite was short");
 	}
 	fclose(out_fp);
 
