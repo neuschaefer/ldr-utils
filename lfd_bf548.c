@@ -353,7 +353,7 @@ uint32_t bf54x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 	return header->target_address;
 }
 
-static const char *bf548_aliases[] = { "BF542", "BF544", "BF547", "BF548", "BF549", NULL };
+static const char *bf548_aliases[] = { "BF542", "BF544", "BF547", "BF548", "BF549", "BF542M", "BF544M", "BF547M", "BF548M", "BF549M", NULL };
 static struct lfd_target bf548_lfd_target = {
 	.name  = "BF548",
 	.description = "Blackfin LDR handler for BF542/BF544/BF547/BF548/BF549",
