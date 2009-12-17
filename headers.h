@@ -59,6 +59,11 @@
 # include <config.h>
 #endif
 
+#ifdef __MINGW64__
+# define _POSIX
+# define __USE_MINGW_ALARM
+#endif
+
 #ifdef HAVE_ASSERT_H
 # include <assert.h>
 #endif
