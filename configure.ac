@@ -2,6 +2,11 @@ AC_INIT(ldr-utils, [svn-3464], [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
+dnl silent rules requires automake-1.11+
+m4_ifdef([AM_SILENT_RULES],
+	[AM_SILENT_RULES([yes])],
+	[AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
+
 AC_PROG_CC
 gl_EARLY
 gl_INIT
