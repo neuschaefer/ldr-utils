@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2009 Free Software Foundation, Inc.
+# Copyright (C) 2002-2010 Free Software Foundation, Inc.
 #
 # This file is free software, distributed under the terms of the GNU
 # General Public License.  As a special exception to the GNU General
@@ -50,8 +50,6 @@ AC_DEFUN([gl_INIT],
   gl_source_base='gnulib/lib'
   gl_FUNC_ALLOCA
   gl_ASSERT
-  gl_FUNC_DUP2
-  gl_UNISTD_MODULE_INDICATOR([dup2])
   gl_HEADER_ERRNO_H
   gl_FLOAT_H
   gl_FUNC_FPRINTF_POSIX
@@ -128,7 +126,7 @@ AC_DEFUN([gl_INIT],
     if test -n "$gl_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gl_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gl_libobjs="$gl_libobjs $i.$ac_objext"
         gl_ltlibobjs="$gl_ltlibobjs $i.lo"
       done
@@ -167,7 +165,7 @@ AC_DEFUN([gl_INIT],
     if test -n "$gltests_LIBOBJS"; then
       # Remove the extension.
       sed_drop_objext='s/\.o$//;s/\.obj$//'
-      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed "$sed_drop_objext" | sort | uniq`; do
+      for i in `for i in $gltests_LIBOBJS; do echo "$i"; done | sed -e "$sed_drop_objext" | sort | uniq`; do
         gltests_libobjs="$gltests_libobjs $i.$ac_objext"
         gltests_ltlibobjs="$gltests_ltlibobjs $i.lo"
       done
@@ -238,11 +236,11 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # This macro records the list of files which have been installed by
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
+  build-aux/arg-nonnull.h
   build-aux/config.rpath
-  build-aux/link-warning.h
+  build-aux/warn-on-use.h
   lib/alloca.in.h
   lib/asnprintf.c
-  lib/dup2.c
   lib/errno.in.h
   lib/float+.h
   lib/float.in.h
@@ -304,7 +302,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/00gnulib.m4
   m4/alloca.m4
   m4/assert.m4
-  m4/dup2.m4
   m4/errno_h.m4
   m4/exponentd.m4
   m4/exponentf.m4
@@ -360,6 +357,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/unistd_h.m4
   m4/vasnprintf.m4
   m4/vfprintf-posix.m4
+  m4/warn-on-use.m4
   m4/wchar.m4
   m4/wchar_t.m4
   m4/wint_t.m4

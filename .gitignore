@@ -4,8 +4,10 @@
 *.o
 *~
 
+/arg-nonnull.h
 /autom4te.cache
 /config.rpath
+/warn-on-use.h
 
 /ldr
 

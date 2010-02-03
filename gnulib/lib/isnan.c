@@ -1,5 +1,5 @@
 /* Test for NaN that does not need libm.
-   Copyright (C) 2007-2009 Free Software Foundation, Inc.
+   Copyright (C) 2007-2010 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -140,10 +140,10 @@ FUNC (DOUBLE x)
        -Infinity, which have the same exponent.  */
     m.value = x;
     if (((m.word[EXPBIT0_WORD] ^ nan.word[EXPBIT0_WORD])
-	 & (EXP_MASK << EXPBIT0_BIT))
-	== 0)
+         & (EXP_MASK << EXPBIT0_BIT))
+        == 0)
       return (memcmp (&m.value, &plus_inf, SIZE) != 0
-	      && memcmp (&m.value, &minus_inf, SIZE) != 0);
+              && memcmp (&m.value, &minus_inf, SIZE) != 0);
     else
       return 0;
   }
