@@ -15,6 +15,6 @@ ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf506.c lfd_bf518.c lfd_bf527.
 ldr_LDADD = $(LIB_PTHREAD)
 
 .rc.o:
-	$(WINDRES) -I $(srcdir) $< -o $@
+	$(AM_V_GEN)$(WINDRES) -I $(srcdir) $< -o $@
 %.o : %.rc
-	$(WINDRES) -I $(srcdir) $< -o $@
+	$(AM_V_GEN)$(WINDRES) -I $(srcdir) $< -o $@
