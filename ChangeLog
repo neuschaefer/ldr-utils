@@ -1,4 +1,28 @@
 ------------------------------------------------------------------------
+r3936 | vapier | 2010-02-10 18:37:49 -0500 (Wed, 10 Feb 2010) | 1 line
+
+ldr-utils: support silent automake when generating windows icons
+------------------------------------------------------------------------
+r3857 | vapier | 2010-02-04 15:35:09 -0500 (Thu, 04 Feb 2010) | 1 line
+
+ldr-utils: import autotool generated headers needed by configure/make steps
+------------------------------------------------------------------------
+r3855 | vapier | 2010-02-03 17:52:12 -0500 (Wed, 03 Feb 2010) | 1 line
+
+ldr-utils: rebuild autotools
+------------------------------------------------------------------------
+r3854 | vapier | 2010-02-03 17:42:12 -0500 (Wed, 03 Feb 2010) | 1 line
+
+ldr-utils: enable support for quiet builds if automake-1.11+ is available
+------------------------------------------------------------------------
+r3853 | vapier | 2010-02-03 17:40:06 -0500 (Wed, 03 Feb 2010) | 1 line
+
+ldr-utils: add support for bf592
+------------------------------------------------------------------------
+r3844 | vapier | 2010-02-02 19:07:01 -0500 (Tue, 02 Feb 2010) | 1 line
+
+ldr-utils: bf50x: fix typo in comment
+------------------------------------------------------------------------
 r3778 | vapier | 2009-12-17 15:15:33 -0500 (Thu, 17 Dec 2009) | 1 line
 
 enable posix/alarm code for mingw64

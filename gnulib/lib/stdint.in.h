@@ -23,6 +23,11 @@
 
 #ifndef _GL_STDINT_H
 
+#if __GNUC__ >= 3
+@PRAGMA_SYSTEM_HEADER@
+#endif
+@PRAGMA_COLUMNS@
+
 /* When including a system file that in turn includes <inttypes.h>,
    use the system <inttypes.h>, not our substitute.  This avoids
    problems with (for example) VMS, whose <sys/bitypes.h> includes
@@ -49,9 +54,6 @@
      in <inttypes.h> would reinclude us, skipping our contents because
      _GL_STDINT_H is defined.
      The include_next requires a split double-inclusion guard.  */
-# if __GNUC__ >= 3
-@PRAGMA_SYSTEM_HEADER@
-# endif
 # @INCLUDE_NEXT@ @NEXT_STDINT_H@
 #endif
 
@@ -474,8 +476,9 @@ typedef int _verify_intmax_size[2 * (sizeof (intmax_t) == sizeof (uintmax_t)) - 
 
 /* wchar_t limits */
 /* Get WCHAR_MIN, WCHAR_MAX.
-   This include is not on the top, above, because on OSF/1 4.0 we have a sequence of nested
-   includes <wchar.h> -> <stdio.h> -> <getopt.h> -> <stdlib.h>, and the latter includes
+   This include is not on the top, above, because on OSF/1 4.0 we have a
+   sequence of nested includes
+   <wchar.h> -> <stdio.h> -> <getopt.h> -> <stdlib.h>, and the latter includes
    <stdint.h> and assumes its types are already defined.  */
 #if ! (defined WCHAR_MIN && defined WCHAR_MAX)
 # define _GL_JUST_INCLUDE_SYSTEM_WCHAR_H

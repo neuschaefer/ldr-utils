@@ -1,5 +1,5 @@
-AC_INIT(ldr-utils, [svn-3778], [vapier@blackfin.uclinux.org])
-AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-lzma no-dist-gzip])
+AC_INIT(ldr-utils, [svn-3936], [vapier@blackfin.uclinux.org])
+AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-xz no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 
 dnl silent rules requires automake-1.11+
@@ -15,43 +15,52 @@ AM_MISSING_PROG([AUTOM4TE], [autom4te])
 AC_USE_SYSTEM_EXTENSIONS
 AC_C_BIGENDIAN
 
-AC_CHECK_HEADERS_ONCE([ \
-assert.h \
-ctype.h \
-endian.h \
-errno.h \
-fcntl.h \
-getopt.h \
-inttypes.h \
-io.h \
-libgen.h \
-netdb.h \
-pthread.h \
-pty.h \
-signal.h \
-stdbool.h \
-stdint.h \
-stdio.h \
-string.h \
-strings.h \
-termios.h \
-time.h \
-unistd.h \
-util.h \
-winsock2.h \
-ws2tcpip.h \
-arpa/inet.h \
-netinet/in.h \
-netinet/tcp.h \
-sys/endian.h \
-sys/mman.h \
-sys/socket.h \
-sys/stat.h \
-sys/types.h \
-sys/wait.h \
-])
+AC_CHECK_HEADERS_ONCE(m4_flatten([
+	assert.h
+	ctype.h
+	endian.h
+	errno.h
+	fcntl.h
+	getopt.h
+	inttypes.h
+	io.h
+	libgen.h
+	netdb.h
+	pthread.h
+	pty.h
+	signal.h
+	stdbool.h
+	stdint.h
+	stdio.h
+	string.h
+	strings.h
+	termios.h
+	time.h
+	unistd.h
+	util.h
+	winsock2.h
+	ws2tcpip.h
+	arpa/inet.h
+	netinet/in.h
+	netinet/tcp.h
+	sys/endian.h
+	sys/mman.h
+	sys/socket.h
+	sys/stat.h
+	sys/types.h
+	sys/wait.h
+]))
 
-AC_CHECK_FUNCS_ONCE([alarm fdatasync fork fseeko ftello getaddrinfo mmap usleep])
+AC_CHECK_FUNCS_ONCE(m4_flatten([
+	alarm
+	fdatasync
+	fork
+	fseeko
+	ftello
+	getaddrinfo
+	mmap
+	usleep
+]))
 
 AC_CHECK_LIB([util], [openpty], [PTY_LIB="-lutil"], [PTY_LIB=""])
 AC_SUBST([PTY_LIB])
@@ -139,10 +148,12 @@ case $host_os in
 esac
 AM_CONDITIONAL(USE_RC_SOURCES, $USE_RC_SOURCES)
 
-AC_OUTPUT([
-Makefile
-gnulib/lib/Makefile
-tests/atlocal
-tests/Makefile
-tests/package.m4
+AC_CONFIG_FILES([
+	Makefile
+	gnulib/lib/Makefile
+	tests/atlocal
+	tests/Makefile
+	tests/package.m4
 ])
+
+AC_OUTPUT

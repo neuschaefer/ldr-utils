@@ -12,7 +12,8 @@
 # This file represents the compiled summary of the specification in
 # gnulib-cache.m4. It lists the computed macro invocations that need
 # to be invoked from configure.ac.
-# In projects using CVS, this file can be treated like other built files.
+# In projects that use version control, this file can be treated like
+# other built files.
 
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -26,11 +27,63 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
   AC_REQUIRE([AC_PROG_RANLIB])
   AC_REQUIRE([AM_PROG_CC_C_O])
+  # Code from module alloca-opt:
+  # Code from module arg-nonnull:
+  # Code from module assert:
+  # Code from module c++defs:
+  # Code from module errno:
+  # Code from module extensions:
   AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
+  # Code from module float:
+  # Code from module fpieee:
   AC_REQUIRE([gl_FP_IEEE])
+  # Code from module fprintf-posix:
+  # Code from module fpucw:
+  # Code from module frexp-nolibm:
+  # Code from module frexpl-nolibm:
+  # Code from module fseeko:
   AC_REQUIRE([AC_FUNC_FSEEKO])
+  # Code from module fseterr:
+  # Code from module ftello:
   AC_REQUIRE([AC_FUNC_FSEEKO])
+  # Code from module func:
+  # Code from module gettext-h:
+  # Code from module havelib:
+  # Code from module include_next:
+  # Code from module inline:
+  # Code from module isnand-nolibm:
+  # Code from module isnanf-nolibm:
+  # Code from module isnanl-nolibm:
+  # Code from module lock:
+  # Code from module lseek:
+  # Code from module math:
+  # Code from module memchr:
+  # Code from module multiarch:
+  # Code from module nocrash:
+  # Code from module printf-frexp:
+  # Code from module printf-frexpl:
+  # Code from module printf-posix:
+  # Code from module printf-safe:
+  # Code from module signbit:
+  # Code from module size_max:
+  # Code from module snprintf:
+  # Code from module snprintf-posix:
+  # Code from module sprintf-posix:
+  # Code from module stdbool:
+  # Code from module stddef:
+  # Code from module stdint:
+  # Code from module stdio:
+  # Code from module string:
+  # Code from module strsignal:
+  # Code from module threadlib:
   gl_THREADLIB_EARLY
+  # Code from module tls:
+  # Code from module unistd:
+  # Code from module vasnprintf:
+  # Code from module vfprintf-posix:
+  # Code from module warn-on-use:
+  # Code from module wchar:
+  # Code from module xsize:
 ])
 
 # This macro should be invoked from ./configure.ac, in the section
@@ -41,6 +94,7 @@ AC_DEFUN([gl_INIT],
   gl_cond_libtool=false
   gl_libdeps=
   gl_ltlibdeps=
+  gl_m4_base='gnulib/m4'
   m4_pushdef([AC_LIBOBJ], m4_defn([gl_LIBOBJ]))
   m4_pushdef([AC_REPLACE_FUNCS], m4_defn([gl_REPLACE_FUNCS]))
   m4_pushdef([AC_LIBSOURCES], m4_defn([gl_LIBSOURCES]))
@@ -48,62 +102,115 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gl_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='gnulib/lib'
+  # Code from module alloca-opt:
   gl_FUNC_ALLOCA
+  # Code from module arg-nonnull:
+  # Code from module assert:
   gl_ASSERT
+  # Code from module c++defs:
+  # Code from module errno:
   gl_HEADER_ERRNO_H
+  # Code from module extensions:
+  # Code from module float:
   gl_FLOAT_H
+  # Code from module fpieee:
+  # Code from module fprintf-posix:
   gl_FUNC_FPRINTF_POSIX
   gl_STDIO_MODULE_INDICATOR([fprintf-posix])
+  # Code from module fpucw:
+  # Code from module frexp-nolibm:
   gl_FUNC_FREXP_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexp])
+  # Code from module frexpl-nolibm:
   gl_FUNC_FREXPL_NO_LIBM
   gl_MATH_MODULE_INDICATOR([frexpl])
+  # Code from module fseeko:
   gl_FUNC_FSEEKO
   gl_STDIO_MODULE_INDICATOR([fseeko])
+  # Code from module fseterr:
+  # Code from module ftello:
   gl_FUNC_FTELLO
   gl_STDIO_MODULE_INDICATOR([ftello])
+  # Code from module func:
   gl_FUNC
+  # Code from module gettext-h:
   AC_SUBST([LIBINTL])
   AC_SUBST([LTLIBINTL])
+  # Code from module havelib:
+  # Code from module include_next:
+  # Code from module inline:
   gl_INLINE
+  # Code from module isnand-nolibm:
   gl_FUNC_ISNAND_NO_LIBM
+  # Code from module isnanf-nolibm:
   gl_FUNC_ISNANF_NO_LIBM
+  # Code from module isnanl-nolibm:
   gl_FUNC_ISNANL_NO_LIBM
+  # Code from module lock:
   gl_LOCK
+  # Code from module lseek:
   gl_FUNC_LSEEK
   gl_UNISTD_MODULE_INDICATOR([lseek])
+  # Code from module math:
   gl_MATH_H
+  # Code from module memchr:
   gl_FUNC_MEMCHR
   gl_STRING_MODULE_INDICATOR([memchr])
+  # Code from module multiarch:
   gl_MULTIARCH
+  # Code from module nocrash:
+  # Code from module printf-frexp:
   gl_FUNC_PRINTF_FREXP
+  # Code from module printf-frexpl:
   gl_FUNC_PRINTF_FREXPL
+  # Code from module printf-posix:
   gl_FUNC_PRINTF_POSIX
   gl_STDIO_MODULE_INDICATOR([printf-posix])
+  # Code from module printf-safe:
   m4_divert_text([INIT_PREPARE], [gl_printf_safe=yes])
+  # Code from module signbit:
   gl_SIGNBIT
   gl_MATH_MODULE_INDICATOR([signbit])
+  # Code from module size_max:
   gl_SIZE_MAX
+  # Code from module snprintf:
   gl_FUNC_SNPRINTF
   gl_STDIO_MODULE_INDICATOR([snprintf])
+  # Code from module snprintf-posix:
   gl_FUNC_SNPRINTF_POSIX
+  # Code from module sprintf-posix:
   gl_FUNC_SPRINTF_POSIX
   gl_STDIO_MODULE_INDICATOR([sprintf-posix])
+  # Code from module stdbool:
   AM_STDBOOL_H
+  # Code from module stddef:
   gl_STDDEF_H
+  # Code from module stdint:
   gl_STDINT_H
+  # Code from module stdio:
   gl_STDIO_H
+  # Code from module string:
   gl_HEADER_STRING_H
+  # Code from module strsignal:
   gl_FUNC_STRSIGNAL
   gl_STRING_MODULE_INDICATOR([strsignal])
+  # Code from module threadlib:
   gl_THREADLIB
+  # Code from module tls:
   gl_TLS
+  # Code from module unistd:
   gl_UNISTD_H
+  # Code from module vasnprintf:
   gl_FUNC_VASNPRINTF
+  # Code from module vfprintf-posix:
   gl_FUNC_VFPRINTF_POSIX
   gl_STDIO_MODULE_INDICATOR([vfprintf-posix])
+  # Code from module warn-on-use:
+  # Code from module wchar:
   gl_WCHAR_H
+  # Code from module xsize:
   gl_XSIZE
+  # End of code from modules
   m4_ifval(gl_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gl_LIBSOURCES_DIR])[ ||
       for gl_file in ]gl_LIBSOURCES_LIST[ ; do
@@ -143,6 +250,13 @@ AC_DEFUN([gl_INIT],
   m4_pushdef([gltests_LIBSOURCES_DIR], [])
   gl_COMMON
   gl_source_base='tests'
+changequote(,)dnl
+  gltests_WITNESS=IN_`echo "${PACKAGE-$PACKAGE_TARNAME}" | LC_ALL=C tr abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ | LC_ALL=C sed -e 's/[^A-Z0-9_]/_/g'`_GNULIB_TESTS
+changequote([, ])dnl
+  AC_SUBST([gltests_WITNESS])
+  gl_module_indicator_condition=$gltests_WITNESS
+  m4_pushdef([gl_MODULE_INDICATOR_CONDITION], [$gl_module_indicator_condition])
+  m4_popdef([gl_MODULE_INDICATOR_CONDITION])
   m4_ifval(gltests_LIBSOURCES_LIST, [
     m4_syscmd([test ! -d ]m4_defn([gltests_LIBSOURCES_DIR])[ ||
       for gl_file in ]gltests_LIBSOURCES_LIST[ ; do
@@ -237,6 +351,7 @@ AC_DEFUN([gltests_LIBSOURCES], [
 # gnulib-tool and may be removed by future gnulib-tool invocations.
 AC_DEFUN([gl_FILE_LIST], [
   build-aux/arg-nonnull.h
+  build-aux/c++defs.h
   build-aux/config.rpath
   build-aux/warn-on-use.h
   lib/alloca.in.h
@@ -301,6 +416,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/xsize.h
   m4/00gnulib.m4
   m4/alloca.m4
+  m4/asm-underscore.m4
   m4/assert.m4
   m4/errno_h.m4
   m4/exponentd.m4
@@ -358,7 +474,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/vasnprintf.m4
   m4/vfprintf-posix.m4
   m4/warn-on-use.m4
-  m4/wchar.m4
+  m4/wchar_h.m4
   m4/wchar_t.m4
   m4/wint_t.m4
   m4/xsize.m4
