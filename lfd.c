@@ -995,7 +995,7 @@ static bool ldr_load_uart(LFD *alfd, const struct ldr_load_options *opts,
 
 			if (prompt && block->data != NULL)
 				if (ldr_send_prompt("Press any key to send block data") == 'c')
-				prompt = false;
+					prompt = false;
 
 			del += printf("%zi] (%2.0f%%)", ldr->dxes[d].num_blocks,
 			              ((float)(b+1) / (float)ldr->dxes[d].num_blocks) * 100);
