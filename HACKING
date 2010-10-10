@@ -27,11 +27,7 @@ Common LDR File Descriptor (LFD) code.
  lfd.h
 
 Processor specific LDR implementations.
- lfd_bf527.c
- lfd_bf533.c
- lfd_bf537.c
- lfd_bf548.c
- lfd_bf561.c
+ lfd_bf###.c
 
 --------------
  Interactions
