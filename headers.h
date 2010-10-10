@@ -56,7 +56,9 @@
 # endif
 # define LOCALSTATEDIR "/var"
 # define _UNUSED_PARAMETER_ __attribute__((__unused__))
-# define HAVE_LIBUSB 1
+# ifdef __LFD_INTERNAL
+#  define HAVE_LIBUSB 1
+# endif
 #else
 # include <config.h>
 #endif
