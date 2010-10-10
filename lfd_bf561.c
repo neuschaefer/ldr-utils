@@ -45,7 +45,8 @@ static void *bf561_lfd_read_ldr_header(LFD *alfd, size_t *header_size)
 	uint32_t *header;
 	*header_size = 4;
 	header = xmalloc(*header_size);
-	fread(header, *header_size, 1, alfd->fp);
+	if (fread(header, *header_size, 1, alfd->fp) != 1)
+		return NULL;
 	ldr_make_little_endian_32(*header);
 	return header;
 }

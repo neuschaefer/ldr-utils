@@ -61,7 +61,8 @@ void *bf53x_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *fin
 {
 	FILE *fp = alfd->fp;
 	BLOCK_HEADER *header = xmalloc(sizeof(*header));
-	fread(header->raw, 1, LDR_BLOCK_HEADER_LEN, fp);
+	if (fread(header->raw, 1, LDR_BLOCK_HEADER_LEN, fp) != LDR_BLOCK_HEADER_LEN)
+		return NULL;
 	memcpy(&(header->target_address), header->raw, sizeof(header->target_address));
 	memcpy(&(header->byte_count), header->raw+4, sizeof(header->byte_count));
 	memcpy(&(header->flags), header->raw+8, sizeof(header->flags));
@@ -134,15 +135,16 @@ bool bf53x_lfd_display_dxe(LFD *alfd, size_t d)
 /*
  * ldr_create()
  */
-static void _bf53x_lfd_write_header(FILE *fp, uint16_t flags,
+static bool _bf53x_lfd_write_header(FILE *fp, uint16_t flags,
                                     uint32_t addr, uint32_t count)
 {
 	ldr_make_little_endian_32(addr);
 	ldr_make_little_endian_32(count);
 	ldr_make_little_endian_16(flags);
-	fwrite(&addr, sizeof(addr), 1, fp);
-	fwrite(&count, sizeof(count), 1, fp);
-	fwrite(&flags, sizeof(flags), 1, fp);
+	return
+		fwrite(&addr, sizeof(addr), 1, fp) == 1 &&
+		fwrite(&count, sizeof(count), 1, fp) == 1 &&
+		fwrite(&flags, sizeof(flags), 1, fp) == 1;
 }
 
 bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
@@ -182,8 +184,7 @@ bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
 	    !target_is(alfd, "BF532"))
 		flags |= LDR_FLAG_RESVECT;
 
-	_bf53x_lfd_write_header(fp, flags, addr, count);
-	return true;
+	return _bf53x_lfd_write_header(fp, flags, addr, count);
 }
 
 bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
@@ -280,7 +281,8 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 					while (!feof(filler_fp)) {
 						bytes = fread(filler_buf, 1, sizeof(filler_buf), filler_fp);
 						filled += bytes;
-						fwrite(filler_buf, 1, bytes, fp);
+						if (fwrite(filler_buf, 1, bytes, fp) != bytes)
+							return false;
 					}
 					if (ferror(filler_fp))
 						return false;
@@ -309,14 +311,19 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 uint32_t bf53x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 {
 	BLOCK_HEADER *header = block->header;
+	uint32_t wrote;
 
-	if (!(header->flags & LDR_FLAG_ZEROFILL))
-		fwrite(block->data, 1, header->byte_count, fp);
-	else if (dump_fill) {
+	if (!(header->flags & LDR_FLAG_ZEROFILL)) {
+		wrote = fwrite(block->data, 1, header->byte_count, fp);
+	} else if (dump_fill) {
 		void *filler = xzalloc(header->byte_count);
-		fwrite(filler, 1, header->byte_count, fp);
+		wrote = fwrite(filler, 1, header->byte_count, fp);
 		free(filler);
-	}
+	} else
+		wrote = header->byte_count;
+
+	if (wrote != header->byte_count)
+		warnf("unable to write out");
 
 	return header->target_address;
 }

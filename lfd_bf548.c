@@ -67,7 +67,8 @@ void *bf54x_lfd_read_block_header(LFD *alfd, bool *ignore, bool *fill, bool *fin
 {
 	FILE *fp = alfd->fp;
 	BLOCK_HEADER *header = xmalloc(sizeof(*header));
-	fread(header->raw, 1, LDR_BLOCK_HEADER_LEN, fp);
+	if (fread(header->raw, 1, LDR_BLOCK_HEADER_LEN, fp) != LDR_BLOCK_HEADER_LEN)
+		return NULL;
 	memcpy(&(header->block_code), header->raw, sizeof(header->block_code));
 	memcpy(&(header->target_address), header->raw+4, sizeof(header->target_address));
 	memcpy(&(header->byte_count), header->raw+8, sizeof(header->byte_count));
@@ -323,7 +324,7 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 		argument = curr_pos - last_dxe_pos - LDR_BLOCK_HEADER_LEN;
 		last_dxe_pos = curr_pos;
 		fseek(fp, 4, SEEK_SET);
-		fread(&addr, sizeof(addr), 1, fp);
+		ret &= (fread(&addr, sizeof(addr), 1, fp) == 1 ? true : false);
 		ldr_make_little_endian_32(addr);
 		rewind(fp);
 		block_code = block_code_base | BFLAG_IGNORE | BFLAG_FIRST;
@@ -337,18 +338,23 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 uint32_t bf54x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 {
 	BLOCK_HEADER *header = block->header;
+	uint32_t wrote;
 
 	if (!(header->block_code & BFLAG_FILL))
-		fwrite(block->data, 1, header->byte_count, fp);
+		wrote = fwrite(block->data, 1, header->byte_count, fp);
 	else if (dump_fill) {
 		/* cant use memset() here as it's a 32bit fill, not 8bit */
 		void *filler;
 		uint32_t *p = filler = xmalloc(header->byte_count);
 		while ((void*)p < (void*)(filler + header->byte_count))
 			*p++ = header->argument;
-		fwrite(filler, 1, header->byte_count, fp);
+		wrote = fwrite(filler, 1, header->byte_count, fp);
 		free(filler);
-	}
+	} else
+		wrote = header->byte_count;
+
+	if (wrote != header->byte_count)
+		warnf("unable to write out");
 
 	return header->target_address;
 }

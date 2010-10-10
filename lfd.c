@@ -243,7 +243,10 @@ bool lfd_read(LFD *alfd)
 					dxe->num_blocks, block->data_size);
 			}
 			block->data = xmalloc(block->data_size);
-			fread(block->data, 1, block->data_size, fp);
+			if (fread(block->data, 1, block->data_size, fp) != block->data_size) {
+				warn("unable to read LDR");
+				return false;
+			}
 			pos += block->data_size;
 		} else
 			block->data = NULL;
