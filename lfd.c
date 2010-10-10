@@ -675,7 +675,7 @@ static void ldr_load_method_tty_flush(void *void_state)
 	if (tcdrain(state->fd))
 		perror("tcdrain failed");
 }
-struct ldr_load_method ldr_load_method_tty = {
+static const struct ldr_load_method ldr_load_method_tty = {
 	.init  = ldr_load_method_tty_init,
 	.open  = ldr_load_method_tty_open,
 	.close = ldr_load_method_tty_close,
@@ -804,7 +804,7 @@ static void ldr_load_method_network_flush(void *void_state)
 {
 	(void)void_state;
 }
-struct ldr_load_method ldr_load_method_network = {
+static const struct ldr_load_method ldr_load_method_network = {
 	.init  = ldr_load_method_network_init,
 	.open  = ldr_load_method_network_open,
 	.close = ldr_load_method_network_close,
@@ -816,12 +816,12 @@ static bool ldr_load_method_network_init(void **void_state, const struct ldr_loa
 	err("your system does not support POSIX network address functionality");
 	return false;
 }
-struct ldr_load_method ldr_load_method_network = {
+static const struct ldr_load_method ldr_load_method_network = {
 	.init  = ldr_load_method_network_init,
 };
 #endif
 
-static struct ldr_load_method *ldr_load_method_detect(const char *device)
+static const struct ldr_load_method *ldr_load_method_detect(const char *device)
 {
 	char *prot = strchr(device, ':');
 	if (!prot || !strncmp(device, "tty:", 4))
@@ -878,7 +878,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
-	struct ldr_load_method *method;
+	const struct ldr_load_method *method;
 	void *state;
 	pthread_t reader;
 
