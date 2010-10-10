@@ -594,8 +594,8 @@ ac_includes_default="\
 #endif"
 
 gl_use_threads_default=
-gl_header_list=
-gl_func_list=
+ac_header_list=
+ac_func_list=
 ac_subst_vars='gltests_LTLIBOBJS
 gltests_LIBOBJS
 gl_LTLIBOBJS
@@ -608,7 +608,12 @@ USE_RC_SOURCES_FALSE
 USE_RC_SOURCES_TRUE
 WINDRES
 LIB_PTHREAD
+LIBUSB_LIBS
+LIBUSB_CFLAGS
 PTY_LIB
+PKG_CONFIG_LIBDIR
+PKG_CONFIG_PATH
+PKG_CONFIG
 AUTOM4TE
 LIBGNU_LTLIBDEPS
 LIBGNU_LIBDEPS
@@ -1161,7 +1166,12 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP'
+CPP
+PKG_CONFIG
+PKG_CONFIG_PATH
+PKG_CONFIG_LIBDIR
+LIBUSB_CFLAGS
+LIBUSB_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1807,6 +1817,14 @@ Some influential environment variables:
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
   CPP         C preprocessor
+  PKG_CONFIG  path to pkg-config utility
+  PKG_CONFIG_PATH
+              directories to add to pkg-config's search path
+  PKG_CONFIG_LIBDIR
+              path overriding pkg-config's built-in search path
+  LIBUSB_CFLAGS
+              C compiler flags for LIBUSB, overriding pkg-config
+  LIBUSB_LIBS linker flags for LIBUSB, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -2795,55 +2813,55 @@ $as_echo "$as_me: creating cache $cache_file" >&6;}
   >$cache_file
 fi
 
-gl_header_list="$gl_header_list errno.h"
-gl_header_list="$gl_header_list float.h"
-gl_func_list="$gl_func_list vasnprintf"
-gl_header_list="$gl_header_list math.h"
-gl_header_list="$gl_header_list sys/mman.h"
-gl_func_list="$gl_func_list mprotect"
-gl_func_list="$gl_func_list memchr"
+as_fn_append ac_header_list " errno.h"
+as_fn_append ac_header_list " float.h"
+as_fn_append ac_func_list " vasnprintf"
+as_fn_append ac_header_list " math.h"
+as_fn_append ac_header_list " sys/mman.h"
+as_fn_append ac_func_list " mprotect"
+as_fn_append ac_func_list " memchr"
 gl_printf_safe=yes
-gl_header_list="$gl_header_list stddef.h"
-gl_header_list="$gl_header_list stdint.h"
-gl_header_list="$gl_header_list wchar.h"
-gl_header_list="$gl_header_list stdio.h"
-gl_header_list="$gl_header_list string.h"
-gl_header_list="$gl_header_list unistd.h"
-gl_header_list="$gl_header_list assert.h"
-gl_header_list="$gl_header_list ctype.h"
-gl_header_list="$gl_header_list endian.h"
-gl_header_list="$gl_header_list fcntl.h"
-gl_header_list="$gl_header_list getopt.h"
-gl_header_list="$gl_header_list inttypes.h"
-gl_header_list="$gl_header_list io.h"
-gl_header_list="$gl_header_list libgen.h"
-gl_header_list="$gl_header_list netdb.h"
-gl_header_list="$gl_header_list pthread.h"
-gl_header_list="$gl_header_list pty.h"
-gl_header_list="$gl_header_list signal.h"
-gl_header_list="$gl_header_list stdbool.h"
-gl_header_list="$gl_header_list strings.h"
-gl_header_list="$gl_header_list termios.h"
-gl_header_list="$gl_header_list time.h"
-gl_header_list="$gl_header_list util.h"
-gl_header_list="$gl_header_list winsock2.h"
-gl_header_list="$gl_header_list ws2tcpip.h"
-gl_header_list="$gl_header_list arpa/inet.h"
-gl_header_list="$gl_header_list netinet/in.h"
-gl_header_list="$gl_header_list netinet/tcp.h"
-gl_header_list="$gl_header_list sys/endian.h"
-gl_header_list="$gl_header_list sys/socket.h"
-gl_header_list="$gl_header_list sys/stat.h"
-gl_header_list="$gl_header_list sys/types.h"
-gl_header_list="$gl_header_list sys/wait.h"
-gl_func_list="$gl_func_list alarm"
-gl_func_list="$gl_func_list fdatasync"
-gl_func_list="$gl_func_list fork"
-gl_func_list="$gl_func_list fseeko"
-gl_func_list="$gl_func_list ftello"
-gl_func_list="$gl_func_list getaddrinfo"
-gl_func_list="$gl_func_list mmap"
-gl_func_list="$gl_func_list usleep"
+as_fn_append ac_header_list " stddef.h"
+as_fn_append ac_header_list " stdint.h"
+as_fn_append ac_header_list " wchar.h"
+as_fn_append ac_header_list " stdio.h"
+as_fn_append ac_header_list " string.h"
+as_fn_append ac_header_list " unistd.h"
+as_fn_append ac_header_list " assert.h"
+as_fn_append ac_header_list " ctype.h"
+as_fn_append ac_header_list " endian.h"
+as_fn_append ac_header_list " fcntl.h"
+as_fn_append ac_header_list " getopt.h"
+as_fn_append ac_header_list " inttypes.h"
+as_fn_append ac_header_list " io.h"
+as_fn_append ac_header_list " libgen.h"
+as_fn_append ac_header_list " netdb.h"
+as_fn_append ac_header_list " pthread.h"
+as_fn_append ac_header_list " pty.h"
+as_fn_append ac_header_list " signal.h"
+as_fn_append ac_header_list " stdbool.h"
+as_fn_append ac_header_list " strings.h"
+as_fn_append ac_header_list " termios.h"
+as_fn_append ac_header_list " time.h"
+as_fn_append ac_header_list " util.h"
+as_fn_append ac_header_list " winsock2.h"
+as_fn_append ac_header_list " ws2tcpip.h"
+as_fn_append ac_header_list " arpa/inet.h"
+as_fn_append ac_header_list " netinet/in.h"
+as_fn_append ac_header_list " netinet/tcp.h"
+as_fn_append ac_header_list " sys/endian.h"
+as_fn_append ac_header_list " sys/socket.h"
+as_fn_append ac_header_list " sys/stat.h"
+as_fn_append ac_header_list " sys/types.h"
+as_fn_append ac_header_list " sys/wait.h"
+as_fn_append ac_func_list " alarm"
+as_fn_append ac_func_list " fdatasync"
+as_fn_append ac_func_list " fork"
+as_fn_append ac_func_list " fseeko"
+as_fn_append ac_func_list " ftello"
+as_fn_append ac_func_list " getaddrinfo"
+as_fn_append ac_func_list " mmap"
+as_fn_append ac_func_list " usleep"
 # Check that the precious variables saved in the cache have kept the same
 # value.
 ac_cache_corrupted=false
@@ -5699,11 +5717,11 @@ $as_echo "$gl_cv_pragma_columns" >&6; }
 
 
 
-
-  for ac_header in $gl_header_list
+  for ac_header in $ac_header_list
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
-ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+ac_fn_c_check_header_compile "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default
+"
 eval as_val=\$$as_ac_Header
    if test "x$as_val" = x""yes; then :
   cat >>confdefs.h <<_ACEOF
@@ -5713,8 +5731,6 @@ _ACEOF
 fi
 
 done
-
-
 
 
 
@@ -5780,12 +5796,6 @@ $as_echo "$gl_cv_header_errno_h_complete" >&6; }
   if test $gl_cv_header_errno_h_complete = yes; then
     ERRNO_H=''
   else
-
-
-
-
-  :
-
 
 
 
@@ -6054,9 +6064,6 @@ $as_echo "$gl_cv_header_errno_h_EOVERFLOW" >&6; }
 
 
   fi
-
-
-
 
 
 
@@ -7733,8 +7740,7 @@ $as_echo "#define NEED_PRINTF_LONG_DOUBLE 1" >>confdefs.h
 
 
 
-
-  for ac_func in $gl_func_list
+  for ac_func in $ac_func_list
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -7746,8 +7752,6 @@ _ACEOF
 
 fi
 done
-
-
 
 
 
@@ -9748,15 +9752,6 @@ $as_echo "$gl_threads_api" >&6; }
 
 
 
-
-
-
-
-
-
-
-
-
   GNULIB_MEMCHR=0;
   GNULIB_MEMMEM=0;
   GNULIB_MEMPCPY=0;
@@ -9832,9 +9827,6 @@ $as_echo "$gl_threads_api" >&6; }
 
 
 
-
-
-
   # Check for mmap(). Don't use AC_FUNC_MMAP, because it checks too much: it
   # fails on HP-UX 11, because MAP_FIXED mappings do not work. But this is
   # irrelevant for anonymous mappings.
@@ -9895,24 +9887,6 @@ $as_echo "#define HAVE_MAP_ANONYMOUS 1" >>confdefs.h
     fi
   fi
 
-
-  :
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-
-
-  :
 
 
 
@@ -10260,12 +10234,6 @@ $as_echo "#define NEED_PRINTF_LONG_DOUBLE 1" >>confdefs.h
 
 
 
-  :
-
-
-
-
-
 
 
 
@@ -10357,8 +10325,7 @@ $as_echo "#define REPLACE_VFPRINTF_POSIX 1" >>confdefs.h
 
   fi
 
-
-      ac_fn_c_check_decl "$LINENO" "snprintf" "ac_cv_have_decl_snprintf" "$ac_includes_default"
+ac_fn_c_check_decl "$LINENO" "snprintf" "ac_cv_have_decl_snprintf" "$ac_includes_default"
 if test "x$ac_cv_have_decl_snprintf" = x""yes; then :
   ac_have_decl=1
 else
@@ -10368,7 +10335,6 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_SNPRINTF $ac_have_decl
 _ACEOF
-
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for stdbool.h that conforms to C99" >&5
 $as_echo_n "checking for stdbool.h that conforms to C99... " >&6; }
@@ -10469,9 +10435,6 @@ $as_echo "#define HAVE_STDBOOL_H 1" >>confdefs.h
 
 
 
-
-
-
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for unsigned long long int" >&5
 $as_echo_n "checking for unsigned long long int... " >&6; }
 if test "${ac_cv_type_unsigned_long_long_int+set}" = set; then :
@@ -10530,12 +10493,6 @@ $as_echo "#define HAVE_UNSIGNED_LONG_LONG_INT 1" >>confdefs.h
 
 
 
-
-
-
-
-
-
         { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether C symbols are prefixed with underscore at the linker level" >&5
 $as_echo_n "checking whether C symbols are prefixed with underscore at the linker level... " >&6; }
 if test "${gl_cv_prog_as_underscore+set}" = set; then :
@@ -10575,9 +10532,6 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
   ASM_SYMBOL_PREFIX='"'${USER_LABEL_PREFIX}'"'
-
-
-
 
 
 
@@ -10632,15 +10586,6 @@ _ACEOF
 
 
 
-
-
-
-
-
-
-
-
-  :
 
 
 
@@ -10738,8 +10683,7 @@ fi
       done
 
 
-
-      ac_fn_c_check_decl "$LINENO" "strsignal" "ac_cv_have_decl_strsignal" "$ac_includes_default"
+ac_fn_c_check_decl "$LINENO" "strsignal" "ac_cv_have_decl_strsignal" "$ac_includes_default"
 if test "x$ac_cv_have_decl_strsignal" = x""yes; then :
   ac_have_decl=1
 else
@@ -10749,7 +10693,6 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_STRSIGNAL $ac_have_decl
 _ACEOF
-
 
 ac_fn_c_check_decl "$LINENO" "sys_siglist" "ac_cv_have_decl_sys_siglist" "#include <signal.h>
 /* NetBSD declares sys_siglist in unistd.h.  */
@@ -10767,9 +10710,6 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_SYS_SIGLIST $ac_have_decl
 _ACEOF
-
-
-
 
 
 
@@ -10979,12 +10919,6 @@ $as_echo "$enable_assert" >&6; }
   case "$host_os" in
     beos* | openbsd* | mirbsd*)
       FLOAT_H=float.h
-
-
-
-
-  :
-
 
 
 
@@ -11268,12 +11202,6 @@ $as_echo "#define NEED_PRINTF_LONG_DOUBLE 1" >>confdefs.h
 
       ;;
   esac
-
-
-
-  :
-
-
 
 
 
@@ -13126,12 +13054,6 @@ $as_echo "#define GNULIB_TEST_LSEEK 1" >>confdefs.h
 
 
 
-  :
-
-
-
-
-
 
 
      if test $gl_cv_have_include_next = yes; then
@@ -14612,12 +14534,6 @@ $as_echo "$gl_cv_func_snprintf_size1" >&6; }
 
   fi
 
-  :
-
-
-
-
-
   if test $ac_cv_have_decl_snprintf = no; then
     HAVE_DECL_SNPRINTF=0
   fi
@@ -15160,12 +15076,6 @@ $as_echo "#define NEED_PRINTF_LONG_DOUBLE 1" >>confdefs.h
 
 
 
-  :
-
-
-
-
-
 
 
 
@@ -15484,12 +15394,6 @@ $as_echo "#define NEED_PRINTF_LONG_DOUBLE 1" >>confdefs.h
 
 
 
-  :
-
-
-
-
-
 
 
 
@@ -15653,12 +15557,6 @@ $as_echo "$gl_cv_decl_null_works" >&6; }
 
 
 
-  :
-
-
-
-
-
 
 
      if test $gl_cv_have_include_next = yes; then
@@ -15741,12 +15639,6 @@ $as_echo "$gl_cv_next_stddef_h" >&6; }
     HAVE_SYS_TYPES_H=0
   fi
 
-
-
-
-
-
-  :
 
 
 
@@ -16106,12 +15998,6 @@ done
 
 
 
-  :
-
-
-
-
-
 
 
 
@@ -16421,12 +16307,6 @@ _ACEOF
 
 
 
-  :
-
-
-
-
-
 
 
      if test $gl_cv_have_include_next = yes; then
@@ -16536,12 +16416,6 @@ fi
 
   # Code from module strsignal:
 
-
-
-
-
-
-  :
 
 
 
@@ -16664,12 +16538,6 @@ $as_echo "#define GNULIB_TEST_STRSIGNAL 1" >>confdefs.h
 
 
 
-  :
-
-
-
-
-
 
 
      if test $gl_cv_have_include_next = yes; then
@@ -16716,12 +16584,6 @@ $as_echo "$gl_cv_next_unistd_h" >&6; }
        gl_next_as_first_directive=$gl_cv_next_unistd_h
      fi
      NEXT_AS_FIRST_DIRECTIVE_UNISTD_H=$gl_next_as_first_directive
-
-
-
-
-
-  :
 
 
 
@@ -16788,19 +16650,7 @@ fi
   # Code from module vasnprintf:
 
 
-  :
-
-
-
-
-
   if test $ac_cv_func_vasnprintf = no; then
-
-
-  :
-
-
-
 
 
 
@@ -17104,12 +16954,6 @@ $as_echo "#define NEED_PRINTF_LONG_DOUBLE 1" >>confdefs.h
 
 
 
-  :
-
-
-
-
-
 
 
 
@@ -17217,18 +17061,6 @@ $as_echo "#define GNULIB_TEST_VFPRINTF_POSIX 1" >>confdefs.h
 
 
 
-
-  :
-
-
-
-
-
-
-
-
-
-  :
 
 
 
@@ -17406,6 +17238,125 @@ done
 
 AUTOM4TE=${AUTOM4TE-"${am_missing_run}autom4te"}
 
+
+
+
+
+
+
+if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+	if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_path_PKG_CONFIG+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PKG_CONFIG=$ac_cv_path_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+$as_echo "$PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_PKG_CONFIG"; then
+  ac_pt_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if test "${ac_cv_path_ac_pt_PKG_CONFIG+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  case $ac_pt_PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_PKG_CONFIG="$ac_pt_PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_ac_pt_PKG_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_PKG_CONFIG=$ac_cv_path_ac_pt_PKG_CONFIG
+if test -n "$ac_pt_PKG_CONFIG"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_pt_PKG_CONFIG" >&5
+$as_echo "$ac_pt_PKG_CONFIG" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+  if test "x$ac_pt_PKG_CONFIG" = x; then
+    PKG_CONFIG=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+$as_echo "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_pt_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_path_PKG_CONFIG"
+fi
+
+fi
+if test -n "$PKG_CONFIG"; then
+	_pkg_min_version=0.9.0
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking pkg-config is at least version $_pkg_min_version" >&5
+$as_echo_n "checking pkg-config is at least version $_pkg_min_version... " >&6; }
+	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	else
+		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+		PKG_CONFIG=""
+	fi
+fi
 
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether byte ordering is bigendian" >&5
@@ -17707,240 +17658,6 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  :
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for openpty in -lutil" >&5
 $as_echo_n "checking for openpty in -lutil... " >&6; }
 if test "${ac_cv_lib_util_openpty+set}" = set; then :
@@ -17984,6 +17701,86 @@ else
 fi
 
 
+
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBUSB" >&5
+$as_echo_n "checking for LIBUSB... " >&6; }
+
+if test -n "$LIBUSB_CFLAGS"; then
+    pkg_cv_LIBUSB_CFLAGS="$LIBUSB_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libusb-1.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libusb-1.0") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LIBUSB_CFLAGS=`$PKG_CONFIG --cflags "libusb-1.0" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$LIBUSB_LIBS"; then
+    pkg_cv_LIBUSB_LIBS="$LIBUSB_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libusb-1.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libusb-1.0") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_LIBUSB_LIBS=`$PKG_CONFIG --libs "libusb-1.0" 2>/dev/null`
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        LIBUSB_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors "libusb-1.0" 2>&1`
+        else
+	        LIBUSB_PKG_ERRORS=`$PKG_CONFIG --print-errors "libusb-1.0" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$LIBUSB_PKG_ERRORS" >&5
+
+
+	:
+
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+	:
+
+else
+	LIBUSB_CFLAGS=$pkg_cv_LIBUSB_CFLAGS
+	LIBUSB_LIBS=$pkg_cv_LIBUSB_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+	as_fn_append CFLAGS " $LIBUSB_CFLAGS"
+	as_fn_append LIBS " $LIBUSB_LIBS"
+
+$as_echo "#define HAVE_LIBUSB 1" >>confdefs.h
+
+
+fi
 
 ac_fn_c_check_header_mongrel "$LINENO" "elf.h" "ac_cv_header_elf_h" "$ac_includes_default"
 if test "x$ac_cv_header_elf_h" = x""yes; then :
@@ -18087,7 +17884,7 @@ fi
 USE_RC_SOURCES="false"
 case $host_os in
 	mingw*)
-    if test -n "$ac_tool_prefix"; then
+	if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}windres", so it can be a program name with args.
 set dummy ${ac_tool_prefix}windres; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -18179,7 +17976,7 @@ else
   WINDRES="$ac_cv_prog_WINDRES"
 fi
 
-    USE_RC_SOURCES="true"
+	USE_RC_SOURCES="true"
 	;;
 esac
  if $USE_RC_SOURCES; then

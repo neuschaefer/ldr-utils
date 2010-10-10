@@ -451,7 +451,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/mmap-anon.m4
   m4/multiarch.m4
   m4/nocrash.m4
-  m4/onceonly.m4
   m4/printf-frexp.m4
   m4/printf-frexpl.m4
   m4/printf-posix-rpl.m4

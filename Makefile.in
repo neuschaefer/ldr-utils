@@ -80,7 +80,6 @@ am__aclocal_m4_deps = $(top_srcdir)/gnulib/m4/00gnulib.m4 \
 	$(top_srcdir)/gnulib/m4/mmap-anon.m4 \
 	$(top_srcdir)/gnulib/m4/multiarch.m4 \
 	$(top_srcdir)/gnulib/m4/nocrash.m4 \
-	$(top_srcdir)/gnulib/m4/onceonly.m4 \
 	$(top_srcdir)/gnulib/m4/printf-frexp.m4 \
 	$(top_srcdir)/gnulib/m4/printf-frexpl.m4 \
 	$(top_srcdir)/gnulib/m4/printf-posix-rpl.m4 \
@@ -120,8 +119,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am__ldr_SOURCES_DIST = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf506.c \
 	lfd_bf518.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c \
 	lfd_bf561.c lfd_bf592.c termios-mingw.c arg-nonnull.h \
-	blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h \
-	ldr_elf.h lfd.h link-warning.h warn-on-use.h icon.rc
+	blackfin_defines.h c++defs.h dxe_jump.h dxes.h headers.h \
+	helpers.h ldr.h ldr_elf.h lfd.h link-warning.h sdp.h \
+	warn-on-use.h icon.rc
 @USE_RC_SOURCES_TRUE@am__objects_1 = icon.$(OBJEXT)
 am_ldr_OBJECTS = helpers.$(OBJEXT) ldr.$(OBJEXT) ldr_elf.$(OBJEXT) \
 	lfd.$(OBJEXT) lfd_bf506.$(OBJEXT) lfd_bf518.$(OBJEXT) \
@@ -541,6 +541,8 @@ LIBPTH = @LIBPTH@
 LIBPTH_PREFIX = @LIBPTH_PREFIX@
 LIBS = @LIBS@
 LIBTHREAD = @LIBTHREAD@
+LIBUSB_CFLAGS = @LIBUSB_CFLAGS@
+LIBUSB_LIBS = @LIBUSB_LIBS@
 LIB_PTHREAD = @LIB_PTHREAD@
 LTLIBINTL = @LTLIBINTL@
 LTLIBMULTITHREAD = @LTLIBMULTITHREAD@
@@ -576,6 +578,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PRAGMA_COLUMNS = @PRAGMA_COLUMNS@
 PRAGMA_SYSTEM_HEADER = @PRAGMA_SYSTEM_HEADER@
 PTRDIFF_T_SUFFIX = @PTRDIFF_T_SUFFIX@
@@ -753,7 +758,7 @@ ACLOCAL_AMFLAGS = -I gnulib/m4
 AM_CPPFLAGS = -DLOCALSTATEDIR=\"$(localstatedir)\"
 @USE_RC_SOURCES_FALSE@RC_SOURCES = 
 @USE_RC_SOURCES_TRUE@RC_SOURCES = icon.rc
-ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf506.c lfd_bf518.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c lfd_bf592.c termios-mingw.c arg-nonnull.h blackfin_defines.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h link-warning.h warn-on-use.h $(RC_SOURCES)
+ldr_SOURCES = helpers.c ldr.c ldr_elf.c lfd.c lfd_bf506.c lfd_bf518.c lfd_bf527.c lfd_bf533.c lfd_bf537.c lfd_bf548.c lfd_bf561.c lfd_bf592.c termios-mingw.c arg-nonnull.h blackfin_defines.h c++defs.h dxe_jump.h dxes.h headers.h helpers.h ldr.h ldr_elf.h lfd.h link-warning.h sdp.h warn-on-use.h $(RC_SOURCES)
 ldr_LDADD = $(LIB_PTHREAD)
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

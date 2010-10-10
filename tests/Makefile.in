@@ -76,7 +76,6 @@ am__aclocal_m4_deps = $(top_srcdir)/gnulib/m4/00gnulib.m4 \
 	$(top_srcdir)/gnulib/m4/mmap-anon.m4 \
 	$(top_srcdir)/gnulib/m4/multiarch.m4 \
 	$(top_srcdir)/gnulib/m4/nocrash.m4 \
-	$(top_srcdir)/gnulib/m4/onceonly.m4 \
 	$(top_srcdir)/gnulib/m4/printf-frexp.m4 \
 	$(top_srcdir)/gnulib/m4/printf-frexpl.m4 \
 	$(top_srcdir)/gnulib/m4/printf-posix-rpl.m4 \
@@ -474,6 +473,8 @@ LIBPTH = @LIBPTH@
 LIBPTH_PREFIX = @LIBPTH_PREFIX@
 LIBS = @LIBS@
 LIBTHREAD = @LIBTHREAD@
+LIBUSB_CFLAGS = @LIBUSB_CFLAGS@
+LIBUSB_LIBS = @LIBUSB_LIBS@
 LIB_PTHREAD = @LIB_PTHREAD@
 LTLIBINTL = @LTLIBINTL@
 LTLIBMULTITHREAD = @LTLIBMULTITHREAD@
@@ -509,6 +510,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PRAGMA_COLUMNS = @PRAGMA_COLUMNS@
 PRAGMA_SYSTEM_HEADER = @PRAGMA_SYSTEM_HEADER@
 PTRDIFF_T_SUFFIX = @PTRDIFF_T_SUFFIX@

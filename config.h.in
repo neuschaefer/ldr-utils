@@ -244,6 +244,9 @@
 /* Define to 1 if you have the <libgen.h> header file. */
 #undef HAVE_LIBGEN_H
 
+/* Whether we support libusb */
+#undef HAVE_LIBUSB
+
 /* Define to 1 if you have a local "elf.h" header file. */
 #undef HAVE_LOCAL_ELF_H
 

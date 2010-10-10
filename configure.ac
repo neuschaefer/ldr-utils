@@ -1,3 +1,4 @@
+AC_PREREQ(2.63)
 AC_INIT(ldr-utils, [svn-3936], [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-xz no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
@@ -70,8 +71,8 @@ dnl
 dnl look for libusb for SDP/USB loading
 dnl
 PKG_CHECK_MODULES([LIBUSB], libusb-1.0, [
-	AS_APPEND([CFLAGS], [" $LIBUSB_CFLAGS"])
-	AS_APPEND([LIBS], [" $LIBUSB_LIBS"])
+	AS_VAR_APPEND([CFLAGS], [" $LIBUSB_CFLAGS"])
+	AS_VAR_APPEND([LIBS], [" $LIBUSB_LIBS"])
 	AC_DEFINE([HAVE_LIBUSB], 1, [Whether we support libusb])
 ],[
 	:
