@@ -128,7 +128,7 @@ bool lfd_read(LFD *alfd);
 bool lfd_display(LFD *alfd);
 bool lfd_create(LFD *alfd, const void *opts);
 bool lfd_dump(LFD *alfd, const void *opts);
-bool lfd_load_uart(LFD *alfd, const void *opts);
+bool lfd_load(LFD *alfd, const void *opts);
 bool lfd_close(LFD *alfd);
 
 #endif

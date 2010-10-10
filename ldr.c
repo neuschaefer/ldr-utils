@@ -60,7 +60,7 @@ static struct option const long_opts[] = {
 static struct option_help const opts_help[] = {
 	{"Show details of a LDR",               "<ldrs>"},
 	{"Break DXEs out of LDR",               "<ldrs>"},
-	{"Load LDR over UART",                  "<ldr> <tty>"},
+	{"Load LDR (UART/network/USB/...)",     "<ldr> <devspec>"},
 	{"Create LDR from binaries\n",          "<ldr> <elfs>"},
 	{"Select LDR target",                   "<target>"},
 	COMMON_HELP_OPTS
@@ -266,7 +266,7 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 	const char *filename;
 
 	struct ldr_load_options opts = {
-		.tty = NULL,
+		.dev = NULL,
 		.baud = 115200,
 		.ctsrts = false,
 		.prompt = false,
@@ -284,10 +284,10 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 		}
 	}
 	if (optind + 2 != argc)
-		err("Load requires two arguments: <ldr> <tty>");
+		err("Load requires two arguments: <ldr> <devspec>");
 
 	filename = argv[optind];
-	opts.tty = argv[optind+1];
+	opts.dev = argv[optind+1];
 
 	if (!quiet)
 		printf("Loading LDR %s ... ", filename);
@@ -302,7 +302,7 @@ static bool load_ldr(const int argc, char *argv[], const char *target)
 		} else {
 			if (!quiet)
 				printf("OK!\n");
-			ret &= lfd_load_uart(alfd, &opts);
+			ret &= lfd_load(alfd, &opts);
 		}
 		lfd_close(alfd);
 	}

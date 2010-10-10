@@ -55,6 +55,8 @@
 #  define HAVE_PTY_H 1
 # endif
 # define LOCALSTATEDIR "/var"
+# define _UNUSED_PARAMETER_ __attribute__((__unused__))
+# define HAVE_LIBUSB 1
 #else
 # include <config.h>
 #endif
@@ -171,6 +173,9 @@
 #endif
 #ifdef HAVE_SYS_WAIT_H
 # include <sys/wait.h>
+#endif
+#ifdef HAVE_LIBUSB
+# include <libusb.h>
 #endif
 
 #define _LDR_UTILS_BIG_ENDIAN 4321

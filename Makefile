@@ -14,6 +14,10 @@ CPPFLAGS += -D_GNU_SOURCE
 LDFLAGS  += $(CFLAGS) -rdynamic
 LDLIBS   += -lpthread
 
+PKG_CONFIG ?= pkg-config
+CPPFLAGS   += $(shell $(PKG_CONFIG) --cflags libusb-1.0)
+LDFLAGS    += $(shell $(PKG_CONFIG) --libs libusb-1.0)
+
 DESTDIR :=
 PREFIX  := /usr
 BINDIR  := $(PREFIX)/bin

@@ -594,11 +594,27 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
  *    in the call to write()
  */
 struct ldr_load_method {
+	bool (*load)(LFD *alfd, const struct ldr_load_options *opts, const struct ldr_load_method *method);
 	bool (*init)(void **void_state, const struct ldr_load_options *opts);
 	int (*open)(void *void_state);
 	int (*close)(void *void_state);
 	void (*flush)(void *void_state);
 };
+static bool ldr_load_uart(LFD *alfd, const struct ldr_load_options *opts,
+                          const struct ldr_load_method *method);
+#ifdef HAVE_LIBUSB
+static bool ldr_load_sdp(LFD *alfd, const struct ldr_load_options *opts,
+                         const struct ldr_load_method *method);
+#endif
+
+_UNUSED_PARAMETER_
+static bool ldr_load_stub(_UNUSED_PARAMETER_ LFD *alfd,
+                          _UNUSED_PARAMETER_ const struct ldr_load_options *opts,
+                          _UNUSED_PARAMETER_ const struct ldr_load_method *method)
+{
+	err("configure was unable to detect required features for this load function");
+	return false;
+}
 
 struct ldr_load_method_tty_state {
 	const struct ldr_load_options *opts;
@@ -614,7 +630,7 @@ static bool ldr_load_method_tty_init(void **void_state, const struct ldr_load_op
 	*void_state = state = xmalloc(sizeof(*state));
 	state->opts = opts;
 	state->fd = -1;
-	tty = state->tty = strdup(state->opts->tty);
+	tty = state->tty = strdup(state->opts->dev);
 
 	if (!strncmp("tty:", tty, 4))
 		memmove(tty, tty+4, strlen(tty)-4+1);
@@ -676,6 +692,7 @@ static void ldr_load_method_tty_flush(void *void_state)
 		perror("tcdrain failed");
 }
 static const struct ldr_load_method ldr_load_method_tty = {
+	.load  = ldr_load_uart,
 	.init  = ldr_load_method_tty_init,
 	.open  = ldr_load_method_tty_open,
 	.close = ldr_load_method_tty_close,
@@ -708,7 +725,7 @@ static bool ldr_load_method_network_init(void **void_state, const struct ldr_loa
 	*void_state = state = xmalloc(sizeof(*state));
 	state->opts = opts;
 	state->fd = -1;
-	host = state->host = strdup(state->opts->tty);
+	host = state->host = strdup(state->opts->dev);
 
 	for (i = 0; i < ARRAY_SIZE(domains); ++i) {
 		size_t len = strlen(domains[i].name);
@@ -800,24 +817,29 @@ static int ldr_load_method_network_close(void *void_state)
 	free(state);
 	return ret;
 }
-static void ldr_load_method_network_flush(void *void_state)
+static void ldr_load_method_network_flush(_UNUSED_PARAMETER_ void *void_state)
 {
-	(void)void_state;
 }
 static const struct ldr_load_method ldr_load_method_network = {
+	.load  = ldr_load_uart,
 	.init  = ldr_load_method_network_init,
 	.open  = ldr_load_method_network_open,
 	.close = ldr_load_method_network_close,
 	.flush = ldr_load_method_network_flush,
 };
 #else
-static bool ldr_load_method_network_init(void **void_state, const struct ldr_load_options *opts)
-{
-	err("your system does not support POSIX network address functionality");
-	return false;
-}
 static const struct ldr_load_method ldr_load_method_network = {
-	.init  = ldr_load_method_network_init,
+	.load  = ldr_load_stub,
+};
+#endif
+
+#ifdef HAVE_LIBUSB
+static const struct ldr_load_method ldr_load_method_sdp = {
+	.load  = ldr_load_sdp,
+};
+#else
+static const struct ldr_load_method ldr_load_method_sdp = {
+	.load  = ldr_load_stub,
 };
 #endif
 
@@ -826,6 +848,8 @@ static const struct ldr_load_method *ldr_load_method_detect(const char *device)
 	char *prot = strchr(device, ':');
 	if (!prot || !strncmp(device, "tty:", 4))
 		return &ldr_load_method_tty;
+	else if (!strncmp(device, "sdp:", 4))
+		return &ldr_load_method_sdp;
 	else
 		return &ldr_load_method_network;
 }
@@ -867,32 +891,28 @@ static void *ldr_read_board(void *arg)
 
 	return NULL;
 }
-static bool ldr_load_uart(LFD *alfd, const void *void_opts)
+static bool ldr_load_uart(LFD *alfd, const struct ldr_load_options *opts,
+                          const struct ldr_load_method *method)
 {
-	const struct ldr_load_options *opts = void_opts;
 	LDR *ldr = alfd->ldr;
-	const char *tty = opts->tty;
 	unsigned char autobaud[4] = { 0xFF, 0xFF, 0xFF, 0xFF };
 	int fd = -1;
 	bool ok = false, prompt = opts->prompt;
 	ssize_t ret;
 	size_t d, b, baud, sclock;
 	void (*old_alarm)(int);
-	const struct ldr_load_method *method;
 	void *state;
 	pthread_t reader;
 
-	method = ldr_load_method_detect(tty);
-	if (!method)
-		err("No load handler for '%s' available\n", tty);
+	if (!alfd->target->uart_boot) {
+		warn("target '%s' does not support booting via UART", alfd->selected_target);
+		return false;
+	}
 
 	old_alarm = signal(SIGALRM, ldr_send_timeout);
 
 	if (!method->init(&state, opts))
 		goto out;
-
-	setbuf(stdout, NULL);
-	setbuf(stdin, NULL);
 
 	alarm(10);
 
@@ -997,7 +1017,7 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 
 	if (!quiet)
 		printf("You may want to run minicom or kermit now\n"
-		       "Quick tip: run 'ldr <ldr> <tty> && minicom'\n");
+		       "Quick tip: run 'ldr <ldr> <devspec> && minicom'\n");
 
 	ok = true;
  pout:
@@ -1012,18 +1032,129 @@ static bool ldr_load_uart(LFD *alfd, const void *void_opts)
 	signal(SIGALRM, old_alarm);
 	return ok;
 }
-bool lfd_load_uart(LFD *alfd, const void *opts)
+
+#ifdef HAVE_LIBUSB
+static bool sdp_cmd(libusb_device_handle *devh, uint32_t cmd, uint32_t a1,
+                    uint32_t a2, uint32_t a3, void *rcv, int rcv_len)
 {
+	int len, actual, ret, timeout = 0;
+	unsigned char buf[512];
+
+	/* XXX: does not work on big-endian systems */
+	memcpy(&buf[0], &cmd, 4);
+	memcpy(&buf[4], &a1, 4);
+	memcpy(&buf[8], &a2, 4);
+	memcpy(&buf[12], &a3, 4);
+	memset(&buf[14], 0, 8);
+	len = sizeof(buf);
+
+	ret = libusb_bulk_transfer(devh, ADI_SDP_WRITE_ENDPOINT,
+	                           buf, len, &actual, timeout);
+
+	if (ret || actual != len) {
+		warn("libusb_bulk_transfer(out) = %i (len:%i actual:%i)", ret, len, actual);
+		return false;
+	}
+
+	if (rcv) {
+		ret = libusb_bulk_transfer(devh, ADI_SDP_READ_ENDPOINT | LIBUSB_ENDPOINT_IN,
+		                           buf, len, &actual, timeout);
+
+		if (ret || actual != len) {
+			warn("libusb_bulk_transfer(in) = %i (len:%i actual:%i)", ret, len, actual);
+			return false;
+		}
+
+		assert(rcv_len <= len);
+		memcpy(rcv, buf, rcv_len);
+	}
+
+	return true;
+}
+#define sdp_cmd1(devh, cmd) sdp_cmd(devh, cmd, 0, 0, 0, NULL, 0)
+
+static bool ldr_load_sdp(_UNUSED_PARAMETER_ LFD *alfd,
+                         _UNUSED_PARAMETER_ const struct ldr_load_options *opts,
+                         _UNUSED_PARAMETER_ const struct ldr_load_method *method)
+{
+	int ret;
+	int vid, pid;
+	libusb_context *ctx;
+	libusb_device_handle *devh;
+
+	ret = libusb_init(&ctx);
+	if (ret) {
+		warn("libusb_init() failed");
+		goto err;
+	}
+
+	/* XXX: Should add support for diff VID:PID or Serial (multiple devs) */
+	vid = ADI_SDP_USB_VID;
+	pid = ADI_SDP_USB_PID;
+	printf("Looking for SDP board at %04x:%04x ... ", vid, pid);
+	devh = libusb_open_device_with_vid_pid(ctx, vid, pid);
+	if (devh == NULL) {
+		warn("unable to locate USB device");
+		goto err_init;
+	}
+	puts("OK!");
+
+	printf("Configuring interface ... ");
+	ret = libusb_claim_interface(devh, 0);
+	if (ret) {
+		warn("libusb_claim_interface(0) failed");
+		goto err_devh;
+	}
+	puts("OK!");
+
+	printf("Simple test (LEDs flash) ... ");
+	if (!sdp_cmd1(devh, ADI_SDP_CMD_FLASH_LED))
+		goto err_iface;
+	puts("OK!");
+
+	printf("Checking firmware ... ");
+	struct {
+		union {
+			uint16_t u16[16];
+			char c[16*2];
+		};
+	} firmware;
+	sdp_cmd(devh, ADI_SDP_CMD_GET_FW_VERSION, 0, 32, 0, &firmware, sizeof(firmware));
+	printf("Rev: %i.%i Host: %i Blackfin: %i Date: %s %s Bmode: %i\n",
+		firmware.u16[0], firmware.u16[1], firmware.u16[2], firmware.u16[3],
+		&firmware.c[8], &firmware.c[20],
+		firmware.u16[14] & 0xf);
+
+	printf("Loading file ... ");
+	/* XXX: do ADI_SDP_CMD_SDRAM_PROGRAM_BOOT */
+	puts("OK!");
+
+ err_iface:
+	libusb_release_interface(devh, 0);
+ err_devh:
+	libusb_close(devh);
+ err_init:
+	libusb_exit(ctx);
+ err:
+	return false;
+}
+#endif
+
+bool lfd_load(LFD *alfd, const void *void_opts)
+{
+	const struct ldr_load_options *opts = void_opts;
+	const struct ldr_load_method *method;
+
 	if (!alfd->is_open) {
 		errno = EBADF;
 		return false;
 	}
 
-	if (!alfd->target->uart_boot) {
-		warn("target '%s' does not support booting via UART", alfd->selected_target);
-		return false;
-	} else
-		return ldr_load_uart(alfd, opts);
+	setbuf(stdout, NULL);
+	setbuf(stdin, NULL);
+
+	method = ldr_load_method_detect(opts->dev);
+	return method->load(alfd, opts, method);
 }
 
 /**

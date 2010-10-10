@@ -11,6 +11,7 @@ AC_PROG_CC
 gl_EARLY
 gl_INIT
 AM_MISSING_PROG([AUTOM4TE], [autom4te])
+PKG_PROG_PKG_CONFIG
 
 AC_USE_SYSTEM_EXTENSIONS
 AC_C_BIGENDIAN
@@ -64,6 +65,17 @@ AC_CHECK_FUNCS_ONCE(m4_flatten([
 
 AC_CHECK_LIB([util], [openpty], [PTY_LIB="-lutil"], [PTY_LIB=""])
 AC_SUBST([PTY_LIB])
+
+dnl
+dnl look for libusb for SDP/USB loading
+dnl
+PKG_CHECK_MODULES([LIBUSB], libusb-1.0, [
+	AS_APPEND([CFLAGS], [" $LIBUSB_CFLAGS"])
+	AS_APPEND([LIBS], [" $LIBUSB_LIBS"])
+	AC_DEFINE([HAVE_LIBUSB], 1, [Whether we support libusb])
+],[
+	:
+])
 
 dnl
 dnl for non-ELF systems, steal elf.h from local uClibc
@@ -142,8 +154,8 @@ fi
 USE_RC_SOURCES="false"
 case $host_os in
 	mingw*)
-    AC_CHECK_TOOL([WINDRES], [windres], :)
-    USE_RC_SOURCES="true"
+	AC_CHECK_TOOL([WINDRES], [windres], :)
+	USE_RC_SOURCES="true"
 	;;
 esac
 AM_CONDITIONAL(USE_RC_SOURCES, $USE_RC_SOURCES)

@@ -14,6 +14,7 @@
 
 #include "headers.h"
 #include "helpers.h"
+#include "sdp.h"
 
 typedef struct {
 	size_t offset;                /* file offset */
@@ -58,7 +59,7 @@ struct ldr_create_options {
 };
 
 struct ldr_load_options {
-	const char *tty;              /* path to the TTY for board */
+	const char *dev;              /* path to the device load point */
 	size_t baud;                  /* baud rate to send LDR */
 	bool ctsrts;                  /* use hardware flow control */
 	bool prompt;                  /* prompt before every communication step */
