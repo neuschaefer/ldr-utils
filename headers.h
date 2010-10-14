@@ -219,11 +219,11 @@
 #endif
 
 #if _LDR_UTILS_ENDIAN == _LDR_UTILS_BIG_ENDIAN
-# define ldr_make_little_endian_16(x) (x) = bswap_16(x)
-# define ldr_make_little_endian_32(x) (x) = bswap_32(x)
+# define ldr_make_little_endian_16(x) ({ ((x) = bswap_16(x)); })
+# define ldr_make_little_endian_32(x) ({ ((x) = bswap_32(x)); })
 #elif _LDR_UTILS_ENDIAN == _LDR_UTILS_LITTLE_ENDIAN
-# define ldr_make_little_endian_16(x)
-# define ldr_make_little_endian_32(x)
+# define ldr_make_little_endian_16(x) ({ (x); })
+# define ldr_make_little_endian_32(x) ({ (x); })
 #endif
 
 #ifndef ELF_DATA

@@ -1041,18 +1041,24 @@ static bool sdp_cmd(libusb_device_handle *devh, uint32_t cmd, uint32_t a1,
                     uint32_t a2, uint32_t a3, void *rcv, int rcv_len)
 {
 	int len, actual, ret, timeout = 0;
-	unsigned char buf[512];
+	union {
+		unsigned char buf[512];
+		uint8_t u8[512];
+		uint16_t u16[512/2];
+		uint32_t u32[512/4];
+	} pkt;
 
-	/* XXX: does not work on big-endian systems */
-	memcpy(&buf[0], &cmd, 4);
-	memcpy(&buf[4], &a1, 4);
-	memcpy(&buf[8], &a2, 4);
-	memcpy(&buf[12], &a3, 4);
-	memset(&buf[14], 0, 8);
-	len = sizeof(buf);
+	/* these are read by the Blackfin proc, so make sure they're LE */
+	pkt.u32[0] = ldr_make_little_endian_32(cmd);
+	pkt.u32[1] = ldr_make_little_endian_32(a1);
+	pkt.u32[2] = ldr_make_little_endian_32(a2);
+	pkt.u32[3] = ldr_make_little_endian_32(a3);
+	pkt.u32[4] = ldr_make_little_endian_32(0);
+	pkt.u32[5] = ldr_make_little_endian_32(0);
+	len = sizeof(pkt);
 
 	ret = libusb_bulk_transfer(devh, ADI_SDP_WRITE_ENDPOINT,
-	                           buf, len, &actual, timeout);
+	                           pkt.buf, len, &actual, timeout);
 
 	if (ret || actual != len) {
 		warn("libusb_bulk_transfer(out) = %i (len:%i actual:%i)", ret, len, actual);
@@ -1061,7 +1067,7 @@ static bool sdp_cmd(libusb_device_handle *devh, uint32_t cmd, uint32_t a1,
 
 	if (rcv) {
 		ret = libusb_bulk_transfer(devh, ADI_SDP_READ_ENDPOINT | LIBUSB_ENDPOINT_IN,
-		                           buf, len, &actual, timeout);
+		                           pkt.buf, len, &actual, timeout);
 
 		if (ret || actual != len) {
 			warn("libusb_bulk_transfer(in) = %i (len:%i actual:%i)", ret, len, actual);
@@ -1069,7 +1075,7 @@ static bool sdp_cmd(libusb_device_handle *devh, uint32_t cmd, uint32_t a1,
 		}
 
 		assert(rcv_len <= len);
-		memcpy(rcv, buf, rcv_len);
+		memcpy(rcv, pkt.buf, rcv_len);
 	}
 
 	return true;
