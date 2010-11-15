@@ -55,6 +55,7 @@ void *xrealloc(void *, size_t);
 char *xstrdup(const char *);
 bool parse_bool(const char *);
 ssize_t read_retry(int, void *, size_t);
+size_t fread_retry(void *, size_t, size_t, FILE *);
 
 size_t tty_get_baud(const int);
 int tty_open(const char *, int);

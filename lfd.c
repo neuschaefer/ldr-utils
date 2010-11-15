@@ -1037,50 +1037,61 @@ static bool ldr_load_uart(LFD *alfd, const struct ldr_load_options *opts,
 }
 
 #ifdef HAVE_LIBUSB
-static bool sdp_cmd(libusb_device_handle *devh, uint32_t cmd, uint32_t a1,
-                    uint32_t a2, uint32_t a3, void *rcv, int rcv_len)
+static bool sdp_transfer(libusb_device_handle *devh, unsigned char ep,
+                         void *udata, int ulen, unsigned int timeout)
 {
-	int len, actual, ret, timeout = 0;
-	union {
-		unsigned char buf[512];
-		uint8_t u8[512];
-		uint16_t u16[512/2];
-		uint32_t u32[512/4];
-	} pkt;
+	int actual, ret, len;
+	void *data;
+	u8 tdata[ADI_SDP_SDRAM_PKT_MIN_LEN];
 
-	/* these are read by the Blackfin proc, so make sure they're LE */
-	pkt.u32[0] = ldr_make_little_endian_32(cmd);
-	pkt.u32[1] = ldr_make_little_endian_32(a1);
-	pkt.u32[2] = ldr_make_little_endian_32(a2);
-	pkt.u32[3] = ldr_make_little_endian_32(a3);
-	pkt.u32[4] = ldr_make_little_endian_32(0);
-	pkt.u32[5] = ldr_make_little_endian_32(0);
-	len = sizeof(pkt);
+	if ((ep & LIBUSB_ENDPOINT_IN) && ulen < ADI_SDP_SDRAM_PKT_MIN_LEN) {
+		memcpy(tdata, udata, ulen);
+		data = tdata;
+		len = ADI_SDP_SDRAM_PKT_MIN_LEN;
+	} else {
+		data = udata;
+		len = ulen;
+	}
 
-	ret = libusb_bulk_transfer(devh, ADI_SDP_WRITE_ENDPOINT,
-	                           pkt.buf, len, &actual, timeout);
-
+	ret = libusb_bulk_transfer(devh, ep, data, len, &actual, timeout);
 	if (ret || actual != len) {
-		warn("libusb_bulk_transfer(out) = %i (len:%i actual:%i)", ret, len, actual);
+		warn("libusb_bulk_transfer(%#x) = %i (len:%i actual:%i)",
+		     ep, ret, len, actual);
 		return false;
 	}
 
-	if (rcv) {
-		ret = libusb_bulk_transfer(devh, ADI_SDP_READ_ENDPOINT | LIBUSB_ENDPOINT_IN,
-		                           pkt.buf, len, &actual, timeout);
-
-		if (ret || actual != len) {
-			warn("libusb_bulk_transfer(in) = %i (len:%i actual:%i)", ret, len, actual);
-			return false;
-		}
-
-		assert(rcv_len <= len);
-		memcpy(rcv, pkt.buf, rcv_len);
-	}
+	if (data == tdata)
+		memcpy(udata, tdata, ulen);
 
 	return true;
 }
-#define sdp_cmd1(devh, cmd) sdp_cmd(devh, cmd, 0, 0, 0, NULL, 0)
+
+static bool sdp_cmd(libusb_device_handle *devh, u32 cmd, u32 out_len, u32 in_len,
+                    u32 num_params, u32 *params, void *in_buf)
+{
+	int timeout = 0;
+	struct sdp_header pkt;
+	u32 np;
+
+	/* these are read by the Blackfin proc, so make sure they're LE */
+	pkt.cmd        = ldr_make_little_endian_32(cmd);
+	pkt.out_len    = ldr_make_little_endian_32(out_len);
+	pkt.in_len     = ldr_make_little_endian_32(in_len);
+	pkt.num_params = ldr_make_little_endian_32(num_params);
+	for (np = 0; np < num_params; ++np)
+		pkt.params[np] = ldr_make_little_endian_32(params[np]);
+
+	if (!sdp_transfer(devh, ADI_SDP_WRITE_ENDPOINT, &pkt, sizeof(pkt), timeout))
+		return false;
+
+	if (in_buf)
+		if (!sdp_transfer(devh, ADI_SDP_READ_ENDPOINT | LIBUSB_ENDPOINT_IN,
+		                  in_buf, in_len, timeout))
+			return false;
+
+	return true;
+}
+#define sdp_cmd1(devh, cmd) sdp_cmd(devh, cmd, 0, 0, 0, NULL, NULL)
 
 static bool ldr_load_sdp(_UNUSED_PARAMETER_ LFD *alfd,
                          _UNUSED_PARAMETER_ const struct ldr_load_options *opts,
@@ -1122,20 +1133,47 @@ static bool ldr_load_sdp(_UNUSED_PARAMETER_ LFD *alfd,
 	puts("OK!");
 
 	printf("Checking firmware ... ");
-	struct {
-		union {
-			uint16_t u16[16];
-			char c[16*2];
-		};
-	} firmware;
-	sdp_cmd(devh, ADI_SDP_CMD_GET_FW_VERSION, 0, 32, 0, &firmware, sizeof(firmware));
+	struct sdp_version firmware;
+	char date[sizeof(firmware.datestamp)+1];
+	char time[sizeof(firmware.timestamp)+1];
+	sdp_cmd(devh, ADI_SDP_CMD_GET_FW_VERSION, 0, 32, 0, NULL, &firmware);
+	memcpy(date, firmware.datestamp, sizeof(firmware.datestamp));
+	date[sizeof(firmware.datestamp)] = '\0';
+	memcpy(time, firmware.timestamp, sizeof(firmware.timestamp));
+	time[sizeof(firmware.timestamp)] = '\0';
 	printf("Rev: %i.%i Host: %i Blackfin: %i Date: %s %s Bmode: %i\n",
-		firmware.u16[0], firmware.u16[1], firmware.u16[2], firmware.u16[3],
-		&firmware.c[8], &firmware.c[20],
-		firmware.u16[14] & 0xf);
+		ldr_make_little_endian_32(firmware.rev.major),
+		ldr_make_little_endian_32(firmware.rev.minor),
+		ldr_make_little_endian_32(firmware.rev.host),
+		ldr_make_little_endian_32(firmware.rev.bfin),
+		date, time,
+		ldr_make_little_endian_32(firmware.bmode) & 0xf);
 
+	char data[ADI_SDP_SDRAM_PKT_MAX_LEN];
+	uint32_t offset, chunk, this_chunk;
 	printf("Loading file ... ");
-	/* XXX: do ADI_SDP_CMD_SDRAM_PROGRAM_BOOT */
+	rewind(alfd->fp);
+	chunk = ADI_SDP_SDRAM_PKT_MAX_LEN;
+	for (offset = 0; offset < alfd->st.st_size; offset += this_chunk) {
+		u32 params[2];
+		int del;
+
+		del = printf("[%u/%u] ", offset, (u32)alfd->st.st_size);
+
+		params[0] = offset;
+		if (offset + chunk >= alfd->st.st_size) {
+			chunk = alfd->st.st_size - offset;
+			params[1] = 0x2;
+		} else
+			params[1] = 0;
+		this_chunk = fread_retry(data, 1, chunk, alfd->fp);
+
+		sdp_cmd(devh, ADI_SDP_CMD_SDRAM_PROGRAM_BOOT, this_chunk, 0, 2, params, NULL);
+		if (!sdp_transfer(devh, ADI_SDP_WRITE_ENDPOINT, data, this_chunk, 0))
+			goto err_iface;
+
+		ldr_send_erase_output(del);
+	}
 	puts("OK!");
 
  err_iface:

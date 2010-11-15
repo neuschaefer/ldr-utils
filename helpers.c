@@ -84,6 +84,27 @@ ssize_t read_retry(int fd, void *buf, size_t count)
 	return ret;
 }
 
+size_t fread_retry(void *buf, size_t size, size_t nmemb, FILE *fp)
+{
+	size_t ret = 0, temp_ret;
+	while (nmemb > 0) {
+		temp_ret = fread(buf, size, nmemb, fp);
+		if (temp_ret > 0) {
+			ret += temp_ret;
+			buf += (temp_ret * size);
+			nmemb -= temp_ret;
+		} else if (temp_ret == 0) {
+			break;
+		} else {
+			if (errno == EINTR)
+				continue;
+			ret = 0;
+			break;
+		}
+	}
+	return ret;
+}
+
 #ifdef HAVE_TERMIOS_H
 
 /*

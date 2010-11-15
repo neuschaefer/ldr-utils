@@ -1,5 +1,5 @@
 /*
- * File: helpers.h
+ * File: headers.h
  *
  * Copyright 2006-2010 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
@@ -233,6 +233,11 @@
 #  define ELF_DATA ELFDATA2LSB
 # endif
 #endif
+
+#define u8 uint8_t
+#define u16 uint16_t
+#define u32 uint32_t
+#define u64 uint64_t
 
 /* Crappy Windows compatibility for moronic behavior. */
 #ifndef O_BINARY
