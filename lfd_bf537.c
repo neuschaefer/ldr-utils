@@ -35,7 +35,7 @@ typedef struct {
 #define LDR_FLAG_COMPRESSED  0x2000
 #define LDR_FLAG_FINAL       0x8000
 
-static struct lfd_flag bf537_lfd_flags[] = {
+static const struct lfd_flag bf537_lfd_flags[] = {
 	{ LDR_FLAG_ZEROFILL,    "zerofill"  },
 	{ LDR_FLAG_RESVECT,     "resvect"   },
 	{ LDR_FLAG_INIT,        "init"      },
@@ -329,8 +329,8 @@ uint32_t bf53x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 }
 
 
-static const char *bf537_aliases[] = { "BF534", "BF536", "BF537", NULL };
-static struct lfd_target bf537_lfd_target = {
+static const char * const bf537_aliases[] = { "BF534", "BF536", "BF537", NULL };
+static const struct lfd_target bf537_lfd_target = {
 	.name  = "BF537",
 	.description = "Blackfin LDR handler for BF534/BF536/BF537",
 	.aliases = bf537_aliases,

@@ -94,8 +94,8 @@ static bool bf561_lfd_write_ldr(LFD *alfd, const void *void_opts)
 	return (fwrite(&header, sizeof(header), 1, alfd->fp) == sizeof(header) ? true : false);
 }
 
-static const char *bf561_aliases[] = { "BF561", NULL };
-static struct lfd_target bf561_lfd_target = {
+static const char * const bf561_aliases[] = { "BF561", NULL };
+static const struct lfd_target bf561_lfd_target = {
 	.name = "BF561",
 	.description = "Blackfin LDR handler for BF561",
 	.aliases = bf561_aliases,

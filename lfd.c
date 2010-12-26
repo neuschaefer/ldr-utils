@@ -13,12 +13,12 @@
 
 struct list_item {
 	struct list_item *next;
-	struct lfd_target *target;
+	const struct lfd_target *target;
 };
 
 static struct list_item *target_list = NULL;
 
-void lfd_target_register(struct lfd_target *target)
+void lfd_target_register(const struct lfd_target *target)
 {
 	struct list_item *new_node = xmalloc(sizeof(*new_node));
 	if (!target->name || !target->description || !target->aliases)
@@ -36,7 +36,7 @@ void lfd_target_register(struct lfd_target *target)
 	target_list = new_node;
 }
 
-struct lfd_target *lfd_target_find(const char *name)
+const struct lfd_target *lfd_target_find(const char *name)
 {
 	const char *p = strchr(name, '-');
 	size_t i, checklen;

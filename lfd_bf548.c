@@ -40,7 +40,7 @@ typedef struct {
 #define BFLAG_HDRCHK_MASK       0x00FF0000
 #define BFLAG_HDRCHK_SHIFT      16
 
-static struct lfd_flag bf548_lfd_flags[] = {
+static const struct lfd_flag bf548_lfd_flags[] = {
 	{ BFLAG_SAFE,        "safe"      },
 	{ BFLAG_AUX,         "aux"       },
 	{ BFLAG_FILL,        "fill"      },
@@ -359,8 +359,8 @@ uint32_t bf54x_lfd_dump_block(BLOCK *block, FILE *fp, bool dump_fill)
 	return header->target_address;
 }
 
-static const char *bf548_aliases[] = { "BF542", "BF544", "BF547", "BF548", "BF549", "BF542M", "BF544M", "BF547M", "BF548M", "BF549M", NULL };
-static struct lfd_target bf548_lfd_target = {
+static const char * const bf548_aliases[] = { "BF542", "BF544", "BF547", "BF548", "BF549", "BF542M", "BF544M", "BF547M", "BF548M", "BF549M", NULL };
+static const struct lfd_target bf548_lfd_target = {
 	.name  = "BF548",
 	.description = "Blackfin LDR handler for BF542/BF544/BF547/BF548/BF549",
 	.aliases = bf548_aliases,

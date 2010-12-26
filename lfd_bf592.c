@@ -11,8 +11,8 @@
 #define __LFD_INTERNAL
 #include "ldr.h"
 
-static const char *bf592_aliases[] = { "BF592", NULL };
-static struct lfd_target bf592_lfd_target = {
+static const char * const bf592_aliases[] = { "BF592", NULL };
+static const struct lfd_target bf592_lfd_target = {
 	.name = "BF592",
 	.description = "Blackfin LDR handler for BF592",
 	.aliases = bf592_aliases,

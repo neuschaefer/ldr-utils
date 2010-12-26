@@ -38,14 +38,14 @@ struct lfd_iovec {
 struct lfd_target {
 	const char *name;        /* unique short name */
 	const char *description; /* description of target */
-	const char **aliases;
+	const char * const *aliases;
 	const bool uart_boot;
 
 	struct lfd_iovec iovec;
 };
 
 typedef struct lfd {
-	struct lfd_target *target;
+	const struct lfd_target *target;
 	LDR *ldr;
 
 	char *dupped_mem;
@@ -66,15 +66,15 @@ enum {
 	DXE_BLOCK_FINAL = 0x20,
 };
 
-void lfd_target_register(struct lfd_target *target);
-struct lfd_target *lfd_target_find(const char *target);
+void lfd_target_register(const struct lfd_target *target);
+const struct lfd_target *lfd_target_find(const char *target);
 
 #define target_is(alfd, target) (!strcasecmp(alfd->selected_target, target))
 
 static inline bool family_is(LFD *alfd, const char *family)
 {
 	size_t i;
-	struct lfd_target *target = lfd_target_find(family);
+	const struct lfd_target *target = lfd_target_find(family);
 	if (target == NULL)
 		err("family '%s' is not supported", family);
 	for (i = 0; target->aliases[i]; ++i)

@@ -112,7 +112,7 @@ size_t fread_retry(void *buf, size_t size, size_t nmemb, FILE *fp)
  * Annoying function for translating the termios baud representation
  * into the actual decimal value and vice versa.
  */
-static struct {
+static const struct {
 	speed_t s;
 	size_t b;
 } speeds[] = {
