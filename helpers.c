@@ -125,7 +125,7 @@ __attribute__((const))
 static inline size_t tty_speed_to_baud(const speed_t speed)
 {
 	size_t i;
-	for (i = 0; i < sizeof(speeds)/sizeof(*speeds); ++i)
+	for (i = 0; i < ARRAY_SIZE(speeds); ++i)
 		if (speeds[i].s == speed)
 			return speeds[i].b;
 	return 0;
@@ -134,7 +134,7 @@ __attribute__((const))
 static inline size_t tty_baud_to_speed(const size_t baud)
 {
 	size_t i;
-	for (i = 0; i < sizeof(speeds)/sizeof(*speeds); ++i)
+	for (i = 0; i < ARRAY_SIZE(speeds); ++i)
 		if (speeds[i].b == baud)
 			return speeds[i].s;
 	return 0;
