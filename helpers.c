@@ -279,8 +279,9 @@ bool tty_lock(const char *tty)
 			fprintf(fp, "%lu\n", (unsigned long)getpid());
 			fclose(fp);
 			ret = true;
-		}
-		close(fd);
+		} else
+			/* the fclose() above also calls close() on the underlying fd */
+			close(fd);
 	}
 
 	return ret;
