@@ -67,6 +67,11 @@ ssize_t read_retry(int fd, void *buf, size_t count)
 {
 	ssize_t ret = 0, temp_ret;
 	while (count > 0) {
+		/*
+		 * clear errno to avoid confusing output with higher layers and
+		 * short reads (which aren't technically errors)
+		 */
+		errno = 0;
 		temp_ret = read(fd, buf, count);
 		if (temp_ret > 0) {
 			ret += temp_ret;
