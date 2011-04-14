@@ -147,6 +147,27 @@ static bool _bf53x_lfd_write_header(FILE *fp, uint16_t flags,
 		fwrite(&flags, sizeof(flags), 1, fp) == 1;
 }
 
+static void _bf53x_lfd_block_flags(LFD *alfd, const struct ldr_create_options *opts,
+                                   uint16_t *flags, uint32_t *addr)
+{
+	*flags = 0;
+	if (!target_is(alfd, "BF531") &&
+	    !target_is(alfd, "BF532"))
+		*flags |= LDR_FLAG_RESVECT;
+
+	*flags |= (opts->gpio << LDR_FLAG_PFLAG_SHIFT) & LDR_FLAG_PFLAG_MASK;
+	if (family_is(alfd, "BF537")) {
+		switch (toupper(opts->port)) {
+			case 'F': *flags |= LDR_FLAG_PPORT_PORTF; break;
+			case 'G': *flags |= LDR_FLAG_PPORT_PORTG; break;
+			case 'H': *flags |= LDR_FLAG_PPORT_PORTH; break;
+			default:  *flags |= LDR_FLAG_PPORT_NONE; break;
+		}
+	}
+
+	*addr = (*flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
+}
+
 bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
 {
 	const struct ldr_create_options *opts = void_opts;
@@ -161,12 +182,14 @@ bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
 	     strcasecmp(opts->bmode, "fifo")))
 		return true;
 
+	/* Seed the initial flags/addr values */
+	_bf53x_lfd_block_flags(alfd, opts, &flags, &addr);
+
 	/* The address field doubles up as extra flag bits:
 	 * 0x40: 8-bit flash, no dma
 	 * 0x60: 16-bit flash, 8-bit dma
 	 * 0x20: 16-bit flash, 16-bit dma
 	 */
-	addr = 0xFFA00000;
 	if (opts->flash_bits == 16) {
 		if (opts->dma == 8)
 			addr |= 0x60;
@@ -179,10 +202,7 @@ bool bf53x_lfd_write_ldr(LFD *alfd, const void *void_opts)
 	count = 0;
 
 	/* make sure this block gets ignored */
-	flags = LDR_FLAG_IGNORE;
-	if (!target_is(alfd, "BF531") &&
-	    !target_is(alfd, "BF532"))
-		flags |= LDR_FLAG_RESVECT;
+	flags |= LDR_FLAG_IGNORE;
 
 	return _bf53x_lfd_write_header(fp, flags, addr, count);
 }
@@ -196,20 +216,8 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 	uint16_t flags;
 	uint32_t default_init_addr;
 
-	flags = 0;
-	if (!target_is(alfd, "BF531") &&
-	    !target_is(alfd, "BF532"))
-		flags = LDR_FLAG_RESVECT;
-	default_init_addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
-	flags |= (opts->gpio << LDR_FLAG_PFLAG_SHIFT) & LDR_FLAG_PFLAG_MASK;
-	if (family_is(alfd, "BF537")) {
-		switch (toupper(opts->port)) {
-			case 'F': flags |= LDR_FLAG_PPORT_PORTF; break;
-			case 'G': flags |= LDR_FLAG_PPORT_PORTG; break;
-			case 'H': flags |= LDR_FLAG_PPORT_PORTH; break;
-			default:  flags |= LDR_FLAG_PPORT_NONE; break;
-		}
-	}
+	/* Seed the initial flags/addr values */
+	_bf53x_lfd_block_flags(alfd, opts, &flags, &default_init_addr);
 
 	/* we dont need a special first ignore block */
 	if (dxe_flags & DXE_BLOCK_FIRST)
@@ -227,7 +235,7 @@ bool bf53x_lfd_write_block(LFD *alfd, uint8_t dxe_flags,
 		 */
 		if (addr == default_init_addr)
 			return true;
-		addr = (flags & LDR_FLAG_RESVECT ? 0xFFA00000 : 0xFFA08000);
+		addr = default_init_addr;
 	}
 	if (dxe_flags & DXE_BLOCK_FILL)
 		flags |= LDR_FLAG_ZEROFILL;
