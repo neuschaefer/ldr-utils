@@ -91,7 +91,7 @@ static bool bf561_lfd_write_ldr(LFD *alfd, const void *void_opts)
 		case 2000: header |= (LDR_FLAG_SPI_2M << LDR_FLAG_SPI_SHIFT);   break;
 	}
 	ldr_make_little_endian_32(header);
-	return (fwrite(&header, sizeof(header), 1, alfd->fp) == sizeof(header) ? true : false);
+	return (fwrite(&header, sizeof(header), 1, alfd->fp) == 1 ? true : false);
 }
 
 static const char * const bf561_aliases[] = { "BF561", NULL };
