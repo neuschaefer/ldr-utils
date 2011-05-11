@@ -42,6 +42,7 @@ int tty_open(const char *filename, int flags)
 
 bool tty_init(const int fd, const size_t baud, const bool ctsrts)
 {
+	COMMTIMEOUTS timeouts;
 	DCB state = { .DCBlength = sizeof(state) };
 	if (GetCommState(FD_TO_HANDLE(fd), &state) == FALSE)
 		return false;
@@ -60,6 +61,19 @@ bool tty_init(const int fd, const size_t baud, const bool ctsrts)
 	state.ByteSize = 8;
 	state.Parity = NOPARITY;
 	state.StopBits = ONESTOPBIT;
+	if (GetCommTimeouts (FD_TO_HANDLE(fd), &timeouts) == FALSE) {
+		printf ( "Failed to Get Comm Timeouts Reason: %d", GetLastError());
+		return false;
+	}
+	timeouts.ReadIntervalTimeout = 2000;
+	timeouts.ReadTotalTimeoutMultiplier = 1;
+	timeouts.ReadTotalTimeoutConstant = 10;
+	timeouts.WriteTotalTimeoutMultiplier = 10;
+	timeouts.WriteTotalTimeoutConstant = 2000;
+	if (SetCommTimeouts(FD_TO_HANDLE(fd), &timeouts) == FALSE) {
+		printf ( "Error setting time-outs. %d", GetLastError());
+		return false;
+	}
 	return BOOL_TO_bool(SetCommState(FD_TO_HANDLE(fd), &state));
 }
 
