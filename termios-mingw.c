@@ -62,7 +62,7 @@ bool tty_init(const int fd, const size_t baud, const bool ctsrts)
 	state.Parity = NOPARITY;
 	state.StopBits = ONESTOPBIT;
 	if (GetCommTimeouts (FD_TO_HANDLE(fd), &timeouts) == FALSE) {
-		printf ( "Failed to Get Comm Timeouts Reason: %d", GetLastError());
+		printf("Failed to Get Comm Timeouts Reason: %d", GetLastError());
 		return false;
 	}
 	timeouts.ReadIntervalTimeout = 2000;
@@ -71,7 +71,7 @@ bool tty_init(const int fd, const size_t baud, const bool ctsrts)
 	timeouts.WriteTotalTimeoutMultiplier = 10;
 	timeouts.WriteTotalTimeoutConstant = 2000;
 	if (SetCommTimeouts(FD_TO_HANDLE(fd), &timeouts) == FALSE) {
-		printf ( "Error setting time-outs. %d", GetLastError());
+		printf("Error setting time-outs. %d", GetLastError());
 		return false;
 	}
 	return BOOL_TO_bool(SetCommState(FD_TO_HANDLE(fd), &state));
