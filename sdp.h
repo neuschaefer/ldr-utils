@@ -1,5 +1,5 @@
 /*
- * File: ldr.h
+ * File: sdp.h
  *
  * Copyright 2009-2010 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
