@@ -158,7 +158,15 @@ size_t tty_get_baud(const int fd)
 
 int tty_open(const char *filename, int flags)
 {
-	return open(filename, flags);
+	/*
+	 * We need to open in non-blocking mode because if the serial
+	 * device has CTS/RTS enabled, but the cable or device doesn't
+	 * actually support it, we can easily hang.  The kernel itself
+	 * waits for carrier detection before returning to userspace.
+	 * Once we've applied our own settings in tty_init(), we'll
+	 * undo the non-blocking mode of the fd.
+	 */
+	return open(filename, flags | O_NONBLOCK);
 }
 
 /*
@@ -195,6 +203,13 @@ bool tty_init(const int fd, const size_t baud, const bool ctsrts)
 		if (tcsetattr(fd, TCSANOW, &term))
 			return false;
 	}
+
+	/* See comment in tty_open() */
+	int flags = fcntl(fd, F_GETFL);
+	if (flags == -1)
+		return false;
+	fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
+
 	return true;
 }
 
