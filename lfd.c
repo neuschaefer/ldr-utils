@@ -288,7 +288,7 @@ static bool lfd_blockify(LFD *alfd, const struct ldr_create_options *opts, uint8
 {
 	bool ret = true;
 	size_t bytes_to_write, bytes_written;
-	uint8_t final_block = 0;
+	uint8_t final_block = src_addr? 0 : DXE_BLOCK_FILL;
 
 	bytes_written = 0;
 	do {
@@ -298,10 +298,11 @@ static bool lfd_blockify(LFD *alfd, const struct ldr_create_options *opts, uint8
 			bytes_to_write = opts->block_size;
 
 		if (bytes_written + bytes_to_write >= byte_count)
-			final_block = final;
+			final_block |= final;
 
 		ret &= alfd->target->iovec.write_block(alfd, DXE_BLOCK_DATA | final_block, opts,
-			dst_addr + bytes_written, bytes_to_write, src_addr + bytes_written);
+			dst_addr + bytes_written, bytes_to_write,
+			src_addr? src_addr + bytes_written : NULL);
 
 		bytes_written += bytes_to_write;
 	} while (bytes_written < byte_count);
@@ -494,7 +495,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 
 				if (memsz > filesz) {
 					final = (p == final_load ? DXE_BLOCK_FINAL : 0);
-					alfd->target->iovec.write_block(alfd, DXE_BLOCK_FILL | final, opts, paddr + filesz, memsz - filesz, NULL);
+					lfd_blockify(alfd, opts, final, paddr + filesz, memsz - filesz, NULL);
 				}
 			}
 			++phdr;
