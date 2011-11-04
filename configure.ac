@@ -120,6 +120,12 @@ Support for loading LDRs over the UART is disabled.
 ])
 fi
 
+case $host_os in
+	*darwin*)
+	LIBS="${LIBS} -lobjc"
+	;;
+esac
+
 if test "x$ac_cv_header_pthread_h" = "xno" ; then
 	fail_at_life=yes
 AC_MSG_WARN([

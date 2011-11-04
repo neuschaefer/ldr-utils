@@ -17834,6 +17834,12 @@ Support for loading LDRs over the UART is disabled.
 " >&2;}
 fi
 
+case $host_os in
+	*darwin*)
+	LIBS="${LIBS} -lobjc"
+	;;
+esac
+
 if test "x$ac_cv_header_pthread_h" = "xno" ; then
 	fail_at_life=yes
 { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING:
