@@ -580,7 +580,7 @@ bool lfd_dump(LFD *alfd, const void *void_opts)
 		fclose(fp_dxe);
 	}
 
-	return true;
+	return ret;
 }
 
 /*
@@ -870,10 +870,10 @@ static void ldr_send_erase_output(size_t count)
 }
 static char ldr_send_prompt(const char *msg)
 {
-	int outret, inret;
+	int inret;
 	char dummy;
 	alarm(0);
-	outret = printf("\n%s: ", msg);
+	printf("\n%s: ", msg);
 	fflush(stdout);
 	while ((inret = read(0, &dummy, 1)) == -1)
 		if (errno != EAGAIN)
