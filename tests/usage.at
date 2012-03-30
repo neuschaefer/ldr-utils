@@ -18,6 +18,7 @@ for target in \
 531 532 533 534 536 537 538 539 \
 542 544 547 548 549 542M 544M 547M 548M 549M \
 561 \
+606 607 608 609 \
 ; do
 	for prefix in BF Bf bF bf ; do
 		if ! LDR_BINARY -T $prefix$target --show -h ; then
