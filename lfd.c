@@ -659,7 +659,7 @@ static int ldr_load_method_tty_open(void *void_state)
 
 	printf("Opening %s ... ", tty);
 	if (tty[0] != '#') {
-		state->fd = tty_open(tty, O_RDWR | O_BINARY);
+		state->fd = tty_open(tty, O_RDWR);
 		if (state->fd == -1)
 			goto out;
 	} else

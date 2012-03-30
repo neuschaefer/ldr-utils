@@ -166,7 +166,7 @@ int tty_open(const char *filename, int flags)
 	 * Once we've applied our own settings in tty_init(), we'll
 	 * undo the non-blocking mode of the fd.
 	 */
-	return open(filename, flags | O_NONBLOCK);
+	return open(filename, flags | O_BINARY | O_NONBLOCK);
 }
 
 /*
