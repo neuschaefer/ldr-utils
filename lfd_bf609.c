@@ -5,7 +5,7 @@
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:
- * Format handlers for LDR files on the BF592.
+ * Format handlers for LDR files on the BF60[6789].
  */
 
 #define __LFD_INTERNAL
@@ -14,7 +14,7 @@
 static const char * const bf609_aliases[] = { "BF606", "BF607", "BF608", "BF609", NULL };
 static const struct lfd_target bf609_lfd_target = {
 	.name = "BF609",
-	.description = "Blackfin LDR handler for BF606/607/608/609",
+	.description = "Blackfin LDR handler for BF606/BF607/BF608/BF609",
 	.aliases = bf609_aliases,
 	.uart_boot = true,
 	.iovec = {
