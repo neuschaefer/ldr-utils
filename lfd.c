@@ -288,7 +288,7 @@ static bool lfd_blockify(LFD *alfd, const struct ldr_create_options *opts, uint8
 {
 	bool ret = true;
 	size_t bytes_to_write, bytes_written;
-	uint8_t final_block = src_addr? 0 : DXE_BLOCK_FILL;
+	uint8_t final_block = src_addr ? 0 : DXE_BLOCK_FILL;
 
 	bytes_written = 0;
 	do {
@@ -302,7 +302,7 @@ static bool lfd_blockify(LFD *alfd, const struct ldr_create_options *opts, uint8
 
 		ret &= alfd->target->iovec.write_block(alfd, DXE_BLOCK_DATA | final_block, opts,
 			dst_addr + bytes_written, bytes_to_write,
-			src_addr? src_addr + bytes_written : NULL);
+			src_addr ? src_addr + bytes_written : NULL);
 
 		bytes_written += bytes_to_write;
 	} while (bytes_written < byte_count);
