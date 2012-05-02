@@ -218,7 +218,7 @@ bool bf54x_lfd_write_block(struct lfd *alfd, uint8_t dxe_flags,
 
 	block_code = block_code_base;
 
-	if (dxe_flags & DXE_BLOCK_FIRST) {
+	if ((dxe_flags & DXE_BLOCK_FIRST) && family_is(alfd, "BF548")) {
 		block_code |= BFLAG_IGNORE | BFLAG_FIRST;
 		addr = LDR_ADDR_INIT;
 	}
