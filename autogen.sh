@@ -8,19 +8,32 @@ export LC_ALL=C
 
 make distclean
 
+# figure out which vcs we're using
+if svn info >&/dev/null ; then
+	VCS="svn"
+elif git rev-parse HEAD >&/dev/null ; then
+	VCS="git"
+else
+	echo "ERROR: no idea what vcs i'm using"
+	exit 1
+fi
+
 # prep files for autotoolization
-if [ -d .svn ] ; then
+case ${VCS} in
+svn)
 	svn log > ChangeLog
-elif [ -d .git ] ; then
+	;;
+git)
 	if git config svn-remote.svn.url >/dev/null ; then
 		git svn log > ChangeLog
 	else
 		git log > ChangeLog
 	fi
-fi
+	;;
+esac
 topfiles=$(echo *.c *.h)
 sed -i "/^ldr_SOURCES/s:=.*:= ${topfiles} \$(RC_SOURCES):" Makefile.am
-ver=$(./local-version.sh)
+ver=$(./local-version.sh ${VCS})
 sed -i "/^AC_INIT/s:\([^,]*,\)[^,]*:\1 [${ver}]:" configure.ac
 testatfiles=$(cd tests; echo *.at)
 testfiles=$(cd tests; echo *.c *.in elfs/* ldrs/*)
@@ -38,21 +51,22 @@ find gnulib -name '*~' -exec rm {} +
 autoreconf -f -i -v
 
 # stupid automake bug
-if [ -d .svn ] ; then
-	svn revert INSTALL
-elif [ -d .git ] ; then
-	git checkout INSTALL
-fi
+case ${VCS} in
+svn) svn revert INSTALL ;;
+git) git checkout INSTALL ;;
+esac
 
 # update copyrights automatically
-if [ -d .svn ] ; then
+case ${VCS} in
+svn)
 	for f in $(grep -lI 'Copyright.*Analog Devices Inc.' `svn ls`) ; do
 		year=$(svn info $f | awk '$0 ~ /^Last Changed Date:/ {print $4}' | cut -d- -f1)
 		sed -i \
 			-e "s:\(Copyright\) [-0-9]* \(Analog Devices Inc.\):\1 2006-${year} \2:" \
 			${f}
 	done
-fi
+	;;
+esac
 
 # test building
 if [ -d build ] ; then
