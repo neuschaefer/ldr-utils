@@ -1,4 +1,152 @@
 ------------------------------------------------------------------------
+r5853 | sonicz | 2012-05-02 02:16:30 -0400 (Wed, 02 May 2012) | 7 lines
+
+ldr-utils: Change the flags of DXE_BLOCK_FIRST block only for BF548 family.
+
+Mike points out that this block is to see the load address explicitly
+if the target needs it. This work around is only for BF548 family boot rom.
+
+
+
+------------------------------------------------------------------------
+r5832 | sonicz | 2012-04-05 03:15:19 -0400 (Thu, 05 Apr 2012) | 6 lines
+
+ldr-utils: revert the changes to the flags of DXE_BLOCK_FIRST block
+
+Mike points out that this block is to see the load address explicitly
+if the target needs it.
+
+
+------------------------------------------------------------------------
+r5831 | vapier | 2012-04-04 23:33:55 -0400 (Wed, 04 Apr 2012) | 1 line
+
+ldr-utils: fix style with tertiary op
+------------------------------------------------------------------------
+r5823 | vapier | 2012-03-29 23:52:03 -0400 (Thu, 29 Mar 2012) | 1 line
+
+ldr-utils: fix usage text in new bf60x code
+------------------------------------------------------------------------
+r5822 | vapier | 2012-03-29 23:42:33 -0400 (Thu, 29 Mar 2012) | 1 line
+
+ldr-utils: add new 60x cpus to usage test
+------------------------------------------------------------------------
+r5821 | vapier | 2012-03-29 23:40:30 -0400 (Thu, 29 Mar 2012) | 1 line
+
+ldr-utils: move O_BINARY to actual open() call to make tests happy
+------------------------------------------------------------------------
+r5820 | vapier | 2012-03-29 23:39:49 -0400 (Thu, 29 Mar 2012) | 1 line
+
+ldr-utils: fix set-but-unused variable warnings
+------------------------------------------------------------------------
+r5819 | vapier | 2012-03-29 23:06:57 -0400 (Thu, 29 Mar 2012) | 3 lines
+
+ldr-utils: restore local Makefiles
+
+seems like they were dropped by accident
+------------------------------------------------------------------------
+r5818 | shenders | 2012-03-29 05:30:44 -0400 (Thu, 29 Mar 2012) | 2 lines
+
+Merge BF60x support to trunk.
+
+------------------------------------------------------------------------
+r5766 | shenders | 2011-11-04 12:59:32 -0400 (Fri, 04 Nov 2011) | 2 lines
+
+darwin needs objc to build.
+
+------------------------------------------------------------------------
+r5692 | sonicz | 2011-09-20 05:09:59 -0400 (Tue, 20 Sep 2011) | 8 lines
+
+Fix bug[#6797] ldr-utils: Split bss section into ldr zero-fill blocks according to predefined size.
+
+BF53x and BF561 bootrom doesn't support load and fill ldr blocks that is larger than
+64k bytes. The max block size is defined in ldr utility. If bss section is larger than
+this size, split it into several zero-fill blocks.
+
+
+
+------------------------------------------------------------------------
+r5607 | vapier | 2011-07-02 03:04:48 -0400 (Sat, 02 Jul 2011) | 1 line
+
+ldr-utils: when opening tty devices, do so with O_NONBLOCK so previous settings dont possibly cause us to hang
+------------------------------------------------------------------------
+r5575 | vapier | 2011-06-27 16:04:26 -0400 (Mon, 27 Jun 2011) | 1 line
+
+ldr-utils: fix filename in header
+------------------------------------------------------------------------
+r5419 | shenders | 2011-05-16 06:41:59 -0400 (Mon, 16 May 2011) | 2 lines
+
+[#6439] ldr-utils: fix up style from previous commit.
+
+------------------------------------------------------------------------
+r5412 | shenders | 2011-05-11 06:27:13 -0400 (Wed, 11 May 2011) | 2 lines
+
+[#6439] ldr-utils: init tty timeout values appropriately.
+
+------------------------------------------------------------------------
+r5389 | vapier | 2011-04-13 21:48:17 -0400 (Wed, 13 Apr 2011) | 1 line
+
+ldr-utils: fix fwrite() size check -- it returns # elements, not # of bytes
+------------------------------------------------------------------------
+r5388 | vapier | 2011-04-13 21:13:09 -0400 (Wed, 13 Apr 2011) | 1 line
+
+ldr-utils: bf537: unify block flags setup so that the special first block includes proper port/hwait settings too
+------------------------------------------------------------------------
+r5387 | vapier | 2011-04-11 15:32:46 -0400 (Mon, 11 Apr 2011) | 1 line
+
+ldr-utils: clear errno when reading to avoid confusing error output with higher levels and short reads
+------------------------------------------------------------------------
+r5386 | vapier | 2011-04-11 15:27:43 -0400 (Mon, 11 Apr 2011) | 1 line
+
+ldr-utils: avoid useless close() on tty lock file to avoid confusing strace output
+------------------------------------------------------------------------
+r5077 | vapier | 2010-12-26 11:58:15 -0500 (Sun, 26 Dec 2010) | 1 line
+
+ldr-utils: constify misc structures
+------------------------------------------------------------------------
+r5076 | vapier | 2010-12-26 11:56:00 -0500 (Sun, 26 Dec 2010) | 1 line
+
+ldr-utils: use ARRAY_SIZE a bit more
+------------------------------------------------------------------------
+r5005 | vapier | 2010-11-15 17:07:39 -0500 (Mon, 15 Nov 2010) | 1 line
+
+ldr-utils: clean up SDP code a bit and get SDRAM booting working
+------------------------------------------------------------------------
+r4995 | vapier | 2010-10-14 17:33:54 -0400 (Thu, 14 Oct 2010) | 1 line
+
+ldr-utils: convert 32bit ints read by the blackfin to litle endian
+------------------------------------------------------------------------
+r4989 | vapier | 2010-10-10 02:27:08 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: rebuild autotools
+------------------------------------------------------------------------
+r4988 | vapier | 2010-10-10 02:23:09 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: tweak HACKING file to avoid useless future updates
+------------------------------------------------------------------------
+r4987 | vapier | 2010-10-10 02:20:15 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: check fwrite/fread return values to fix gcc warnings
+------------------------------------------------------------------------
+r4986 | vapier | 2010-10-10 02:19:41 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: fix up tests after new sdp code
+------------------------------------------------------------------------
+r4985 | vapier | 2010-10-10 02:06:08 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: fix indentation
+------------------------------------------------------------------------
+r4984 | vapier | 2010-10-10 02:05:43 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: initial sdp loading support
+------------------------------------------------------------------------
+r4983 | vapier | 2010-10-10 00:21:33 -0400 (Sun, 10 Oct 2010) | 1 line
+
+ldr-utils: mark load methods static/const
+------------------------------------------------------------------------
+r4982 | vapier | 2010-10-09 09:31:26 -0400 (Sat, 09 Oct 2010) | 1 line
+
+ldr-utils: refresh autotools
+------------------------------------------------------------------------
 r3936 | vapier | 2010-02-10 18:37:49 -0500 (Wed, 10 Feb 2010) | 1 line
 
 ldr-utils: support silent automake when generating windows icons

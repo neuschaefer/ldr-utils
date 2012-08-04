@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT(ldr-utils, [svn-3936], [vapier@blackfin.uclinux.org])
+AC_INIT(ldr-utils, [svn-5853], [vapier@blackfin.uclinux.org])
 AM_INIT_AUTOMAKE([1.10.1 dist-bzip2 dist-xz no-dist-gzip])
 AC_CONFIG_HEADER(config.h)
 

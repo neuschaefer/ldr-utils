@@ -1,7 +1,7 @@
 /*
  * File: lfd_bf561.c
  *
- * Copyright 2006-2010 Analog Devices Inc.
+ * Copyright 2006-2011 Analog Devices Inc.
  * Licensed under the GPL-2, see the file COPYING in this dir
  *
  * Description:

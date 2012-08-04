@@ -1,4 +1,4 @@
-/* Copyright (C) 1991, 1994-2002, 2005, 2008-2010 Free Software Foundation,
+/* Copyright (C) 1991, 1994-2002, 2005, 2008-2012 Free Software Foundation,
    Inc.
    This file is part of the GNU C Library.
 
@@ -19,10 +19,12 @@
 # include <config.h>
 #endif
 
+/* Specification.  */
+#include <string.h>
+
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #ifdef _LIBC
 # include <libintl.h>
@@ -54,7 +56,9 @@ extern const char *const _sys_siglist_internal[] attribute_hidden;
 #else /* !_LIBC */
 
 /* NetBSD declares sys_siglist in unistd.h. */
-# include <unistd.h>
+# if HAVE_UNISTD_H
+#  include <unistd.h>
+# endif
 
 # define INTUSE(x) (x)
 
@@ -108,7 +112,7 @@ strsignal (int signum)
 #ifdef SIGRTMIN
       if (signum >= SIGRTMIN && signum <= SIGRTMAX)
         len = __snprintf (buffer, BUFFERSIZ - 1, _("Real-time signal %d"),
-                          signum - SIGRTMIN);
+                          signum - (int) SIGRTMIN);
       else
 #endif
         len = __snprintf (buffer, BUFFERSIZ - 1, _("Unknown signal %d"),
