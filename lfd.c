@@ -366,7 +366,7 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 		alfd->target->iovec.write_block(alfd, DXE_BLOCK_FIRST, opts, EGET(ehdr->e_entry), 0, NULL);
 
 		/* if the user gave us some init code, let's pull the code out */
-		if (opts->init_code) {
+		if (i == 1 && opts->init_code) {
 			elfobj *init = elf_open(opts->init_code);
 			if (init == NULL) {
 				warn("'%s' is not a Blackfin ELF!", opts->init_code);
@@ -489,12 +489,12 @@ bool lfd_create(LFD *alfd, const void *void_opts)
 					printf("[ELF block: %zi @ 0x%08zX] ", memsz, paddr);
 
 				if (filesz) {
-					final = (p == final_load && memsz == filesz ? DXE_BLOCK_FINAL : 0);
+					final = (!filelist[i + 1] && p == final_load && memsz == filesz ? DXE_BLOCK_FINAL : 0);
 					lfd_blockify(alfd, opts, final, paddr, filesz, elf->data + EGET(phdr->p_offset));
 				}
 
 				if (memsz > filesz) {
-					final = (p == final_load ? DXE_BLOCK_FINAL : 0);
+					final = (!filelist[i + 1] && p == final_load ? DXE_BLOCK_FINAL : 0);
 					lfd_blockify(alfd, opts, final, paddr + filesz, memsz - filesz, NULL);
 				}
 			}
