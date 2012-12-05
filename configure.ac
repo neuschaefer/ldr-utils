@@ -88,6 +88,7 @@ AC_CHECK_HEADER([elf.h], [
 		dnl the DECLS stuff does not matter as all of our code is C
 		sed \
 			-e "/features.h/d" \
+			-e "/endian.h/d" \
 			-e "/__BEGIN_DECLS/d" \
 			-e "/__END_DECLS/d" \
 			"$srcdir/../uClibc/include/elf.h" > elf.h
